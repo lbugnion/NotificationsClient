@@ -2,6 +2,6 @@
 {
     public interface INotificationsServiceClient
     {
-        bool IsOnlineServicesAvailable();
+        (bool result, string errorMessage) AreOnlineServicesAvailable();
     }
 }

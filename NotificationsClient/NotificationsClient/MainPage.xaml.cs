@@ -15,14 +15,22 @@ namespace NotificationsClient
             InitializeComponent();
 
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
+            var availability = client.AreOnlineServicesAvailable();
 
-            if (client.IsOnlineServicesAvailable())
+            if (availability.result)
             {
                 MainLabel.Text = "Available :)";
             }
             else
             {
-                MainLabel.Text = "Not available :(";
+                if (availability.errorMessage == null)
+                {
+                    MainLabel.Text = "Not available :(";
+                }
+                else
+                {
+                    MainLabel.Text = availability.errorMessage;
+                }
             }
         }
     }

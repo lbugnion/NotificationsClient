@@ -12,27 +12,20 @@ namespace NotificationsClient.Droid.Model
             _context = activity;
         }
 
-        public bool IsOnlineServicesAvailable()
+        public (bool result, string errorMessage) AreOnlineServicesAvailable()
         {
             var resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(_context);
-            return resultCode == ConnectionResult.Success;
+            string errorMessage = null;
 
-            //if (resultCode != ConnectionResult.Success)
-            //{
-            //    if (GoogleApiAvailability.Instance.IsUserResolvableError(resultCode))
-            //        msgText.Text = GoogleApiAvailability.Instance.GetErrorString(resultCode);
-            //    else
-            //    {
-            //        msgText.Text = "This device is not supported";
-            //        Finish();
-            //    }
-            //    return false;
-            //}
-            //else
-            //{
-            //    msgText.Text = "Google Play Services is available.";
-            //    return true;
-            //}
+            if (resultCode != ConnectionResult.Success)
+            {
+                if (GoogleApiAvailability.Instance.IsUserResolvableError(resultCode))
+                {
+                    errorMessage = GoogleApiAvailability.Instance.GetErrorString(resultCode);
+                }
+            }
+
+            return (resultCode == ConnectionResult.Success, errorMessage);
         }
     }
 }
