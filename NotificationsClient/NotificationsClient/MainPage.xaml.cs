@@ -20,6 +20,7 @@ namespace NotificationsClient
             if (availability.result)
             {
                 MainLabel.Text = "Available :)";
+                client.Initialize();
             }
             else
             {

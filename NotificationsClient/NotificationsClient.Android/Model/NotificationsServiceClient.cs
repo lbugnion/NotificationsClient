@@ -1,10 +1,15 @@
-﻿using Android.Gms.Common;
+﻿using Android.App;
+using Android.Gms.Common;
+using Android.OS;
 using NotificationsClient.Model;
 
 namespace NotificationsClient.Droid.Model
 {
     public class NotificationsServiceClient : INotificationsServiceClient
     {
+        private const string ChannelId = "NotificationsClient.Channel";
+        public const int NotificationId = 100;
+        
         private MainActivity _context;
 
         public NotificationsServiceClient(MainActivity activity)
@@ -26,6 +31,27 @@ namespace NotificationsClient.Droid.Model
             }
 
             return (resultCode == ConnectionResult.Success, errorMessage);
+        }
+
+        public void Initialize()
+        {
+            if (Build.VERSION.SdkInt < BuildVersionCodes.O)
+            {
+                // Notification channels are new in API 26 (and not a part of the
+                // support library). There is no need to create a notification
+                // channel on older versions of Android.
+                return;
+            }
+
+            var channel = new NotificationChannel(
+                ChannelId,
+                "Notifications for GalaSoft NotificationsClient",
+                NotificationImportance.Default);
+
+            var notificationManager = (NotificationManager)_context.GetSystemService(
+                Android.Content.Context.NotificationService);
+
+            notificationManager.CreateNotificationChannel(channel);
         }
     }
 }
