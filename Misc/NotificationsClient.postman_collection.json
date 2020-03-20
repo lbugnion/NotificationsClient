@@ -1,0 +1,45 @@
+{
+	"info": {
+		"_postman_id": "9fcfda2f-65fd-4633-b992-80d02ae1fda4",
+		"name": "NotificationsClient",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Send through FCM",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "key=AAAAL5sOydI:APA91bG5k5588vD1flEi3xGQs8gM6mpJ68gJVcWb3ulN-OQoZ0_tIXQB_nGoKTPA6_OG4KRmCY-OLq7WjBtnOKHXrzGQICXbCWSZ7iziImrtQ09TSR1FJAE2I2HbGXOgAZypaxSZJOGp",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"notification\": {\n        \"body\": \"Body notification 2\",\n        \"title\": \"Title notification\"\n    },\n    \n    \"to\": \"d4wxxYk4xwc:APA91bEHNlCcsOanW-NxVpxJZay85WO0yyYKkMNKCtOpqWsVorqqrpDp-ebMQEZPLJUxPvAOWvmQvPg6CrOBPUOo9Bk4-iQgbjLbokTpaFxKglvDP58LMQOrStSkHe509_cIrfsUKc84\"\n}"
+				},
+				"url": {
+					"raw": "https://fcm.googleapis.com/fcm/send",
+					"protocol": "https",
+					"host": [
+						"fcm",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"fcm",
+						"send"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
