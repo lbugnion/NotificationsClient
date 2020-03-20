@@ -16,6 +16,16 @@ namespace NotificationsClient.Droid.Model
         public override void OnMessageReceived(RemoteMessage remoteMessage)
         {
             base.OnMessageReceived(remoteMessage);
+
+            var message = string.Empty;
+
+            foreach (var key in remoteMessage.Data.Keys)
+            {
+                var value = remoteMessage.Data[key];
+                message += $"{key}:{value} |";
+            }
+
+            GalaSoft.MvvmLight.Messaging.Messenger.Default.Send(message);
         }
     }
 }

@@ -13,6 +13,10 @@
                HorizontalOptions="Center"
                VerticalOptions="CenterAndExpand" />
 
+        <Label x:Name="TestLabel"
+               HorizontalOptions="Center"
+               VerticalOptions="CenterAndExpand" />
+
         <Button Text="Log token"
                 Clicked="LogTokenButtonClicked" />
 

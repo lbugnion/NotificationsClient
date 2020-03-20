@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using NotificationsClient.Model;
+using System;
 using System.ComponentModel;
 using Xamarin.Forms;
 
@@ -33,6 +34,17 @@ namespace NotificationsClient
                     MainLabel.Text = availability.errorMessage;
                 }
             }
+
+            GalaSoft.MvvmLight.Messaging.Messenger.Default.Register<string>(
+                this,
+                HandleMessage);
+        }
+
+        private void HandleMessage(string message)
+        {
+            Device.BeginInvokeOnMainThread(() => {
+                TestLabel.Text = message;
+            });
         }
 
         private void LogTokenButtonClicked(object sender, System.EventArgs e)

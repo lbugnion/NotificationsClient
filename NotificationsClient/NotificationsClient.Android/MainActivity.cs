@@ -9,6 +9,7 @@ using Android.OS;
 using NotificationsClient.Droid.Model;
 using GalaSoft.MvvmLight.Ioc;
 using NotificationsClient.Model;
+using GalaSoft.MvvmLight.Threading;
 
 namespace NotificationsClient.Droid
 {
@@ -17,15 +18,6 @@ namespace NotificationsClient.Droid
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
-            if (Intent.Extras != null)
-            {
-                foreach (var key in Intent.Extras.KeySet())
-                {
-                    var value = Intent.Extras.GetString(key);
-                    System.Diagnostics.Debug.WriteLine("Key: {0} Value: {1}", key, value);
-                }
-            }
-
             if (!SimpleIoc.Default.IsRegistered<INotificationsServiceClient>())
             {
                 var notificationsServiceClient
@@ -43,6 +35,20 @@ namespace NotificationsClient.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
+
+            if (Intent.Extras != null)
+            {
+                var message = string.Empty;
+
+                foreach (var key in Intent.Extras.KeySet())
+                {
+                    var value = Intent.Extras.GetString(key);
+                    message += $"{key}:{value} |";
+                }
+
+                GalaSoft.MvvmLight.Messaging.Messenger.Default.Send(message);
+            }
+
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
