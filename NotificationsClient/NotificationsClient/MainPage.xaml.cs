@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using GalaSoft.MvvmLight.Ioc;
+using NotificationsClient.Model;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace NotificationsClient
@@ -16,6 +13,17 @@ namespace NotificationsClient
         public MainPage()
         {
             InitializeComponent();
+
+            var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
+
+            if (client.IsOnlineServicesAvailable())
+            {
+                MainLabel.Text = "Available :)";
+            }
+            else
+            {
+                MainLabel.Text = "Not available :(";
+            }
         }
     }
 }

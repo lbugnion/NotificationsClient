@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsClient.UWP", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsClient.Android", "NotificationsClient\NotificationsClient.Android\NotificationsClient.Android.csproj", "{ED8E2A52-68C6-4E57-AF3C-97A50EEB7CD8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsClient", "NotificationsClient\NotificationsClient\NotificationsClient.csproj", "{57047DBF-731C-4AB4-A467-0BA748EB2F30}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationsClient", "NotificationsClient\NotificationsClient\NotificationsClient.csproj", "{57047DBF-731C-4AB4-A467-0BA748EB2F30}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

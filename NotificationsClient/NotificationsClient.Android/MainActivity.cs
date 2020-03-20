@@ -6,6 +6,9 @@ using Android.Runtime;
 using Android.Views;
 using Android.Widget;
 using Android.OS;
+using NotificationsClient.Droid.Model;
+using GalaSoft.MvvmLight.Ioc;
+using NotificationsClient.Model;
 
 namespace NotificationsClient.Droid
 {
@@ -14,6 +17,12 @@ namespace NotificationsClient.Droid
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            var notificationsServiceClient 
+                = new NotificationsServiceClient(this);
+
+            SimpleIoc.Default.Register<INotificationsServiceClient>(
+                () => notificationsServiceClient);
+
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
 
