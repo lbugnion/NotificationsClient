@@ -34,5 +34,11 @@ namespace NotificationsClient
                 }
             }
         }
+
+        private void LogTokenButtonClicked(object sender, System.EventArgs e)
+        {
+            var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
+            client.ShowToken();
+        }
     }
 }

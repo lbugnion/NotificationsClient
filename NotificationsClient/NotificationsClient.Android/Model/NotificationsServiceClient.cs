@@ -1,7 +1,9 @@
 ﻿using Android.App;
 using Android.Gms.Common;
 using Android.OS;
+using Firebase.Iid;
 using NotificationsClient.Model;
+using System.Diagnostics;
 
 namespace NotificationsClient.Droid.Model
 {
