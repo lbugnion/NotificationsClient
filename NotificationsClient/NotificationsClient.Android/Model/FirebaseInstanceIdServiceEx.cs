@@ -1,24 +1,21 @@
 ﻿using Android.App;
 using Android.Content;
-using Firebase.Iid;
+using Firebase.Messaging;
 
 namespace NotificationsClient.Droid.Model
 {
     [Service]
-    [IntentFilter(new[] { "com.google.firebase.INSTANCE_ID_EVENT" })]
-    public class FirebaseInstanceIdServiceEx : FirebaseInstanceIdService
+    [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
+    public class FirebaseMessagingServiceEx : FirebaseMessagingService
     {
-        const string TAG = "MyFirebaseIIDService";
-
-        public override void OnTokenRefresh()
+        public override void OnNewToken(string token)
         {
-            var refreshedToken = FirebaseInstanceId.Instance.Token;
-            SendRegistrationToServer(refreshedToken);
+            base.OnNewToken(token);
         }
 
-        public void SendRegistrationToServer(string token)
+        public override void OnMessageReceived(RemoteMessage remoteMessage)
         {
-            // Add custom implementation, as needed.
+            base.OnMessageReceived(remoteMessage);
         }
     }
 }

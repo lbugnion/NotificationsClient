@@ -17,6 +17,15 @@ namespace NotificationsClient.Droid
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            if (Intent.Extras != null)
+            {
+                foreach (var key in Intent.Extras.KeySet())
+                {
+                    var value = Intent.Extras.GetString(key);
+                    System.Diagnostics.Debug.WriteLine("Key: {0} Value: {1}", key, value);
+                }
+            }
+
             var notificationsServiceClient 
                 = new NotificationsServiceClient(this);
 

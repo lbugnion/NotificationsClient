@@ -55,5 +55,10 @@ namespace NotificationsClient.Droid.Model
 
             notificationManager.CreateNotificationChannel(channel);
         }
+
+        public void ShowToken()
+        {
+            System.Diagnostics.Debug.WriteLine(FirebaseInstanceId.Instance.Token);
+        }
     }
 }
