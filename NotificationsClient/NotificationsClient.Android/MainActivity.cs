@@ -26,11 +26,14 @@ namespace NotificationsClient.Droid
                 }
             }
 
-            var notificationsServiceClient 
-                = new NotificationsServiceClient(this);
+            if (!SimpleIoc.Default.IsRegistered<INotificationsServiceClient>())
+            {
+                var notificationsServiceClient
+                    = new NotificationsServiceClient(this);
 
-            SimpleIoc.Default.Register<INotificationsServiceClient>(
-                () => notificationsServiceClient);
+                SimpleIoc.Default.Register<INotificationsServiceClient>(
+                    () => notificationsServiceClient);
+            }
 
             TabLayoutResource = Resource.Layout.Tabbar;
             ToolbarResource = Resource.Layout.Toolbar;
@@ -41,6 +44,7 @@ namespace NotificationsClient.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
         }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
