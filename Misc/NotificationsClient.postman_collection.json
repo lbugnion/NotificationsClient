@@ -23,7 +23,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"notification\": {\n        \"body\": \"Body notification 2\",\n        \"title\": \"Title notification\"\n    },\n    \n    \"to\": \"d4wxxYk4xwc:APA91bEHNlCcsOanW-NxVpxJZay85WO0yyYKkMNKCtOpqWsVorqqrpDp-ebMQEZPLJUxPvAOWvmQvPg6CrOBPUOo9Bk4-iQgbjLbokTpaFxKglvDP58LMQOrStSkHe509_cIrfsUKc84\"\n}"
+					"raw": "{\n    \"notification\": {\n        \"body\": \"Body notification 2\",\n        \"title\": \"Title notification\"\n    },\n    \n     \"data\" : {\n     \"body\" : \"Body data\",\n     \"title\": \"Title data\",\n     \"key_1\" : \"Value for key_1\",\n     \"key_2\" : \"Value for key_2\"\n\t},\n    \n    \"to\": \"d4wxxYk4xwc:APA91bEHNlCcsOanW-NxVpxJZay85WO0yyYKkMNKCtOpqWsVorqqrpDp-ebMQEZPLJUxPvAOWvmQvPg6CrOBPUOo9Bk4-iQgbjLbokTpaFxKglvDP58LMQOrStSkHe509_cIrfsUKc84\"\n}"
 				},
 				"url": {
 					"raw": "https://fcm.googleapis.com/fcm/send",
