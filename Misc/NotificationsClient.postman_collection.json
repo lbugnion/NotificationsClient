@@ -40,6 +40,35 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Send through Local Functions",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"This is a notification from Postman\",\n\t\"message\": \"This is the message\",\n\t\"channel\": \"MyChannel\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:7071/api/send",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"send"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
