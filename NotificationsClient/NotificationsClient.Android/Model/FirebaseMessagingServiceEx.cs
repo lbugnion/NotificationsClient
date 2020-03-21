@@ -14,7 +14,7 @@ namespace NotificationsClient.Droid.Model
         private const string ConnectionString = "Endpoint=sb://lbnotifications.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=AKc4JqFZq8hDvwpdF0CZzFCEBzdsWTkt3xUSSgQ1DYo=";
         private const string TagName = "default";
         private const string TemplateName = "defaultTemplate";
-        private const string Template = "{\"data\":{\"message\":\"$(messageParam)\"}}";
+        private const string Template = "{\"notification\":{\"body\":\"$(body)\",\"title\":\"$(title)\"},\"data\":{\"body\":\"$(body)\",\"title\":\"$(title)\",\"channel\":\"$(channel)\"}}";
 
         public override void OnNewToken(string token)
         {
