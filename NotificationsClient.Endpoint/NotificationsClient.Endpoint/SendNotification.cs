@@ -6,6 +6,9 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System;
+using Microsoft.Azure.NotificationHubs;
 
 namespace NotificationsClient.Endpoint
 {
@@ -35,7 +38,55 @@ namespace NotificationsClient.Endpoint
                 return new BadRequestObjectResult("Please pass a message and a title in the request body");
             }
 
-            return new OkObjectResult($"Title: {title} | Message: {message}");
+            var properties = new Dictionary<string, string>
+            {
+                {
+                    "message",
+                    message
+                },
+                {
+                    "title",
+                    title
+                }
+            };
+
+            if (!string.IsNullOrEmpty(channel))
+            {
+                properties.Add("channel", channel);
+            }
+
+            try
+            {
+                var outcome = await Notifications.Instance.Hub.SendTemplateNotificationAsync(properties);
+
+                var result = string.Empty;
+
+                if (outcome.State == NotificationOutcomeState.Completed)
+                {
+                    if (outcome.Success > 0)
+                    {
+                        result = $"Sent notification to {outcome.Success} devices";
+                    }
+                    else
+                    {
+                        result = "Notification was sent to 0 device";
+                    }
+                }
+                else if (outcome.State == NotificationOutcomeState.Enqueued)
+                {
+                    result = "Notification enqueued for sending";
+                }
+                else
+                {
+                    result = "Couldn't complete the operation";
+                }
+
+                return new OkObjectResult(result);
+            }
+            catch (Exception ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
+            }
         }
     }
 }
