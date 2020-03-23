@@ -38,18 +38,18 @@ namespace NotificationsClient.Droid.Model
         {
             try
             {
-                var hub = new NotificationHub(Constants.NotificationHubName, Constants.ConnectionString, this);
+                var hub = new NotificationHub(Constants.NotificationHubName, Constants.NotificationHubConnectionString, this);
 
                 // register device with Azure Notification Hub using the token from FCM
-                var registration = hub.Register(token, Constants.TagName);
+                var registration = hub.Register(token, Constants.NotificationHubTagName);
 
                 // subscribe to the SubscriptionTags list with a simple template.
                 var pnsHandle = registration.PNSHandle;
                 var templateReg = hub.RegisterTemplate(
                     pnsHandle,
-                    Constants.TemplateName, 
+                    Constants.NotificationHubTemplateName, 
                     Template,
-                    Constants.TagName);
+                    Constants.NotificationHubTagName);
             }
             catch (Exception e)
             {

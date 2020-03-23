@@ -4,16 +4,12 @@ using NotificationsClient.Model;
 using System;
 using System.Threading.Tasks;
 using Windows.Networking.PushNotifications;
-using Windows.UI.Popups;
 
 namespace NotificationsClient.UWP.Model
 {
     public class NotificationsServiceClient : INotificationsServiceClient
     {
-        public (bool result, string errorMessage) AreOnlineServicesAvailable()
-        {
-            return (true, null);
-        }
+        private const string Template = "<toast><visual><binding template=\"ToastText02\"><text id=\"1\">$(title)</text><text id=\"2\">$(body)</text></binding></visual></toast>";
 
         public async Task Initialize()
         {
@@ -28,7 +24,11 @@ namespace NotificationsClient.UWP.Model
                     Constants.NotificationHubName, 
                     Constants.NotificationHubConnectionString);
                 
-                var result = await hub.RegisterNativeAsync(channel.Uri);
+                await hub.RegisterNativeAsync(channel.Uri);
+                await hub.RegisterTemplateAsync(
+                    channel.Uri, 
+                    Template, 
+                    Constants.NotificationHubTemplateName);
 
                 messageHandler.ShowInfo("Ready to receive notifications");
             }
