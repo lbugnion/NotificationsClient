@@ -28,21 +28,21 @@ namespace NotificationsClient.Endpoint
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
 
-            string message = data.message;
+            string body = data.body;
             string title = data.title;
             string channel = data.channel;
 
-            if (string.IsNullOrEmpty(message)
+            if (string.IsNullOrEmpty(body)
                 || string.IsNullOrEmpty(title))
             {
-                return new BadRequestObjectResult("Please pass a message and a title in the request body");
+                return new BadRequestObjectResult("Please pass a body and a title in the request");
             }
 
             var properties = new Dictionary<string, string>
             {
                 {
-                    "message",
-                    message
+                    "body",
+                    body
                 },
                 {
                     "title",
