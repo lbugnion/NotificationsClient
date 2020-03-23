@@ -1,7 +1,8 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using NotificationsClient.Model;
-using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace NotificationsClient
@@ -9,33 +10,17 @@ namespace NotificationsClient
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
-    public partial class MainPage : ContentPage
+    public partial class MainPage : ContentPage, IMessageHandler
     {
         public MainPage()
         {
             InitializeComponent();
+            SimpleIoc.Default.Register<IMessageHandler>(() => this);
 
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
-            var availability = client.AreOnlineServicesAvailable();
+            client.Initialize();
 
-            if (availability.result)
-            {
-                MainLabel.Text = "Available :)";
-                client.Initialize();
-            }
-            else
-            {
-                if (availability.errorMessage == null)
-                {
-                    MainLabel.Text = "Not available :(";
-                }
-                else
-                {
-                    MainLabel.Text = availability.errorMessage;
-                }
-            }
-
-            GalaSoft.MvvmLight.Messaging.Messenger.Default.Register<string>(
+            Messenger.Default.Register<string>(
                 this,
                 HandleMessage);
         }
@@ -47,10 +32,16 @@ namespace NotificationsClient
             });
         }
 
-        private void LogTokenButtonClicked(object sender, System.EventArgs e)
+        public void ShowError(string errorMessage)
         {
-            var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
-            client.ShowToken();
+            MainLabel.TextColor = Color.Red;
+            MainLabel.Text = errorMessage;
+        }
+
+        public void ShowInfo(string message)
+        {
+            MainLabel.TextColor = Color.Black;
+            MainLabel.Text = message;
         }
     }
 }

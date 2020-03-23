@@ -1,4 +1,7 @@
-﻿using System;
+﻿using GalaSoft.MvvmLight.Ioc;
+using NotificationsClient.Model;
+using NotificationsClient.UWP.Model;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -39,7 +42,14 @@ namespace NotificationsClient.UWP
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            if (!SimpleIoc.Default.IsRegistered<INotificationsServiceClient>())
+            {
+                var notificationsServiceClient
+                    = new NotificationsServiceClient();
 
+                SimpleIoc.Default.Register<INotificationsServiceClient>(
+                    () => notificationsServiceClient);
+            }
 
             Frame rootFrame = Window.Current.Content as Frame;
 

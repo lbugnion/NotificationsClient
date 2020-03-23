@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="21647584-5c3e-4287-9400-9d76c5657516"
-    Publisher="CN=c563ee0d-e506-4a36-8b15-205d7048fc71"
+    Name="61441GalaSoft.NotificationsClient"
+    Publisher="CN=34995E11-E112-479E-9295-CD9FD6FEB9E4"
     Version="1.0.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="ec0cc741-fd3e-485c-81be-68815c480690" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="f4eaa7c5-4615-4a9f-9e34-ffc883d1f2d7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>NotificationsClient.UWP</DisplayName>
-    <PublisherDisplayName>c563ee0d-e506-4a36-8b15-205d7048fc71</PublisherDisplayName>
+    <DisplayName>NotificationsClient</DisplayName>
+    <PublisherDisplayName>GalaSoft</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 
@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="NotificationsClient.UWP.App">
       <uap:VisualElements
-        DisplayName="NotificationsClient.UWP"
+        DisplayName="NotificationsClient"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="NotificationsClient.UWP"

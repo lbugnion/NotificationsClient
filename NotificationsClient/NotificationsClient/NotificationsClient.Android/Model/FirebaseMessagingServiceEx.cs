@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Firebase.Messaging;
+using NotificationsClient.Model;
 using System;
 using WindowsAzure.Messaging;
 
@@ -10,10 +11,6 @@ namespace NotificationsClient.Droid.Model
     [IntentFilter(new[] { "com.google.firebase.MESSAGING_EVENT" })]
     public class FirebaseMessagingServiceEx : FirebaseMessagingService
     {
-        private const string NotificationHubName = "LbNotifications";
-        private const string ConnectionString = "Endpoint=sb://lbnotifications.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=AKc4JqFZq8hDvwpdF0CZzFCEBzdsWTkt3xUSSgQ1DYo=";
-        private const string TagName = "default";
-        private const string TemplateName = "defaultTemplate";
         private const string Template = "{\"notification\":{\"body\":\"$(body)\",\"title\":\"$(title)\"},\"data\":{\"body\":\"$(body)\",\"title\":\"$(title)\",\"channel\":\"$(channel)\"}}";
 
         public override void OnNewToken(string token)
@@ -41,18 +38,18 @@ namespace NotificationsClient.Droid.Model
         {
             try
             {
-                var hub = new NotificationHub(NotificationHubName, ConnectionString, this);
+                var hub = new NotificationHub(Constants.NotificationHubName, Constants.ConnectionString, this);
 
                 // register device with Azure Notification Hub using the token from FCM
-                var registration = hub.Register(token, TagName);
+                var registration = hub.Register(token, Constants.TagName);
 
                 // subscribe to the SubscriptionTags list with a simple template.
                 var pnsHandle = registration.PNSHandle;
                 var templateReg = hub.RegisterTemplate(
-                    pnsHandle, 
-                    TemplateName, 
+                    pnsHandle,
+                    Constants.TemplateName, 
                     Template,
-                    TagName);
+                    Constants.TagName);
             }
             catch (Exception e)
             {

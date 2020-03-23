@@ -1,9 +1,10 @@
 ﻿using Android.App;
 using Android.Gms.Common;
 using Android.OS;
-using Firebase.Iid;
+using GalaSoft.MvvmLight.Ioc;
 using NotificationsClient.Model;
-using System.Diagnostics;
+using System;
+using System.Threading.Tasks;
 
 namespace NotificationsClient.Droid.Model
 {
@@ -19,24 +20,40 @@ namespace NotificationsClient.Droid.Model
             _context = activity;
         }
 
-        public (bool result, string errorMessage) AreOnlineServicesAvailable()
+        // This method doesn't need to be asynchronous for Android but
+        // is anyway for compatibility with UWP
+        public async Task Initialize()
         {
-            var resultCode = GoogleApiAvailability.Instance.IsGooglePlayServicesAvailable(_context);
+            var resultCode = GoogleApiAvailability
+                .Instance
+                .IsGooglePlayServicesAvailable(_context);
+
             string errorMessage = null;
+            var messageHandler = SimpleIoc.Default.GetInstance<IMessageHandler>();
 
             if (resultCode != ConnectionResult.Success)
             {
-                if (GoogleApiAvailability.Instance.IsUserResolvableError(resultCode))
+                if (GoogleApiAvailability
+                    .Instance
+                    .IsUserResolvableError(resultCode))
                 {
-                    errorMessage = GoogleApiAvailability.Instance.GetErrorString(resultCode);
+                    errorMessage = GoogleApiAvailability
+                        .Instance
+                        .GetErrorString(resultCode);
                 }
+
+                if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    messageHandler.ShowError(errorMessage);
+                }
+                else
+                {
+                    messageHandler.ShowError("Unknown error when checking for service availability");
+                }
+
+                return;
             }
 
-            return (resultCode == ConnectionResult.Success, errorMessage);
-        }
-
-        public void Initialize()
-        {
             if (Build.VERSION.SdkInt < BuildVersionCodes.O)
             {
                 // Notification channels are new in API 26 (and not a part of the
@@ -45,20 +62,24 @@ namespace NotificationsClient.Droid.Model
                 return;
             }
 
-            var channel = new NotificationChannel(
-                ChannelId,
-                "Notifications for GalaSoft NotificationsClient",
-                NotificationImportance.Default);
+            try
+            {
+                var channel = new NotificationChannel(
+                    ChannelId,
+                    "Notifications for GalaSoft NotificationsClient",
+                    NotificationImportance.Default);
 
-            var notificationManager = (NotificationManager)_context.GetSystemService(
-                Android.Content.Context.NotificationService);
+                var notificationManager = (NotificationManager)_context.GetSystemService(
+                    Android.Content.Context.NotificationService);
 
-            notificationManager.CreateNotificationChannel(channel);
-        }
+                notificationManager.CreateNotificationChannel(channel);
 
-        public void ShowToken()
-        {
-            System.Diagnostics.Debug.WriteLine(FirebaseInstanceId.Instance.Token);
+                messageHandler.ShowInfo("Ready to receive notifications");
+            }
+            catch (Exception ex)
+            {
+                messageHandler.ShowError(ex.Message);
+            }
         }
     }
 }

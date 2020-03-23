@@ -1,9 +1,9 @@
-﻿namespace NotificationsClient.Model
+﻿using System.Threading.Tasks;
+
+namespace NotificationsClient.Model
 {
     public interface INotificationsServiceClient
     {
-        (bool result, string errorMessage) AreOnlineServicesAvailable();
-        void Initialize();
-        void ShowToken();
+        Task Initialize();
     }
 }
