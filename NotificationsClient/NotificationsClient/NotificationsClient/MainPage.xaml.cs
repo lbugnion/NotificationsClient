@@ -18,11 +18,13 @@ namespace NotificationsClient
             SimpleIoc.Default.Register<IMessageHandler>(() => this);
 
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
+            client.NotificationReceived += ClientNotificationReceived;
             client.Initialize();
+        }
 
-            Messenger.Default.Register<string>(
-                this,
-                HandleMessage);
+        private void ClientNotificationReceived(object sender, string message)
+        {
+            HandleMessage(message);
         }
 
         private void HandleMessage(string message)

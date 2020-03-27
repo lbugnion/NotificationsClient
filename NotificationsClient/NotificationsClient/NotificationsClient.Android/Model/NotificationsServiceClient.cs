@@ -10,6 +10,8 @@ namespace NotificationsClient.Droid.Model
 {
     public class NotificationsServiceClient : INotificationsServiceClient
     {
+        public event EventHandler<string> NotificationReceived;
+
         private const string ChannelId = "NotificationsClient.Channel";
         public const int NotificationId = 100;
         
@@ -80,6 +82,11 @@ namespace NotificationsClient.Droid.Model
             {
                 messageHandler.ShowError(ex.Message);
             }
+        }
+
+        public void RaiseNotificationReceived(string message)
+        {
+            NotificationReceived?.Invoke(this, message);
         }
     }
 }

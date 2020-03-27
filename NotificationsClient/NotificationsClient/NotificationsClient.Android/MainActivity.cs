@@ -18,13 +18,19 @@ namespace NotificationsClient.Droid
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            INotificationsServiceClient notificationsServiceClient;
+
             if (!SimpleIoc.Default.IsRegistered<INotificationsServiceClient>())
             {
-                var notificationsServiceClient
+                notificationsServiceClient
                     = new NotificationsServiceClient(this);
 
                 SimpleIoc.Default.Register<INotificationsServiceClient>(
                     () => notificationsServiceClient);
+            }
+            else
+            {
+                notificationsServiceClient = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
             }
 
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -46,9 +52,8 @@ namespace NotificationsClient.Droid
                     message += $"{key}:{value} |";
                 }
 
-                GalaSoft.MvvmLight.Messaging.Messenger.Default.Send(message);
+                notificationsServiceClient.RaiseNotificationReceived(message);
             }
-
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)

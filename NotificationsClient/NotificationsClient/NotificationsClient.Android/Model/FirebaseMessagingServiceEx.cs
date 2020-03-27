@@ -1,6 +1,7 @@
 ﻿using Android.App;
 using Android.Content;
 using Firebase.Messaging;
+using GalaSoft.MvvmLight.Ioc;
 using NotificationsClient.Model;
 using System;
 using WindowsAzure.Messaging;
@@ -31,7 +32,8 @@ namespace NotificationsClient.Droid.Model
                 message += $"{key}:{value} |";
             }
 
-            GalaSoft.MvvmLight.Messaging.Messenger.Default.Send(message);
+            var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
+            client.RaiseNotificationReceived(message);
         }
 
         private void SendRegistrationToServer(string token)
