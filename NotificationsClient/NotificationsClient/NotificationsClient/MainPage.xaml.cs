@@ -1,8 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
-using GalaSoft.MvvmLight.Messaging;
 using NotificationsClient.Model;
+using System;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace NotificationsClient
@@ -10,24 +9,45 @@ namespace NotificationsClient
     // Learn more about making custom code visible in the Xamarin.Forms previewer
     // by visiting https://aka.ms/xamarinforms-previewer
     [DesignTimeVisible(false)]
-    public partial class MainPage : ContentPage, IMessageHandler
+    public partial class MainPage : ContentPage
     {
         public MainPage()
         {
             InitializeComponent();
-            SimpleIoc.Default.Register<IMessageHandler>(() => this);
 
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
             client.NotificationReceived += ClientNotificationReceived;
+            client.ErrorHappened += ClientErrorHappened;
+            client.StatusChanged += ClientStatusChanged;
             client.Initialize();
+        }
+
+        private void ClientStatusChanged(object sender, NotificationStatus e)
+        {
+            switch (e)
+            {
+                case NotificationStatus.Initializing:
+                    ShowInfo("Initializing...");
+                    break;
+
+                case NotificationStatus.Ready:
+                    ShowInfo("Ready to receive notifications");
+                    break;
+            }
+        }
+
+        private void ClientErrorHappened(object sender, string message)
+        {
+            ShowError(message);
         }
 
         private void ClientNotificationReceived(object sender, string message)
         {
-            HandleMessage(message);
+            ShowInfo("Notification received at " + DateTime.Now);
+            ShowNotification(message);
         }
 
-        private void HandleMessage(string message)
+        private void ShowNotification(string message)
         {
             Device.BeginInvokeOnMainThread(() => {
                 TestLabel.Text = message;
@@ -36,14 +56,20 @@ namespace NotificationsClient
 
         public void ShowError(string errorMessage)
         {
-            MainLabel.TextColor = Color.Red;
-            MainLabel.Text = errorMessage;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                MainLabel.TextColor = Color.Red;
+                MainLabel.Text = errorMessage;
+            });
         }
 
         public void ShowInfo(string message)
         {
-            MainLabel.TextColor = Color.Black;
-            MainLabel.Text = message;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                MainLabel.TextColor = Color.Black;
+                MainLabel.Text = message;
+            });
         }
     }
 }

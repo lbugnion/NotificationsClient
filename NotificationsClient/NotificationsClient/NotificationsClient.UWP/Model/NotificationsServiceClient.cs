@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight.Ioc;
-using Microsoft.WindowsAzure.Messaging;
+﻿using Microsoft.WindowsAzure.Messaging;
 using NotificationsClient.Model;
 using System;
 using System.Threading.Tasks;
@@ -9,11 +8,14 @@ namespace NotificationsClient.UWP.Model
 {
     public class NotificationsServiceClient : INotificationsServiceClient
     {
+        public event EventHandler<string> NotificationReceived;
+        public event EventHandler<string> ErrorHappened;
+        public event EventHandler<NotificationStatus> StatusChanged;
+
         private const string Template = "<toast><visual><binding template=\"ToastText02\"><text id=\"1\">$(title)</text><text id=\"2\">$(body)</text></binding></visual></toast>";
 
         public async Task Initialize()
         {
-            IMessageHandler messageHandler = SimpleIoc.Default.GetInstance<IMessageHandler>();
 
             try
             {
@@ -30,13 +32,17 @@ namespace NotificationsClient.UWP.Model
                     Template, 
                     Constants.NotificationHubTemplateName);
 
-                messageHandler.ShowInfo("Ready to receive notifications");
+                StatusChanged?.Invoke(this, NotificationStatus.Ready);
             }
             catch (Exception ex)
             {
-                messageHandler.ShowError(ex.Message);
-                return;
+                ErrorHappened?.Invoke(this, ex.Message);
             }
+        }
+
+        public void RaiseNotificationReceived(string message)
+        {
+            NotificationReceived?.Invoke(this, message);
         }
     }
 }

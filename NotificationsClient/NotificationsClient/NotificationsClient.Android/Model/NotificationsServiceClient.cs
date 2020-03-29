@@ -1,7 +1,6 @@
 ﻿using Android.App;
 using Android.Gms.Common;
 using Android.OS;
-using GalaSoft.MvvmLight.Ioc;
 using NotificationsClient.Model;
 using System;
 using System.Threading.Tasks;
@@ -11,6 +10,8 @@ namespace NotificationsClient.Droid.Model
     public class NotificationsServiceClient : INotificationsServiceClient
     {
         public event EventHandler<string> NotificationReceived;
+        public event EventHandler<string> ErrorHappened;
+        public event EventHandler<NotificationStatus> StatusChanged;
 
         private const string ChannelId = "NotificationsClient.Channel";
         public const int NotificationId = 100;
@@ -31,7 +32,6 @@ namespace NotificationsClient.Droid.Model
                 .IsGooglePlayServicesAvailable(_context);
 
             string errorMessage = null;
-            var messageHandler = SimpleIoc.Default.GetInstance<IMessageHandler>();
 
             if (resultCode != ConnectionResult.Success)
             {
@@ -46,11 +46,11 @@ namespace NotificationsClient.Droid.Model
 
                 if (!string.IsNullOrEmpty(errorMessage))
                 {
-                    messageHandler.ShowError(errorMessage);
+                    ErrorHappened?.Invoke(this, errorMessage);
                 }
                 else
                 {
-                    messageHandler.ShowError("Unknown error when checking for service availability");
+                    ErrorHappened?.Invoke(this, "Unknown error when checking for service availability");
                 }
 
                 return;
@@ -76,17 +76,27 @@ namespace NotificationsClient.Droid.Model
 
                 notificationManager.CreateNotificationChannel(channel);
 
-                messageHandler.ShowInfo("Ready to receive notifications");
+                StatusChanged?.Invoke(this, NotificationStatus.Initializing);
             }
             catch (Exception ex)
             {
-                messageHandler.ShowError(ex.Message);
+                ErrorHappened?.Invoke(this,ex.Message);
             }
         }
 
         public void RaiseNotificationReceived(string message)
         {
             NotificationReceived?.Invoke(this, message);
+        }
+
+        internal void RaiseStatusReady()
+        {
+            StatusChanged?.Invoke(this, NotificationStatus.Ready);
+        }
+
+        internal void RaiseError(string errorMessage)
+        {
+            ErrorHappened?.Invoke(this, errorMessage);
         }
     }
 }

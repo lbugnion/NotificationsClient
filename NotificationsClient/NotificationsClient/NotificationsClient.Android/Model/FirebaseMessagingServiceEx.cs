@@ -38,6 +38,10 @@ namespace NotificationsClient.Droid.Model
 
         private void SendRegistrationToServer(string token)
         {
+            var client = (NotificationsServiceClient)SimpleIoc
+                .Default
+                .GetInstance<INotificationsServiceClient>();
+
             try
             {
                 var hub = new NotificationHub(Constants.NotificationHubName, Constants.NotificationHubConnectionString, this);
@@ -52,9 +56,12 @@ namespace NotificationsClient.Droid.Model
                     Constants.NotificationHubTemplateName, 
                     Template,
                     Constants.NotificationHubTagName);
+
+                client.RaiseStatusReady();
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
+                client.RaiseError(ex.Message);
             }
         }
     }
