@@ -33,7 +33,12 @@ namespace NotificationsClient.Droid.Model
             }
 
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
-            client.RaiseNotificationReceived(message);
+            client.RaiseNotificationReceived(new NotificationsClient.Model.Notification
+            {
+                Body = "TODO",
+                Title = "TODO",
+                Channel = "TODO"
+            });
         }
 
         private void SendRegistrationToServer(string token)

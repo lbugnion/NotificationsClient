@@ -47,7 +47,12 @@ namespace NotificationsClient.Droid
                     message += $"{key}:{value} |";
                 }
 
-                notificationsServiceClient.RaiseNotificationReceived(message);
+                notificationsServiceClient.RaiseNotificationReceived(new NotificationsClient.Model.Notification
+                {
+                    Title = "TODO",
+                    Body = "TODO",
+                    Channel = "TODO"
+                });
             }
         }
 

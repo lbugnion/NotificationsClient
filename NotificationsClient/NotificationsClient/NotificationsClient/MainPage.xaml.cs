@@ -41,10 +41,13 @@ namespace NotificationsClient
             ShowError(message);
         }
 
-        private void ClientNotificationReceived(object sender, string message)
+        private void ClientNotificationReceived(object sender, Notification notification)
         {
             ShowInfo("Notification received at " + DateTime.Now);
-            ShowNotification(message);
+
+            // TODO Show notification
+
+            //ShowNotification(message);
         }
 
         private void ShowNotification(string message)

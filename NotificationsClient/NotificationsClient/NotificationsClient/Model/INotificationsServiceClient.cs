@@ -5,11 +5,11 @@ namespace NotificationsClient.Model
 {
     public interface INotificationsServiceClient
     {
-        event EventHandler<string> NotificationReceived;
+        event EventHandler<Notification> NotificationReceived;
         event EventHandler<string> ErrorHappened;
         event EventHandler<NotificationStatus> StatusChanged;
 
         Task Initialize();
-        void RaiseNotificationReceived(string message);
+        void RaiseNotificationReceived(Notification notification);
     }
 }

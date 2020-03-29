@@ -8,7 +8,7 @@ namespace NotificationsClient.UWP.Model
 {
     public class NotificationsServiceClient : INotificationsServiceClient
     {
-        public event EventHandler<string> NotificationReceived;
+        public event EventHandler<Notification> NotificationReceived;
         public event EventHandler<string> ErrorHappened;
         public event EventHandler<NotificationStatus> StatusChanged;
 
@@ -21,6 +21,8 @@ namespace NotificationsClient.UWP.Model
             {
                 var channel = await PushNotificationChannelManager
                     .CreatePushNotificationChannelForApplicationAsync();
+
+                channel.PushNotificationReceived += ChannelPushNotificationReceived;
                 
                 var hub = new NotificationHub(
                     Constants.NotificationHubName, 
@@ -40,9 +42,22 @@ namespace NotificationsClient.UWP.Model
             }
         }
 
-        public void RaiseNotificationReceived(string message)
+        private void ChannelPushNotificationReceived(
+            PushNotificationChannel sender, 
+            PushNotificationReceivedEventArgs args)
         {
-            NotificationReceived?.Invoke(this, message);
+            // TODO Handle notification message
+            NotificationReceived?.Invoke(this, new Notification
+            {
+                Body = "TODO",
+                Title = "TODO",
+                Channel = "TODO"
+            });
+        }
+
+        public void RaiseNotificationReceived(Notification notification)
+        {
+            NotificationReceived?.Invoke(this, notification);
         }
     }
 }

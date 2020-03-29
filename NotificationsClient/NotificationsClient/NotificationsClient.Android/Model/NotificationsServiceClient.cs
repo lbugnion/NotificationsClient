@@ -9,7 +9,7 @@ namespace NotificationsClient.Droid.Model
 {
     public class NotificationsServiceClient : INotificationsServiceClient
     {
-        public event EventHandler<string> NotificationReceived;
+        public event EventHandler<NotificationsClient.Model.Notification> NotificationReceived;
         public event EventHandler<string> ErrorHappened;
         public event EventHandler<NotificationStatus> StatusChanged;
 
@@ -84,9 +84,9 @@ namespace NotificationsClient.Droid.Model
             }
         }
 
-        public void RaiseNotificationReceived(string message)
+        public void RaiseNotificationReceived(NotificationsClient.Model.Notification notification)
         {
-            NotificationReceived?.Invoke(this, message);
+            NotificationReceived?.Invoke(this, notification);
         }
 
         internal void RaiseStatusReady()
