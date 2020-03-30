@@ -12,7 +12,7 @@ namespace NotificationsClient.UWP.Model
         public event EventHandler<string> ErrorHappened;
         public event EventHandler<NotificationStatus> StatusChanged;
 
-        private const string Template = "<toast><visual><binding template=\"ToastText02\"><text id=\"1\">$(title)</text><text id=\"2\">$(body)</text></binding></visual></toast>";
+        private const string Template = "<toast activationType=\"foreground\" launch=\"$(argument)\"><visual><binding template=\"ToastGeneric\"><text id=\"1\">$(title)</text><text id=\"2\">$(body)</text></binding></visual></toast>";
 
         public async Task Initialize()
         {
@@ -46,7 +46,16 @@ namespace NotificationsClient.UWP.Model
             PushNotificationChannel sender, 
             PushNotificationReceivedEventArgs args)
         {
-            // TODO Handle notification message
+            if (args.NotificationType == PushNotificationType.Toast)
+            {
+                var node = args
+                    .ToastNotification
+                    .Content
+                    .FirstChild; // toast
+            }
+
+            // TODO Finish this
+
             NotificationReceived?.Invoke(this, new Notification
             {
                 Body = "TODO",

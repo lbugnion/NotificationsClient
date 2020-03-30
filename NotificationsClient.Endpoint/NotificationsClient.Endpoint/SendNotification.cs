@@ -47,6 +47,10 @@ namespace NotificationsClient.Endpoint
                 {
                     "title",
                     title
+                },
+                {
+                    "argument",
+                    $"{title}|@|{body}|@|{channel}"
                 }
             };
 

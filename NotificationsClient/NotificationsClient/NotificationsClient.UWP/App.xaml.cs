@@ -2,6 +2,7 @@
 using NotificationsClient.Model;
 using NotificationsClient.UWP.Model;
 using System;
+using System.Diagnostics;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.UI.Xaml;
@@ -32,13 +33,67 @@ namespace NotificationsClient.UWP
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
+            StartApp(e, e.Arguments);
+        }
+
+        /// <summary>
+        /// Invoked when Navigation to a certain page fails
+        /// </summary>
+        /// <param name="sender">The Frame which failed navigation</param>
+        /// <param name="e">Details about the navigation failure</param>
+        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
+        {
+            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
+        }
+
+        /// <summary>
+        /// Invoked when application execution is being suspended.  Application state is saved
+        /// without knowing whether the application will be terminated or resumed with the contents
+        /// of memory still intact.
+        /// </summary>
+        /// <param name="sender">The source of the suspend request.</param>
+        /// <param name="e">Details about the suspend request.</param>
+        private void OnSuspending(object sender, SuspendingEventArgs e)
+        {
+            var deferral = e.SuspendingOperation.GetDeferral();
+            //TODO: Save application state and stop any background activity
+            deferral.Complete();
+        }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            base.OnActivated(args);
+
+            var toastArgs = args as ToastNotificationActivatedEventArgs;
+
+            if (toastArgs != null)
+            {
+                Debug.WriteLine(toastArgs.Argument);
+                StartApp(args, toastArgs.Argument);
+            }
+            else
+            {
+                StartApp(args, string.Empty);
+            }
+        }
+
+        private void StartApp(IActivatedEventArgs e, string arguments)
+        {
+            NotificationsServiceClient notificationsServiceClient;
+
             if (!SimpleIoc.Default.IsRegistered<INotificationsServiceClient>())
             {
-                var notificationsServiceClient
+                notificationsServiceClient
                     = new NotificationsServiceClient();
 
                 SimpleIoc.Default.Register<INotificationsServiceClient>(
                     () => notificationsServiceClient);
+            }
+            else
+            {
+                notificationsServiceClient = (NotificationsServiceClient)SimpleIoc
+                    .Default
+                    .GetInstance<INotificationsServiceClient>();
             }
 
             Frame rootFrame = Window.Current.Content as Frame;
@@ -68,35 +123,26 @@ namespace NotificationsClient.UWP
                 // When the navigation stack isn't restored navigate to the first page,
                 // configuring the new page by passing required information as a navigation
                 // parameter
-                rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                rootFrame.Navigate(typeof(MainPage), arguments);
             }
 
             // Ensure the current window is active
             Window.Current.Activate();
-        }
 
-        /// <summary>
-        /// Invoked when Navigation to a certain page fails
-        /// </summary>
-        /// <param name="sender">The Frame which failed navigation</param>
-        /// <param name="e">Details about the navigation failure</param>
-        void OnNavigationFailed(object sender, NavigationFailedEventArgs e)
-        {
-            throw new Exception("Failed to load Page " + e.SourcePageType.FullName);
-        }
+            if (!string.IsNullOrEmpty(arguments))
+            {
+                var notificationParts = arguments.Split("|@|", StringSplitOptions.RemoveEmptyEntries);
 
-        /// <summary>
-        /// Invoked when application execution is being suspended.  Application state is saved
-        /// without knowing whether the application will be terminated or resumed with the contents
-        /// of memory still intact.
-        /// </summary>
-        /// <param name="sender">The source of the suspend request.</param>
-        /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
-        {
-            var deferral = e.SuspendingOperation.GetDeferral();
-            //TODO: Save application state and stop any background activity
-            deferral.Complete();
+                if (notificationParts.Length == 3)
+                {
+                    notificationsServiceClient.RaiseNotificationReceived(new Notification
+                    {
+                        Body = notificationParts[0],
+                        Title = notificationParts[1],
+                        Channel = notificationParts[2]
+                    });
+                }
+            }
         }
     }
 }
