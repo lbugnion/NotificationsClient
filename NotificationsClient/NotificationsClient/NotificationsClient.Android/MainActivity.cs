@@ -47,11 +47,28 @@ namespace NotificationsClient.Droid
                     message += $"{key}:{value} |";
                 }
 
+                var title = string.Empty;
+                var body = string.Empty;
+                var channel = string.Empty;
+
+                if (Intent.Extras.ContainsKey("title"))
+                {
+                    title = Intent.Extras.GetString("title");
+                }
+                if (Intent.Extras.ContainsKey("body"))
+                {
+                    body = Intent.Extras.GetString("body");
+                }
+                if (Intent.Extras.ContainsKey("channel"))
+                {
+                    channel = Intent.Extras.GetString("channel");
+                }
+
                 notificationsServiceClient.RaiseNotificationReceived(new NotificationsClient.Model.Notification
                 {
-                    Title = "TODO",
-                    Body = "TODO",
-                    Channel = "TODO"
+                    Title = title,
+                    Body = body,
+                    Channel = channel
                 });
             }
         }

@@ -44,16 +44,15 @@ namespace NotificationsClient
         private void ClientNotificationReceived(object sender, Notification notification)
         {
             ShowInfo("Notification received at " + DateTime.Now);
-
-            // TODO Show notification
-
-            //ShowNotification(message);
+            ShowNotification(notification);
         }
 
-        private void ShowNotification(string message)
+        private void ShowNotification(Notification notification)
         {
             Device.BeginInvokeOnMainThread(() => {
-                TestLabel.Text = message;
+                TitleLabel.Text = notification.Title;
+                BodyLabel.Text = notification.Body;
+                ChannelLabel.Text = notification.Channel;
             });
         }
 
@@ -61,8 +60,8 @@ namespace NotificationsClient
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                MainLabel.TextColor = Color.Red;
-                MainLabel.Text = errorMessage;
+                StatusLabel.TextColor = Color.Red;
+                StatusLabel.Text = errorMessage;
             });
         }
 
@@ -70,8 +69,8 @@ namespace NotificationsClient
         {
             Device.BeginInvokeOnMainThread(() =>
             {
-                MainLabel.TextColor = Color.Black;
-                MainLabel.Text = message;
+                StatusLabel.TextColor = Color.Black;
+                StatusLabel.Text = message;
             });
         }
     }

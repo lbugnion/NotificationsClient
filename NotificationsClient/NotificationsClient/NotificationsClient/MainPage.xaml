@@ -7,14 +7,23 @@
              x:Class="NotificationsClient.MainPage">
 
     <StackLayout>
-        <!-- Place new controls here -->
-        <Label Text="Welcome to Xamarin.Forms!"
-               x:Name="MainLabel"
-               HorizontalOptions="Center"
-               VerticalOptions="CenterAndExpand" />
+        <StackLayout VerticalOptions="CenterAndExpand">
+            <Label x:Name="TitleLabel"
+                   HorizontalOptions="Center"
+                   VerticalOptions="CenterAndExpand" />
 
-        <Label x:Name="TestLabel"
+            <Label x:Name="BodyLabel"
+                   HorizontalOptions="Center"
+                   VerticalOptions="CenterAndExpand" />
+
+            <Label x:Name="ChannelLabel"
+                   HorizontalOptions="Center"
+                   VerticalOptions="CenterAndExpand" />
+        </StackLayout>
+
+        <Label Text="Welcome to Xamarin.Forms!"
+               x:Name="StatusLabel"
                HorizontalOptions="Center"
-               VerticalOptions="CenterAndExpand" />
+               VerticalOptions="EndAndExpand" />
     </StackLayout>
 </ContentPage>

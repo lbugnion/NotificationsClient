@@ -24,20 +24,29 @@ namespace NotificationsClient.Droid.Model
         {
             base.OnMessageReceived(remoteMessage);
 
-            var message = string.Empty;
+            var title = string.Empty;
+            var body = string.Empty;
+            var channel = string.Empty;
 
-            foreach (var key in remoteMessage.Data.Keys)
+            if (remoteMessage.Data.ContainsKey("title"))
             {
-                var value = remoteMessage.Data[key];
-                message += $"{key}:{value} |";
+                title = remoteMessage.Data["title"];
+            }
+            if (remoteMessage.Data.ContainsKey("body"))
+            {
+                body = remoteMessage.Data["body"];
+            }
+            if (remoteMessage.Data.ContainsKey("channel"))
+            {
+                channel = remoteMessage.Data["channel"];
             }
 
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
             client.RaiseNotificationReceived(new NotificationsClient.Model.Notification
             {
-                Body = "TODO",
-                Title = "TODO",
-                Channel = "TODO"
+                Body = body,
+                Title = title,
+                Channel = channel
             });
         }
 
