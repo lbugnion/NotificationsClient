@@ -1,6 +1,7 @@
 ﻿using Microsoft.WindowsAzure.Messaging;
 using NotificationsClient.Model;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Windows.Networking.PushNotifications;
 
@@ -48,25 +49,34 @@ namespace NotificationsClient.UWP.Model
         {
             if (args.NotificationType == PushNotificationType.Toast)
             {
-                var node = args
+                var toastNode = args
                     .ToastNotification
                     .Content
                     .FirstChild; // toast
+
+                var launchAttribute = toastNode.Attributes.FirstOrDefault(a => a.NodeName == "launch");
+                RaiseNotificationReceived(launchAttribute.NodeValue.ToString());
             }
-
-            // TODO Finish this
-
-            NotificationReceived?.Invoke(this, new Notification
-            {
-                Body = "TODO",
-                Title = "TODO",
-                Channel = "TODO"
-            });
         }
 
         public void RaiseNotificationReceived(Notification notification)
         {
             NotificationReceived?.Invoke(this, notification);
+        }
+
+        internal void RaiseNotificationReceived(string arguments)
+        {
+            var notificationParts = arguments.Split("|@|", StringSplitOptions.RemoveEmptyEntries);
+
+            if (notificationParts.Length == 3)
+            {
+                RaiseNotificationReceived(new Notification
+                {
+                    Body = notificationParts[0],
+                    Title = notificationParts[1],
+                    Channel = notificationParts[2]
+                });
+            }
         }
     }
 }

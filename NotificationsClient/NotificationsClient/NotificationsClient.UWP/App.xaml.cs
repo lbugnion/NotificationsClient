@@ -131,17 +131,7 @@ namespace NotificationsClient.UWP
 
             if (!string.IsNullOrEmpty(arguments))
             {
-                var notificationParts = arguments.Split("|@|", StringSplitOptions.RemoveEmptyEntries);
-
-                if (notificationParts.Length == 3)
-                {
-                    notificationsServiceClient.RaiseNotificationReceived(new Notification
-                    {
-                        Body = notificationParts[0],
-                        Title = notificationParts[1],
-                        Channel = notificationParts[2]
-                    });
-                }
+                notificationsServiceClient.RaiseNotificationReceived(arguments);
             }
         }
     }
