@@ -13,7 +13,9 @@ namespace NotificationsClient.UWP.Model
         public event EventHandler<string> ErrorHappened;
         public event EventHandler<NotificationStatus> StatusChanged;
 
-        private const string Template = "<toast activationType=\"foreground\" launch=\"$(argument)\"><visual><binding template=\"ToastGeneric\"><text id=\"1\">$(title)</text><text id=\"2\">$(body)</text></binding></visual></toast>";
+        private const string Separator = "|@|";
+
+        private static readonly string Template = $"<toast activationType=\"foreground\" launch=\"$(argument)\"><visual><binding template=\"ToastGeneric\"><text id=\"1\">$(title)</text><text id=\"2\">$(body)</text></binding></visual></toast>";
 
         public async Task Initialize()
         {
@@ -66,14 +68,14 @@ namespace NotificationsClient.UWP.Model
 
         internal void RaiseNotificationReceived(string arguments)
         {
-            var notificationParts = arguments.Split("|@|", StringSplitOptions.RemoveEmptyEntries);
+            var notificationParts = arguments.Split(Separator, StringSplitOptions.RemoveEmptyEntries);
 
             if (notificationParts.Length == 3)
             {
                 RaiseNotificationReceived(new Notification
                 {
-                    Body = notificationParts[0],
-                    Title = notificationParts[1],
+                    Title = notificationParts[0],
+                    Body = notificationParts[1],
                     Channel = notificationParts[2]
                 });
             }
