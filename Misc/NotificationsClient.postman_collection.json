@@ -74,10 +74,16 @@
 			"name": "Send through Remote Functions",
 			"request": {
 				"method": "POST",
-				"header": [],
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "CfPYAamajXsaZQiFOk3CaLxFnDEKThXDnt86NWimMi5O2Gw8yeIK/Q==",
+						"type": "text"
+					}
+				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"title\": \"This is a notification from Postman\",\n\t\"body\": \"This is the message\",\n\t\"channel\": \"MyChannel\"\n}",
+					"raw": "{\n\t\"title\": \"Hello from Postman\",\n\t\"body\": \"This is the message\",\n\t\"channel\": \"MyChannel\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -85,7 +91,7 @@
 					}
 				},
 				"url": {
-					"raw": "https://notificationsendpoint.azurewebsites.net/api/send?code=CfPYAamajXsaZQiFOk3CaLxFnDEKThXDnt86NWimMi5O2Gw8yeIK/Q==",
+					"raw": "https://notificationsendpoint.azurewebsites.net/api/send",
 					"protocol": "https",
 					"host": [
 						"notificationsendpoint",
@@ -95,12 +101,6 @@
 					"path": [
 						"api",
 						"send"
-					],
-					"query": [
-						{
-							"key": "code",
-							"value": "CfPYAamajXsaZQiFOk3CaLxFnDEKThXDnt86NWimMi5O2Gw8yeIK/Q=="
-						}
 					]
 				}
 			},
