@@ -8,6 +8,9 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.34" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Notifications.Data\Notifications.Data.csproj" />
+  </ItemGroup>
+  <ItemGroup>
     <None Update="host.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

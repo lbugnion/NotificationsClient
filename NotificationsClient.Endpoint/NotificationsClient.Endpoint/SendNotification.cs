@@ -23,7 +23,7 @@ namespace NotificationsClient.Endpoint
             HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("SendNotification was called");
 
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             dynamic data = JsonConvert.DeserializeObject(requestBody);
@@ -61,6 +61,12 @@ namespace NotificationsClient.Endpoint
 
             try
             {
+                Notifications.Initialize(
+                    Environment.GetEnvironmentVariable(
+                        Notifications.ConnectionStringVariableName),
+                    Environment.GetEnvironmentVariable(
+                        Notifications.HubNameVariableName));
+
                 var outcome = await Notifications.Instance.Hub.SendTemplateNotificationAsync(properties);
 
                 var result = string.Empty;

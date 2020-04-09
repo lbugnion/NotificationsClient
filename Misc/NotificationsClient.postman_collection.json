@@ -71,6 +71,26 @@
 			"response": []
 		},
 		{
+			"name": "GetConfiguration Local",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7071/api/config",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
 			"name": "Send through Remote Functions",
 			"request": {
 				"method": "POST",

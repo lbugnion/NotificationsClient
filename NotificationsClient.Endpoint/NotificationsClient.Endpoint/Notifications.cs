@@ -4,22 +4,32 @@ namespace NotificationsClient.Endpoint
 {
     public class Notifications
     {
-        private const string ConnectionString = "Endpoint=sb://lbnotifications.servicebus.windows.net/;SharedAccessKeyName=DefaultFullSharedAccessSignature;SharedAccessKey=hw3WssanDG6Xt3bZJD2EceHDPxxkf+Jol9Jpgmov9Cg=";
-        private const string HubName = "lbnotifications";
+        public const string ConnectionStringVariableName = "HubConnectionString";
+        public const string HubNameVariableName = "HubName";
 
-        public static Notifications Instance = new Notifications();
+        public static Notifications Instance = null;
+
+        public static void Initialize(string connectionString, string hubName)
+        {
+            if (Instance != null)
+            {
+                return; 
+            }
+
+            Instance = new Notifications(connectionString, hubName);
+        }
 
         public NotificationHubClient Hub 
         { 
             get; 
-            set; 
+            private set; 
         }
 
-        private Notifications()
+        private Notifications(string connectionString, string hubName)
         {
             Hub = NotificationHubClient.CreateClientFromConnectionString(
-                ConnectionString,
-                HubName);
+                connectionString,
+                hubName);
         }
     }
 }
