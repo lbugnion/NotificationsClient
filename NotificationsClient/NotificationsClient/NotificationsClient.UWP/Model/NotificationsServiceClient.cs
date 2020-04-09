@@ -1,4 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Messaging;
+using Notifications.Data;
 using NotificationsClient.Model;
 using System;
 using System.Linq;
@@ -19,30 +20,63 @@ namespace NotificationsClient.UWP.Model
 
         public async Task Initialize()
         {
+            Exception hubError = null;
+            var configClient = new ConfigurationClient();
+            PushNotificationChannel channel = null;
 
             try
             {
-                var channel = await PushNotificationChannelManager
+                channel = await PushNotificationChannelManager
                     .CreatePushNotificationChannelForApplicationAsync();
 
                 channel.PushNotificationReceived += ChannelPushNotificationReceived;
-                
-                var hub = new NotificationHub(
-                    Constants.NotificationHubName, 
-                    Constants.NotificationHubConnectionString);
-                
-                await hub.RegisterNativeAsync(channel.Uri);
-                await hub.RegisterTemplateAsync(
-                    channel.Uri, 
-                    Template, 
-                    Constants.NotificationHubTemplateName);
 
-                StatusChanged?.Invoke(this, NotificationStatus.Ready);
+                var hubConfig = await configClient.GetConfiguration(false);
+                await TryRegisterHub(hubConfig, channel);
+            }
+            catch (NotificationHubNotFoundException ex)
+            {
+                // Might need to refresh the information
+                hubError = ex;
+            }
+            catch (RegistrationException ex)
+            {
+                hubError = ex;
             }
             catch (Exception ex)
             {
                 ErrorHappened?.Invoke(this, ex.Message);
             }
+
+            if (hubError != null)
+            {
+                try
+                {
+                    var hubConfig = await configClient.GetConfiguration(true);
+                    await TryRegisterHub(hubConfig, channel);
+                }
+                catch (Exception ex)
+                {
+                    ErrorHappened?.Invoke(this, ex.Message);
+                }
+            }
+        }
+
+        private async Task TryRegisterHub(
+            HubConfiguration config,
+            PushNotificationChannel channel)
+        {
+            var hub = new NotificationHub(
+                config.HubName,
+                config.HubConnectionString);
+
+            await hub.RegisterNativeAsync(channel.Uri);
+            await hub.RegisterTemplateAsync(
+                channel.Uri,
+                Template,
+                Constants.NotificationHubTemplateName);
+
+            StatusChanged?.Invoke(this, NotificationStatus.Ready);
         }
 
         private void ChannelPushNotificationReceived(

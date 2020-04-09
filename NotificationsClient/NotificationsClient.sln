@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationsClient.Android
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NotificationsClient", "NotificationsClient\NotificationsClient\NotificationsClient.csproj", "{57047DBF-731C-4AB4-A467-0BA748EB2F30}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Notifications.Data", "..\NotificationsClient.Endpoint\Notifications.Data\Notifications.Data.csproj", "{6A89185A-DE26-4372-8648-D32DF9C9FAC8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,22 @@ Global
 		{57047DBF-731C-4AB4-A467-0BA748EB2F30}.Release|x86.ActiveCfg = Release|Any CPU
 		{57047DBF-731C-4AB4-A467-0BA748EB2F30}.Release|x86.Build.0 = Release|Any CPU
 		{57047DBF-731C-4AB4-A467-0BA748EB2F30}.Release|x86.Deploy.0 = Release|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Debug|ARM.Build.0 = Debug|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Debug|x64.Build.0 = Debug|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Debug|x86.Build.0 = Debug|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Release|ARM.ActiveCfg = Release|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Release|ARM.Build.0 = Release|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Release|x64.ActiveCfg = Release|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Release|x64.Build.0 = Release|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Release|x86.ActiveCfg = Release|Any CPU
+		{6A89185A-DE26-4372-8648-D32DF9C9FAC8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
