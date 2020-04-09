@@ -85,10 +85,12 @@ namespace NotificationsClient.Endpoint
                     result = "Couldn't complete the operation";
                 }
 
+                log.LogInformation(result);
                 return new OkObjectResult(result);
             }
             catch (Exception ex)
             {
+                log.LogError(ex.Message);
                 return new BadRequestObjectResult(ex.Message);
             }
         }
