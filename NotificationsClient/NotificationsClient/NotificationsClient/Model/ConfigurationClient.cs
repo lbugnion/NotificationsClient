@@ -9,7 +9,8 @@ namespace NotificationsClient.Model
 {
     public class ConfigurationClient
     {
-        private const string ConfigurationFunctionUrl = "https://notificationsendpoint.azurewebsites.net/api/config?code=anf5FFb16zHGybTZ95XQgjPvixzAQhdZQUHcY8r4J3vHHQl0pZVryQ==";
+        private const string ConfigurationFunctionUrl = "https://notificationsendpoint.azurewebsites.net/api/config";
+        private const string ConfigurationFunctionCode = "anf5FFb16zHGybTZ95XQgjPvixzAQhdZQUHcY8r4J3vHHQl0pZVryQ==";
         public const string ConfigFileName = "config.json";
 
         public async Task<HubConfiguration> GetConfiguration(bool forceRefresh)
@@ -35,9 +36,14 @@ namespace NotificationsClient.Model
             if (forceRefresh
                 || config == null)
             {
-                // TODO Pass key in header
                 var client = new HttpClient();
-                var json = await client.GetStringAsync(ConfigurationFunctionUrl);
+
+                var request = new HttpRequestMessage(HttpMethod.Get, ConfigurationFunctionUrl);
+                request.Headers.Add("x-functions-key", ConfigurationFunctionCode);
+                var response = await client.SendAsync(request);
+
+                var json = await response.Content.ReadAsStringAsync();
+
                 config = JsonConvert.DeserializeObject<HubConfiguration>(json);
 
                 File.WriteAllText(configFilePath, json);
