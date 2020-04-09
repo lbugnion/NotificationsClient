@@ -35,7 +35,8 @@ namespace NotificationsClient.Endpoint
             if (string.IsNullOrEmpty(body)
                 || string.IsNullOrEmpty(title))
             {
-                return new BadRequestObjectResult("Please pass a body and a title in the request");
+                return new BadRequestObjectResult(
+                    "Please pass a body and a title in the request");
             }
 
             var properties = new Dictionary<string, string>
@@ -67,7 +68,8 @@ namespace NotificationsClient.Endpoint
                     Environment.GetEnvironmentVariable(
                         Notifications.HubNameVariableName));
 
-                var outcome = await Notifications.Instance.Hub.SendTemplateNotificationAsync(properties);
+                var outcome = await Notifications.Instance.Hub
+                    .SendTemplateNotificationAsync(properties);
 
                 var result = string.Empty;
 
