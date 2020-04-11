@@ -1,6 +1,5 @@
-﻿using System;
+﻿using NotificationsClient.ViewModel;
 using Xamarin.Forms;
-using Xamarin.Forms.Xaml;
 
 namespace NotificationsClient
 {
@@ -10,7 +9,8 @@ namespace NotificationsClient
         {
             InitializeComponent();
 
-            MainPage = new MainPage();
+            NavigationPage.SetHasNavigationBar(this, false);
+            MainPage = new NavigationPage(new MainPage());
         }
 
         protected override void OnStart()

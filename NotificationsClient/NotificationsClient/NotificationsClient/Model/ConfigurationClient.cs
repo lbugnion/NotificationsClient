@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Notifications.Data;
+using NotificationsClient.ViewModel;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -9,21 +10,32 @@ namespace NotificationsClient.Model
 {
     public class ConfigurationClient
     {
-        private const string ConfigurationFunctionUrl = "https://notificationsendpoint.azurewebsites.net/api/config";
-        private const string ConfigurationFunctionCode = "anf5FFb16zHGybTZ95XQgjPvixzAQhdZQUHcY8r4J3vHHQl0pZVryQ==";
-        public const string ConfigFileName = "config.json";
+        private const string ConfigurationFunctionUrl = "https://{0}.azurewebsites.net/api/config";
+        private const string ConfigFileName = "config.json";
+        private const string ConfigurationFolderName = "GalaSoft.NotificationsClient";
 
-        public async Task<HubConfiguration> GetConfiguration(bool forceRefresh)
+        public static DirectoryInfo GetConfigurationFolder()
         {
             var rootFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var configFolder = new DirectoryInfo(Path.Combine(rootFolderPath, "GalaSoft.NotificationsClient"));
+            var configFolder = new DirectoryInfo(Path.Combine(rootFolderPath, ConfigurationFolderName));
 
             if (!configFolder.Exists)
             {
                 configFolder.Create();
             }
 
-            var configFilePath = Path.Combine(configFolder.FullName, ConfigFileName);
+            return configFolder;
+        }
+
+        public async Task<HubConfiguration> GetConfiguration(bool forceRefresh)
+        {
+            if (string.IsNullOrEmpty(SettingsViewModel.Instance.FunctionCode)
+                || string.IsNullOrEmpty(SettingsViewModel.Instance.FunctionsAppName))
+            {
+                throw new InvalidOperationException("FunctionCode or FunctionsAppName are not defined in the settings");
+            }
+
+            var configFilePath = Path.Combine(GetConfigurationFolder().FullName, ConfigFileName);
 
             HubConfiguration config = null;
 
@@ -38,14 +50,21 @@ namespace NotificationsClient.Model
             {
                 var client = new HttpClient();
 
-                var request = new HttpRequestMessage(HttpMethod.Get, ConfigurationFunctionUrl);
-                request.Headers.Add("x-functions-key", ConfigurationFunctionCode);
+                var url = string.Format(
+                    ConfigurationFunctionUrl,
+                    SettingsViewModel.Instance.FunctionsAppName);
+
+                var request = new HttpRequestMessage(
+                    HttpMethod.Get,
+                    url);
+
+                request.Headers.Add(
+                    "x-functions-key", 
+                    SettingsViewModel.Instance.FunctionCode);
+
                 var response = await client.SendAsync(request);
-
                 var json = await response.Content.ReadAsStringAsync();
-
                 config = JsonConvert.DeserializeObject<HubConfiguration>(json);
-
                 File.WriteAllText(configFilePath, json);
             }
 

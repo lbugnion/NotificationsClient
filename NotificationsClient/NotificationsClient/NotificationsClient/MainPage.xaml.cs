@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using NotificationsClient.Model;
+using NotificationsClient.ViewModel;
 using System;
 using System.ComponentModel;
 using Xamarin.Forms;
@@ -14,64 +15,12 @@ namespace NotificationsClient
         public MainPage()
         {
             InitializeComponent();
-
-            var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
-            client.NotificationReceived += ClientNotificationReceived;
-            client.ErrorHappened += ClientErrorHappened;
-            client.StatusChanged += ClientStatusChanged;
-            client.Initialize();
+            BindingContext = new MainViewModel();
         }
 
-        private void ClientStatusChanged(object sender, NotificationStatus e)
+        private async void SettingsButtonClicked(object sender, EventArgs e)
         {
-            switch (e)
-            {
-                case NotificationStatus.Initializing:
-                    ShowInfo("Initializing...");
-                    break;
-
-                case NotificationStatus.Ready:
-                    ShowInfo("Ready to receive notifications");
-                    break;
-            }
-        }
-
-        private void ClientErrorHappened(object sender, string message)
-        {
-            ShowError(message);
-        }
-
-        private void ClientNotificationReceived(object sender, Notification notification)
-        {
-            ShowInfo("Notification received at " + DateTime.Now);
-            ShowNotification(notification);
-        }
-
-        private void ShowNotification(Notification notification)
-        {
-            Device.BeginInvokeOnMainThread(() => {
-                TitleLabel.Text = notification.Title;
-                BodyLabel.Text = notification.Body;
-                ChannelLabel.Text = notification.Channel;
-            });
-        }
-
-        public void ShowError(string errorMessage)
-        {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                StatusLabel.TextColor = Color.Red;
-                StatusLabel.Text = errorMessage;
-            });
-        }
-
-        public void ShowInfo(string message)
-        {
-            Device.BeginInvokeOnMainThread(() =>
-            {
-                StatusLabel.TextColor = Color.Black;
-                StatusLabel.Text = message;
-            });
+            await Navigation.PushAsync(new SettingsPage());
         }
     }
 }
