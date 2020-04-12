@@ -32,6 +32,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidLinkMode>None</AndroidLinkMode>
+    <AotAssemblies>false</AotAssemblies>
+    <EnableLLVM>false</EnableLLVM>
+    <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+    <BundleAssemblies>false</BundleAssemblies>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -104,8 +108,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\NotificationsClient.Endpoint\Notifications.Data\Notifications.Data.csproj">
-      <Project>{6a89185a-de26-4372-8648-d32df9c9fac8}</Project>
+      <Project>{7578853a-62bf-4e59-a1f8-1f644ad07aaf}</Project>
       <Name>Notifications.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NotificationsClient.Data\NotificationsClient.Data.csproj">
+      <Project>{c00de26b-f5e1-485a-ac57-83e69434901e}</Project>
+      <Name>NotificationsClient.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\NotificationsClient\NotificationsClient.csproj">
       <Project>{EF4D29B9-29A0-4620-BE73-2F438095E57A}</Project>

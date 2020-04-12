@@ -8,22 +8,25 @@
 
     <StackLayout>
         <StackLayout VerticalOptions="CenterAndExpand">
-            <Label x:Name="TitleLabel"
+            <Label Text="{Binding LastNotification.Title}"
                    HorizontalOptions="Center"
                    VerticalOptions="CenterAndExpand" />
 
-            <Label x:Name="BodyLabel"
+            <Label Text="{Binding LastNotification.Body}"
                    HorizontalOptions="Center"
                    VerticalOptions="CenterAndExpand" />
 
-            <Label x:Name="ChannelLabel"
+            <Label Text="{Binding LastNotification.Channel}"
                    HorizontalOptions="Center"
                    VerticalOptions="CenterAndExpand" />
         </StackLayout>
 
-        <Label Text="Welcome to Xamarin.Forms!"
-               x:Name="StatusLabel"
+        <Button Text="Settings..."
+                Clicked="SettingsButtonClicked" />
+
+        <Label Text="{Binding Status}"
                HorizontalOptions="Center"
                VerticalOptions="EndAndExpand" />
+        
     </StackLayout>
 </ContentPage>
