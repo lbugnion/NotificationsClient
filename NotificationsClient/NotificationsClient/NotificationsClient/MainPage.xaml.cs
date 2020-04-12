@@ -1,5 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
-using NotificationsClient.Model;
+using GalaSoft.MvvmLight.Views;
 using NotificationsClient.ViewModel;
 using System;
 using System.ComponentModel;
@@ -12,15 +12,22 @@ namespace NotificationsClient
     [DesignTimeVisible(false)]
     public partial class MainPage : ContentPage
     {
+        public INavigationService NavService => 
+            SimpleIoc.Default.GetInstance<INavigationService>();
+
         public MainPage()
         {
             InitializeComponent();
-            BindingContext = new MainViewModel();
+            BindingContext = App.Loc.Main;
         }
 
-        private async void SettingsButtonClicked(object sender, EventArgs e)
+        private void SettingsButtonClicked(object sender, EventArgs e)
         {
-            await Navigation.PushAsync(new SettingsPage());
+            NavService.NavigateTo(ViewModelLocator.SettingsPageKey);
+        }
+
+        protected override void OnAppearing()
+        {
         }
     }
 }

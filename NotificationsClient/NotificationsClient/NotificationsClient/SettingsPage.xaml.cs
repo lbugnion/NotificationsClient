@@ -1,5 +1,4 @@
-﻿using NotificationsClient.ViewModel;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace NotificationsClient
@@ -10,7 +9,7 @@ namespace NotificationsClient
         public SettingsPage()
         {
             InitializeComponent();
-            BindingContext = SettingsViewModel.Instance;
+            BindingContext = App.Loc.Settings;
         }
     }
 }

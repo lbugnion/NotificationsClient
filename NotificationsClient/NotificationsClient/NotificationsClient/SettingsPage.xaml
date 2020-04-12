@@ -6,14 +6,34 @@
              mc:Ignorable="d"
              x:Class="NotificationsClient.SettingsPage">
     <ContentPage.Content>
-        <StackLayout>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            
             <Label Text="Function Code"
-                VerticalOptions="CenterAndExpand" 
-                HorizontalOptions="StartAndExpand" />
+                   Grid.Row="0"
+                   VerticalOptions="Start" 
+                   HorizontalOptions="StartAndExpand" />
 
-            <Entry Text="{Binding FunctionCode, Mode=TwoWay}"
-                   VerticalOptions="CenterAndExpand"
+            <Editor Text="{Binding FunctionCode, Mode=TwoWay}"
+                    Grid.Row="1"
+                    VerticalOptions="Start"
+                    HorizontalOptions="FillAndExpand" />
+            
+            <Label Text="Function Name"
+                   Grid.Row="2"
+                   VerticalOptions="Start"
+                   HorizontalOptions="StartAndExpand" />
+
+            <Entry Text="{Binding FunctionsAppName, Mode=TwoWay}"
+                   Grid.Row="3"
+                   VerticalOptions="Start"
                    HorizontalOptions="FillAndExpand" />
-        </StackLayout>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

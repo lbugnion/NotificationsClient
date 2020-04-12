@@ -1,5 +1,6 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Model;
 using System;
 using Xamarin.Forms;
@@ -9,6 +10,12 @@ namespace NotificationsClient.ViewModel
     public class MainViewModel : ViewModelBase
     {
         private Notification _lastNotification = null;
+
+        private SettingsViewModel Settings => 
+            SimpleIoc.Default.GetInstance<SettingsViewModel>();
+
+        private INavigationService Nav => 
+            SimpleIoc.Default.GetInstance<INavigationService>();
 
         public Notification LastNotification
         {
@@ -24,8 +31,15 @@ namespace NotificationsClient.ViewModel
             set => Set(() => Status, ref _status, value);
         }
 
-        public MainViewModel()
+        public void Initialize()
         {
+            if (string.IsNullOrEmpty(Settings.FunctionsAppName)
+                || string.IsNullOrEmpty(Settings.FunctionCode))
+            {
+                Nav.NavigateTo(ViewModelLocator.SettingsPageKey);
+                return;
+            }
+
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
             client.NotificationReceived += ClientNotificationReceived;
             client.ErrorHappened += ClientErrorHappened;

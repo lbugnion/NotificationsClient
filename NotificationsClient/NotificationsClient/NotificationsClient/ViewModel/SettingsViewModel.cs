@@ -9,24 +9,10 @@ namespace NotificationsClient.ViewModel
     {
         private const string SettingsFileName = "settings.json";
 
-        private static SettingsViewModel _instance;
-
         private string _functionCode = string.Empty;
         private string _functionsAppName = string.Empty;
-
-        public static SettingsViewModel Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new SettingsViewModel();
-                    _instance.Initialize();
-                }
-
-                return _instance;
-            }
-        }
+        private Settings _settings;
+        private string _settingsFilePath;
 
         public string FunctionCode
         {
@@ -54,10 +40,7 @@ namespace NotificationsClient.ViewModel
             }
         }
 
-        private Settings _settings;
-        private string _settingsFilePath;
-
-        private void Initialize()
+        public SettingsViewModel()
         {
             _settingsFilePath = Path.Combine(
                 ConfigurationClient.GetConfigurationFolder().FullName,

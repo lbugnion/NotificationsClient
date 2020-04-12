@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using GalaSoft.MvvmLight.Ioc;
+using Newtonsoft.Json;
 using Notifications.Data;
 using NotificationsClient.ViewModel;
 using System;
@@ -13,6 +14,8 @@ namespace NotificationsClient.Model
         private const string ConfigurationFunctionUrl = "https://{0}.azurewebsites.net/api/config";
         private const string ConfigFileName = "config.json";
         private const string ConfigurationFolderName = "GalaSoft.NotificationsClient";
+
+        private SettingsViewModel Settings => SimpleIoc.Default.GetInstance<SettingsViewModel>();
 
         public static DirectoryInfo GetConfigurationFolder()
         {
@@ -29,13 +32,16 @@ namespace NotificationsClient.Model
 
         public async Task<HubConfiguration> GetConfiguration(bool forceRefresh)
         {
-            if (string.IsNullOrEmpty(SettingsViewModel.Instance.FunctionCode)
-                || string.IsNullOrEmpty(SettingsViewModel.Instance.FunctionsAppName))
+            if (string.IsNullOrEmpty(Settings.FunctionCode)
+                || string.IsNullOrEmpty(Settings.FunctionsAppName))
             {
-                throw new InvalidOperationException("FunctionCode or FunctionsAppName are not defined in the settings");
+                throw new InvalidOperationException(
+                    "FunctionCode or FunctionsAppName are not defined in the settings");
             }
 
-            var configFilePath = Path.Combine(GetConfigurationFolder().FullName, ConfigFileName);
+            var configFilePath = Path.Combine(
+                GetConfigurationFolder().FullName, 
+                ConfigFileName);
 
             HubConfiguration config = null;
 
@@ -52,7 +58,7 @@ namespace NotificationsClient.Model
 
                 var url = string.Format(
                     ConfigurationFunctionUrl,
-                    SettingsViewModel.Instance.FunctionsAppName);
+                    Settings.FunctionsAppName);
 
                 var request = new HttpRequestMessage(
                     HttpMethod.Get,
@@ -60,7 +66,7 @@ namespace NotificationsClient.Model
 
                 request.Headers.Add(
                     "x-functions-key", 
-                    SettingsViewModel.Instance.FunctionCode);
+                    Settings.FunctionCode);
 
                 var response = await client.SendAsync(request);
                 var json = await response.Content.ReadAsStringAsync();
