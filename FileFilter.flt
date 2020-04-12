@@ -1,6 +1,6 @@
 ## This is a directory/file filter template for WinMerge
-name: Name of filter
-desc: Longer description
+name: Filter for NotificationsClient
+desc: 
 
 ## Select if filter is inclusive or exclusive
 ## Inclusive (loose) filter lets through all items not matching rules
@@ -17,5 +17,5 @@ f: \.mdf$ ##
 f: \.suo$ ## 
 f: \.user$ ## 
 
-d: \\bin
-d: \\obj
+d: \\bin$
+d: \\obj$
