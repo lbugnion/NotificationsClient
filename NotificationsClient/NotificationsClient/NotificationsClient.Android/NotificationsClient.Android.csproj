@@ -108,7 +108,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\NotificationsClient.Endpoint\Notifications.Data\Notifications.Data.csproj">
-      <Project>{6a89185a-de26-4372-8648-d32df9c9fac8}</Project>
+      <Project>{7578853a-62bf-4e59-a1f8-1f644ad07aaf}</Project>
       <Name>Notifications.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\NotificationsClient\NotificationsClient.csproj">
