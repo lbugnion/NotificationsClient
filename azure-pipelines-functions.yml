@@ -9,11 +9,11 @@ trigger:
    - master
  paths:
   include:
-  - NotificationsClient.Endpoint/*
+  - Notifications.Endpoint/*
 
 variables:
   # Working Directory
-  workingDirectory: '$(System.DefaultWorkingDirectory)/NotificationsClient.Endpoint/NotificationsClient.Endpoint'
+  workingDirectory: '$(System.DefaultWorkingDirectory)/Notifications.Endpoint/Notifications.Endpoint'
 
   # Agent VM image name
   vmImageName: 'vs2017-win2016'
