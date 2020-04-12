@@ -48,7 +48,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"title\": \"This is a notification from Postman\",\n\t\"body\": \"This is the message\",\n\t\"channel\": \"MyChannel\"\n}",
+					"raw": "{\n\t\"title\": \"This is a notification from Postman (local)\",\n\t\"body\": \"This is the message\",\n\t\"channel\": \"MyChannel\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -121,6 +121,96 @@
 					"path": [
 						"api",
 						"send"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Send through Remote Functions Staging",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"type": "text",
+						"value": "nEOrIG1FeMDoIrEZTDqSWOvAco1ea5dn1a4Ybg4eRWn8sITsy300nw=="
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\": \"Hello from Postman staging\",\n\t\"body\": \"This is the message\",\n\t\"channel\": \"MyChannel\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://notificationsendpoint-staging.azurewebsites.net/api/send",
+					"protocol": "https",
+					"host": [
+						"notificationsendpoint-staging",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"send"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetConfiguration Remote",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"value": "anf5FFb16zHGybTZ95XQgjPvixzAQhdZQUHcY8r4J3vHHQl0pZVryQ==",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://notificationsendpoint.azurewebsites.net/api/config",
+					"protocol": "https",
+					"host": [
+						"notificationsendpoint",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"config"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetConfiguration Remote Staging",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-functions-key",
+						"type": "text",
+						"value": "6qqHOMPiInzLnabSaVuJ9s7E/6dE0TxJNaRm1zPvE0QCuPe8nAk5iQ=="
+					}
+				],
+				"url": {
+					"raw": "https://notificationsendpoint-staging.azurewebsites.net/api/config",
+					"protocol": "https",
+					"host": [
+						"notificationsendpoint-staging",
+						"azurewebsites",
+						"net"
+					],
+					"path": [
+						"api",
+						"config"
 					]
 				}
 			},

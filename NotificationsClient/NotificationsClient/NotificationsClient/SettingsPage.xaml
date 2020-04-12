@@ -20,7 +20,7 @@
                    VerticalOptions="Start" 
                    HorizontalOptions="StartAndExpand" />
 
-            <Editor Text="{Binding FunctionCode, Mode=TwoWay}"
+            <Editor Text="{Binding Model.FunctionCode, Mode=TwoWay}"
                     Grid.Row="1"
                     VerticalOptions="Start"
                     HorizontalOptions="FillAndExpand" />
@@ -30,7 +30,7 @@
                    VerticalOptions="Start"
                    HorizontalOptions="StartAndExpand" />
 
-            <Entry Text="{Binding FunctionsAppName, Mode=TwoWay}"
+            <Entry Text="{Binding Model.FunctionsAppName, Mode=TwoWay}"
                    Grid.Row="3"
                    VerticalOptions="Start"
                    HorizontalOptions="FillAndExpand" />

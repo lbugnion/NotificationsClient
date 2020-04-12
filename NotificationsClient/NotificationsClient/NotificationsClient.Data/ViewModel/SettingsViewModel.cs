@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Ioc;
 using Newtonsoft.Json;
 using NotificationsClient.Model;
 using System.IO;
@@ -9,38 +10,19 @@ namespace NotificationsClient.ViewModel
     {
         private const string SettingsFileName = "settings.json";
 
-        private string _functionCode = string.Empty;
-        private string _functionsAppName = string.Empty;
-        private Settings _settings;
         private string _settingsFilePath;
 
-        public string FunctionCode
+        public Settings Model
         {
-            get => _functionCode;
-            set 
-            { 
-                if (Set(() => FunctionCode, ref _functionCode, value))
-                {
-                    _settings.FunctionCode = _functionCode;
-                    Save();
-                }                
-            }
+            get => SimpleIoc.Default.GetInstance<Settings>();
         }
 
-        public string FunctionsAppName
+        static SettingsViewModel()
         {
-            get => _functionsAppName;
-            set
-            {
-                if (Set(() => FunctionsAppName, ref _functionsAppName, value))
-                {
-                    _settings.FunctionsAppName = _functionsAppName;
-                    Save();
-                }
-            }
+            SimpleIoc.Default.Register<Settings>();
         }
 
-        public SettingsViewModel()
+        public void LoadSettings()
         {
             _settingsFilePath = Path.Combine(
                 ConfigurationClient.GetConfigurationFolder().FullName,
@@ -49,26 +31,27 @@ namespace NotificationsClient.ViewModel
             if (File.Exists(_settingsFilePath))
             {
                 var json = File.ReadAllText(_settingsFilePath);
-                _settings = JsonConvert.DeserializeObject<Settings>(json);
+                var settings = JsonConvert.DeserializeObject<Settings>(json);
 
-                FunctionCode = _settings.FunctionCode;
-                FunctionsAppName = _settings.FunctionsAppName;
+                Model.FunctionCode = settings.FunctionCode;
+                Model.FunctionsAppName = settings.FunctionsAppName;
             }
-            else
-            {
-                _settings = new Settings();
-            }
+
+            Model.PropertyChanged += ModelPropertyChanged;
 
             // TODO Remove when we have sorted out the first navigation
-            _settings.FunctionCode = "anf5FFb16zHGybTZ95XQgjPvixzAQhdZQUHcY8r4J3vHHQl0pZVryQ==";
-            _settings.FunctionsAppName = "notificationsendpoint";
-            FunctionCode = _settings.FunctionCode;
-            FunctionsAppName = _settings.FunctionsAppName;
+            Model.FunctionCode = "anf5FFb16zHGybTZ95XQgjPvixzAQhdZQUHcY8r4J3vHHQl0pZVryQ==";
+            Model.FunctionsAppName = "notificationsendpoint";
+        }
+
+        private void ModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            Save();
         }
 
         private void Save()
         {
-            var json = JsonConvert.SerializeObject(_settings);
+            var json = JsonConvert.SerializeObject(Model);
             File.WriteAllText(_settingsFilePath, json);
         }
     }

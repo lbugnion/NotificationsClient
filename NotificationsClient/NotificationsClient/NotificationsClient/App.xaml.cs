@@ -27,12 +27,8 @@ namespace NotificationsClient
 
         public App()
         {
-            InitializeComponent();
-
             NavigationPage.SetHasNavigationBar(this, false);
             var navPage = new NavigationPage(new MainPage());
-            MainPage = navPage;
-
             var navService = new NavigationService();
             navService.Initialize(navPage);
 
@@ -40,6 +36,14 @@ namespace NotificationsClient
             navService.Configure(ViewModelLocator.SettingsPageKey, typeof(SettingsPage));
 
             SimpleIoc.Default.Register<INavigationService>(() => navService);
+            SimpleIoc.Default.Register<IDispatcherHelper, DispatcherHelper>();
+
+            Loc.Settings.LoadSettings();
+            Loc.Main.Initialize();
+
+            InitializeComponent();
+
+            MainPage = navPage;
         }
 
         protected override void OnStart()

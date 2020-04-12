@@ -4,8 +4,8 @@ namespace NotificationsClient.ViewModel
 {
     public class ViewModelLocator
     {
-        public static readonly string MainPageKey = typeof(MainPage).FullName;
-        public static readonly string SettingsPageKey = typeof(SettingsPage).FullName;
+        public static readonly string MainPageKey = "MainPage";
+        public static readonly string SettingsPageKey = "SettingsPage";
 
         static ViewModelLocator()
         {

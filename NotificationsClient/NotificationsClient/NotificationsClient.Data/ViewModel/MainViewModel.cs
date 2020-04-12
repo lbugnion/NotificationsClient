@@ -1,9 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
+using NotificationsClient.Helpers;
 using NotificationsClient.Model;
 using System;
-using Xamarin.Forms;
 
 namespace NotificationsClient.ViewModel
 {
@@ -11,11 +11,14 @@ namespace NotificationsClient.ViewModel
     {
         private Notification _lastNotification = null;
 
-        private SettingsViewModel Settings => 
-            SimpleIoc.Default.GetInstance<SettingsViewModel>();
+        private Settings Settings => 
+            SimpleIoc.Default.GetInstance<Settings>();
 
         private INavigationService Nav => 
             SimpleIoc.Default.GetInstance<INavigationService>();
+
+        private IDispatcherHelper Dispatcher =>
+            SimpleIoc.Default.GetInstance<IDispatcherHelper>();
 
         public Notification LastNotification
         {
@@ -75,7 +78,7 @@ namespace NotificationsClient.ViewModel
         // TODO Handle isError
         public void ShowInfo(string message, bool isError = false)
         {
-            Device.BeginInvokeOnMainThread(() =>
+            Dispatcher.CheckBeginInvokeOnUI(() =>
             {
                 Status = message;
             });

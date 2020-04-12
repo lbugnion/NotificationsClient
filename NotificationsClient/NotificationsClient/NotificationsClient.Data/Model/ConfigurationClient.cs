@@ -15,7 +15,7 @@ namespace NotificationsClient.Model
         private const string ConfigFileName = "config.json";
         private const string ConfigurationFolderName = "GalaSoft.NotificationsClient";
 
-        private SettingsViewModel Settings => SimpleIoc.Default.GetInstance<SettingsViewModel>();
+        private Settings Settings => SimpleIoc.Default.GetInstance<Settings>();
 
         public static DirectoryInfo GetConfigurationFolder()
         {

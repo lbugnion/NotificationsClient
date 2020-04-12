@@ -111,6 +111,10 @@
       <Project>{7578853a-62bf-4e59-a1f8-1f644ad07aaf}</Project>
       <Name>Notifications.Data</Name>
     </ProjectReference>
+    <ProjectReference Include="..\NotificationsClient.Data\NotificationsClient.Data.csproj">
+      <Project>{c00de26b-f5e1-485a-ac57-83e69434901e}</Project>
+      <Name>NotificationsClient.Data</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NotificationsClient\NotificationsClient.csproj">
       <Project>{EF4D29B9-29A0-4620-BE73-2F438095E57A}</Project>
       <Name>NotificationsClient</Name>
