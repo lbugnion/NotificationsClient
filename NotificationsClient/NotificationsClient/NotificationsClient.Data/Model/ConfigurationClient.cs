@@ -1,7 +1,5 @@
-﻿using GalaSoft.MvvmLight.Ioc;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Notifications.Data;
-using NotificationsClient.ViewModel;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -12,69 +10,82 @@ namespace NotificationsClient.Model
     public class ConfigurationClient
     {
         private const string ConfigurationFunctionUrl = "https://{0}.azurewebsites.net/api/config";
-        private const string ConfigFileName = "config.json";
-        private const string ConfigurationFolderName = "GalaSoft.NotificationsClient";
+        private const string HubConfigFileName = "hubconfig.json";
 
-        private Settings Settings => SimpleIoc.Default.GetInstance<Settings>();
+        private string _configFilePath;
+        private string _functionsAppName;
+        private string _functionCode;
 
-        public static DirectoryInfo GetConfigurationFolder()
+        public void SetVariables(
+            DirectoryInfo appFolder,
+            string functionsAppName,
+            string functionCode)
         {
-            var rootFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var configFolder = new DirectoryInfo(Path.Combine(rootFolderPath, ConfigurationFolderName));
-
-            if (!configFolder.Exists)
-            {
-                configFolder.Create();
-            }
-
-            return configFolder;
+            _configFilePath = Path.Combine(appFolder.FullName, HubConfigFileName);
+            _functionsAppName = functionsAppName;
+            _functionCode = functionCode;
         }
 
-        public async Task<HubConfiguration> GetConfiguration(bool forceRefresh)
+        public HubConfiguration GetConfiguration()
         {
-            if (string.IsNullOrEmpty(Settings.FunctionCode)
-                || string.IsNullOrEmpty(Settings.FunctionsAppName))
+            if (string.IsNullOrEmpty(_configFilePath))
             {
-                throw new InvalidOperationException(
-                    "FunctionCode or FunctionsAppName are not defined in the settings");
+                throw new InvalidOperationException("Please set the App Folder path first");
             }
-
-            var configFilePath = Path.Combine(
-                GetConfigurationFolder().FullName, 
-                ConfigFileName);
 
             HubConfiguration config = null;
 
-            if (File.Exists(configFilePath))
+            if (File.Exists(_configFilePath))
             {
-                var json = File.ReadAllText(configFilePath);
+                var json = File.ReadAllText(_configFilePath);
                 config = JsonConvert.DeserializeObject<HubConfiguration>(json);
-            }
-
-            if (forceRefresh
-                || config == null)
-            {
-                var client = new HttpClient();
-
-                var url = string.Format(
-                    ConfigurationFunctionUrl,
-                    Settings.FunctionsAppName);
-
-                var request = new HttpRequestMessage(
-                    HttpMethod.Get,
-                    url);
-
-                request.Headers.Add(
-                    "x-functions-key", 
-                    Settings.FunctionCode);
-
-                var response = await client.SendAsync(request);
-                var json = await response.Content.ReadAsStringAsync();
-                config = JsonConvert.DeserializeObject<HubConfiguration>(json);
-                File.WriteAllText(configFilePath, json);
             }
 
             return config;
+        }
+
+        public async Task RefreshConfiguration()
+        {
+            if (string.IsNullOrEmpty(_configFilePath))
+            {
+                throw new InvalidOperationException("Please set the App Folder path first");
+            }
+
+            if (string.IsNullOrEmpty(_functionCode)
+                || string.IsNullOrEmpty(_functionsAppName))
+            {
+                throw new InvalidOperationException(
+                    "FunctionCode or FunctionsAppName are not defined in the ConfigurationClient");
+            }
+
+            if (File.Exists(_configFilePath))
+            {
+                File.Delete(_configFilePath);
+            }
+
+            var client = new HttpClient();
+
+            var url = string.Format(
+                ConfigurationFunctionUrl,
+                _functionsAppName);
+
+            var request = new HttpRequestMessage(
+                HttpMethod.Get,
+                url);
+
+            request.Headers.Add(
+                "x-functions-key",
+                _functionCode);
+
+            var response = await client.SendAsync(request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new InvalidOperationException($"Invalid response in ConfigurationClient with {_functionsAppName} and {_functionCode}");
+            };
+
+            var json = await response.Content.ReadAsStringAsync();
+            File.WriteAllText(_configFilePath, json);
         }
     }
 }

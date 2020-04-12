@@ -11,5 +11,11 @@ namespace NotificationsClient
             InitializeComponent();
             BindingContext = App.Loc.Settings;
         }
+
+        protected override bool OnBackButtonPressed()
+        {
+            App.Loc.Main.Initialize();
+            return base.OnBackButtonPressed();
+        }
     }
 }

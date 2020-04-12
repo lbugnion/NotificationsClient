@@ -16,9 +16,14 @@ namespace NotificationsClient.Droid.Model
     {
         private const string Template = "{\"notification\":{\"body\":\"$(body)\",\"title\":\"$(title)\"},\"data\":{\"body\":\"$(body)\",\"title\":\"$(title)\",\"channel\":\"$(channel)\"}}";
 
+        private Settings Settings =>
+            SimpleIoc.Default.GetInstance<Settings>();
+
         public override void OnNewToken(string token)
         {
             base.OnNewToken(token);
+
+            // Try to register now
             SendRegistrationToServer(token);
         }
 
@@ -52,22 +57,33 @@ namespace NotificationsClient.Droid.Model
             });
         }
 
-        private async Task SendRegistrationToServer(string token)
+        internal async Task SendRegistrationToServer(string token)
         {
-            Exception hubError = null;
-            var configClient = new ConfigurationClient();
-
             var client = (NotificationsServiceClient)SimpleIoc
                 .Default
                 .GetInstance<INotificationsServiceClient>();
 
+            if (string.IsNullOrEmpty(Settings.FunctionsAppName)
+                || string.IsNullOrEmpty(Settings.FunctionCode))
+            {
+                // Save token for later
+                Settings.Token = token;
+                client.FirebaseService = this;
+                return;
+            }
+
+            Exception hubError = null;
+            var configClient = SimpleIoc.Default.GetInstance<ConfigurationClient>();
+
             try
             {
-                var hubConfig = await configClient.GetConfiguration(false);
+                var hubConfig = configClient.GetConfiguration();
                 TryRegisterHub(hubConfig, client, token);
+                Settings.IsRegisteredSuccessfully = true;
             }
             catch (NotificationHubResourceNotFoundException ex)
             {
+                // Invalid name
                 hubError = ex;
             }
             catch (Exception ex)
@@ -87,11 +103,14 @@ namespace NotificationsClient.Droid.Model
             {
                 try
                 {
-                    var hubConfig = await configClient.GetConfiguration(true);
+                    await configClient.RefreshConfiguration();
+                    var hubConfig = configClient.GetConfiguration();
                     TryRegisterHub(hubConfig, client, token);
+                    Settings.IsRegisteredSuccessfully = true;
                 }
                 catch (Exception ex)
                 {
+                    Settings.IsRegisteredSuccessfully = false;
                     client.RaiseError(ex.Message);
                 }
             }

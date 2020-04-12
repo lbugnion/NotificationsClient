@@ -1,6 +1,8 @@
 ﻿using Android.App;
 using Android.Gms.Common;
 using Android.OS;
+using GalaSoft.MvvmLight.Ioc;
+using NotificationsClient.Helpers;
 using NotificationsClient.Model;
 using System;
 using System.Threading.Tasks;
@@ -15,7 +17,16 @@ namespace NotificationsClient.Droid.Model
 
         private const string ChannelId = "NotificationsClient.Channel";
         public const int NotificationId = 100;
-        
+
+        private Settings Settings =>
+            SimpleIoc.Default.GetInstance<Settings>();
+
+        internal FirebaseMessagingServiceEx FirebaseService 
+        { 
+            get; 
+            set; 
+        }
+
         private MainActivity _context;
 
         public NotificationsServiceClient(MainActivity activity)
@@ -77,6 +88,21 @@ namespace NotificationsClient.Droid.Model
                 notificationManager.CreateNotificationChannel(channel);
 
                 StatusChanged?.Invoke(this, NotificationStatus.Initializing);
+
+                // Check if token was already received
+                if (!string.IsNullOrEmpty(Settings.Token)
+                    && FirebaseService != null)
+                {
+                    var token = Settings.Token;
+                    Settings.Token = string.Empty;
+
+                    // This cannot happen on the UI thread!!
+
+                    await Task.Run(async () =>
+                    {
+                        await FirebaseService.SendRegistrationToServer(token);
+                    });
+                }
             }
             catch (Exception ex)
             {

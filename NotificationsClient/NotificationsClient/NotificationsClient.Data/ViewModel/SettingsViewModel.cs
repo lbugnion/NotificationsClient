@@ -2,12 +2,14 @@
 using GalaSoft.MvvmLight.Ioc;
 using Newtonsoft.Json;
 using NotificationsClient.Model;
+using System;
 using System.IO;
 
 namespace NotificationsClient.ViewModel
 {
     public class SettingsViewModel : ViewModelBase
     {
+        private const string AppFolderName = "GalaSoft.NotificationsClient";
         private const string SettingsFileName = "settings.json";
 
         private string _settingsFilePath;
@@ -25,7 +27,7 @@ namespace NotificationsClient.ViewModel
         public void LoadSettings()
         {
             _settingsFilePath = Path.Combine(
-                ConfigurationClient.GetConfigurationFolder().FullName,
+                GetAppFolder().FullName,
                 SettingsFileName);
 
             if (File.Exists(_settingsFilePath))
@@ -33,15 +35,14 @@ namespace NotificationsClient.ViewModel
                 var json = File.ReadAllText(_settingsFilePath);
                 var settings = JsonConvert.DeserializeObject<Settings>(json);
 
-                Model.FunctionCode = settings.FunctionCode;
-                Model.FunctionsAppName = settings.FunctionsAppName;
+                Model.Set(settings);
             }
 
             Model.PropertyChanged += ModelPropertyChanged;
 
             // TODO Remove when we have sorted out the first navigation
-            Model.FunctionCode = "anf5FFb16zHGybTZ95XQgjPvixzAQhdZQUHcY8r4J3vHHQl0pZVryQ==";
-            Model.FunctionsAppName = "notificationsendpoint";
+            //Model.FunctionCode = "anf5FFb16zHGybTZ95XQgjPvixzAQhdZQUHcY8r4J3vHHQl0pZVryQ==";
+            //Model.FunctionsAppName = "notificationsendpoint";
         }
 
         private void ModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -53,6 +54,19 @@ namespace NotificationsClient.ViewModel
         {
             var json = JsonConvert.SerializeObject(Model);
             File.WriteAllText(_settingsFilePath, json);
+        }
+
+        public DirectoryInfo GetAppFolder()
+        {
+            var rootFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var configFolder = new DirectoryInfo(Path.Combine(rootFolderPath, AppFolderName));
+
+            if (!configFolder.Exists)
+            {
+                configFolder.Create();
+            }
+
+            return configFolder;
         }
     }
 }

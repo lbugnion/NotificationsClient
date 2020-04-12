@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
+using NotificationsClient.Model;
 
 namespace NotificationsClient.ViewModel
 {
@@ -10,6 +11,7 @@ namespace NotificationsClient.ViewModel
         static ViewModelLocator()
         {
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<ConfigurationClient>();
             SimpleIoc.Default.Register<SettingsViewModel>();
         }
 

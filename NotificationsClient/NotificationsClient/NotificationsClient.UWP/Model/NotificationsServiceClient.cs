@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.Messaging;
+﻿using GalaSoft.MvvmLight.Ioc;
+using Microsoft.WindowsAzure.Messaging;
 using Notifications.Data;
 using NotificationsClient.Model;
 using System;
@@ -18,10 +19,13 @@ namespace NotificationsClient.UWP.Model
 
         private static readonly string Template = $"<toast activationType=\"foreground\" launch=\"$(argument)\"><visual><binding template=\"ToastGeneric\"><text id=\"1\">$(title)</text><text id=\"2\">$(body)</text></binding></visual></toast>";
 
+        private Settings Settings =>
+            SimpleIoc.Default.GetInstance<Settings>();
+
         public async Task Initialize()
         {
             Exception hubError = null;
-            var configClient = new ConfigurationClient();
+            var configClient = SimpleIoc.Default.GetInstance<ConfigurationClient>();
             PushNotificationChannel channel = null;
 
             try
@@ -31,8 +35,9 @@ namespace NotificationsClient.UWP.Model
 
                 channel.PushNotificationReceived += ChannelPushNotificationReceived;
 
-                var hubConfig = await configClient.GetConfiguration(false);
+                var hubConfig = configClient.GetConfiguration();
                 await TryRegisterHub(hubConfig, channel);
+                Settings.IsRegisteredSuccessfully = true;
             }
             catch (NotificationHubNotFoundException ex)
             {
@@ -52,12 +57,15 @@ namespace NotificationsClient.UWP.Model
             {
                 try
                 {
-                    var hubConfig = await configClient.GetConfiguration(true);
+                    await configClient.RefreshConfiguration();
+                    var hubConfig = configClient.GetConfiguration();
                     await TryRegisterHub(hubConfig, channel);
+                    Settings.IsRegisteredSuccessfully = true;
                 }
                 catch (Exception ex)
                 {
                     ErrorHappened?.Invoke(this, ex.Message);
+                    Settings.IsRegisteredSuccessfully = false;
                 }
             }
         }

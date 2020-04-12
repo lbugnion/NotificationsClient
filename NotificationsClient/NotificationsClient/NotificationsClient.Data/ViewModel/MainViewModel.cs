@@ -4,6 +4,8 @@ using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Helpers;
 using NotificationsClient.Model;
 using System;
+using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace NotificationsClient.ViewModel
 {
@@ -11,8 +13,11 @@ namespace NotificationsClient.ViewModel
     {
         private Notification _lastNotification = null;
 
-        private Settings Settings => 
-            SimpleIoc.Default.GetInstance<Settings>();
+        private SettingsViewModel SettingsVm => 
+            SimpleIoc.Default.GetInstance<SettingsViewModel>();
+
+        private ConfigurationClient ConfigClient =>
+            SimpleIoc.Default.GetInstance<ConfigurationClient>();
 
         private INavigationService Nav => 
             SimpleIoc.Default.GetInstance<INavigationService>();
@@ -34,20 +39,61 @@ namespace NotificationsClient.ViewModel
             set => Set(() => Status, ref _status, value);
         }
 
-        public void Initialize()
+        public async Task Initialize()
         {
-            if (string.IsNullOrEmpty(Settings.FunctionsAppName)
-                || string.IsNullOrEmpty(Settings.FunctionCode))
+            SettingsVm.Model.PropertyChanged -= SettingsPropertyChanged;
+            SettingsVm.Model.PropertyChanged += SettingsPropertyChanged;
+
+            if (string.IsNullOrEmpty(SettingsVm.Model.FunctionsAppName)
+                || string.IsNullOrEmpty(SettingsVm.Model.FunctionCode))
             {
                 Nav.NavigateTo(ViewModelLocator.SettingsPageKey);
                 return;
             }
 
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
+            client.NotificationReceived -= ClientNotificationReceived;
             client.NotificationReceived += ClientNotificationReceived;
+            client.ErrorHappened -= ClientErrorHappened;
             client.ErrorHappened += ClientErrorHappened;
+            client.StatusChanged -= ClientStatusChanged;
             client.StatusChanged += ClientStatusChanged;
-            client.Initialize();
+
+            if (SettingsVm.Model.IsRegisteredSuccessfully)
+            {
+                return;
+            }
+
+            ConfigClient.SetVariables(
+                SettingsVm.GetAppFolder(),
+                SettingsVm.Model.FunctionsAppName,
+                SettingsVm.Model.FunctionCode);
+
+            try
+            {
+                await ConfigClient.RefreshConfiguration();
+                await client.Initialize();
+            }
+            catch (Exception ex)
+            {
+                SettingsVm.Model.IsRegisteredSuccessfully = false;
+                ShowInfo($"Error when initializing: {ex.Message}", true);
+            }
+        }
+
+        private void SettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(SettingsVm.Model.FunctionsAppName)
+                || string.IsNullOrEmpty(SettingsVm.Model.FunctionCode))
+            {
+                return;
+            }
+
+            if (e.PropertyName == nameof(Settings.FunctionsAppName)
+                || e.PropertyName == nameof(Settings.FunctionCode))
+            {
+                SettingsVm.Model.IsRegisteredSuccessfully = false;
+            }
         }
 
         private void ClientStatusChanged(object sender, NotificationStatus e)
