@@ -1,6 +1,6 @@
 ﻿using Microsoft.Azure.NotificationHubs;
 
-namespace NotificationsClient.Endpoint
+namespace Notifications
 {
     public class Notifications
     {

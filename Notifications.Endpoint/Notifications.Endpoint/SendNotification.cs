@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System;
 using Microsoft.Azure.NotificationHubs;
 
-namespace NotificationsClient.Endpoint
+namespace Notifications
 {
     public static class SendNotification
     {

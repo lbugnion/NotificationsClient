@@ -1,4 +1,4 @@
-﻿namespace Notifications.Data
+﻿namespace Notifications
 {
     public class HubConfiguration
     {
