@@ -157,8 +157,8 @@
     <PackageReference Include="Xamarin.Essentials" Version="1.5.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NotificationsClient.Endpoint\Notifications.Data\Notifications.Data.csproj">
-      <Project>{7578853A-62BF-4E59-A1F8-1F644AD07AAF}</Project>
+    <ProjectReference Include="..\..\..\Notifications.Endpoint\Notifications.Data\Notifications.Data.csproj">
+      <Project>{31505242-a276-4e01-b576-a53baa8a4cd2}</Project>
       <Name>Notifications.Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\NotificationsClient.Data\NotificationsClient.Data.csproj">

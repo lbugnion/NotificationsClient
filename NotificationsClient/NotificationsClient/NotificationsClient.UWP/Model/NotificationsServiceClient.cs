@@ -1,6 +1,6 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Microsoft.WindowsAzure.Messaging;
-using Notifications.Data;
+using Notifications;
 using NotificationsClient.Model;
 using System;
 using System.Linq;

@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using Notifications.Data;
+using Notifications;
 using System;
 using System.IO;
 using System.Net.Http;

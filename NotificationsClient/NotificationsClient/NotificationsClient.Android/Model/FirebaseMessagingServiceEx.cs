@@ -2,7 +2,7 @@
 using Android.Content;
 using Firebase.Messaging;
 using GalaSoft.MvvmLight.Ioc;
-using Notifications.Data;
+using Notifications;
 using NotificationsClient.Model;
 using System;
 using System.Threading.Tasks;
