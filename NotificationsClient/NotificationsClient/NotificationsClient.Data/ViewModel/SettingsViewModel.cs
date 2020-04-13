@@ -39,10 +39,6 @@ namespace NotificationsClient.ViewModel
             }
 
             Model.PropertyChanged += ModelPropertyChanged;
-
-            // TODO Remove when we have sorted out the first navigation
-            //Model.FunctionCode = "anf5FFb16zHGybTZ95XQgjPvixzAQhdZQUHcY8r4J3vHHQl0pZVryQ==";
-            //Model.FunctionsAppName = "notificationsendpoint";
         }
 
         private void ModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

@@ -2,15 +2,19 @@
 using Android.Gms.Common;
 using Android.OS;
 using GalaSoft.MvvmLight.Ioc;
+using Notifications;
 using NotificationsClient.Helpers;
 using NotificationsClient.Model;
 using System;
 using System.Threading.Tasks;
+using WindowsAzure.Messaging;
 
 namespace NotificationsClient.Droid.Model
 {
     public class NotificationsServiceClient : INotificationsServiceClient
     {
+        private const string Template = "{\"notification\":{\"body\":\"$(body)\",\"title\":\"$(title)\"},\"data\":{\"body\":\"$(body)\",\"title\":\"$(title)\",\"channel\":\"$(channel)\"}}";
+
         public event EventHandler<NotificationsClient.Model.Notification> NotificationReceived;
         public event EventHandler<string> ErrorHappened;
         public event EventHandler<NotificationStatus> StatusChanged;
@@ -36,7 +40,7 @@ namespace NotificationsClient.Droid.Model
 
         // This method doesn't need to be asynchronous for Android but
         // is anyway for compatibility with UWP
-        public async Task Initialize()
+        public async Task Initialize(bool registerHub)
         {
             var resultCode = GoogleApiAvailability
                 .Instance
@@ -91,22 +95,18 @@ namespace NotificationsClient.Droid.Model
 
                 // Check if token was already received
                 if (!string.IsNullOrEmpty(Settings.Token)
-                    && FirebaseService != null)
+                    && !Settings.IsRegisteredSuccessfully)
                 {
-                    var token = Settings.Token;
-                    Settings.Token = string.Empty;
-
                     // This cannot happen on the UI thread!!
-
                     await Task.Run(async () =>
                     {
-                        await FirebaseService.SendRegistrationToServer(token);
+                        await SendRegistrationToServer(Settings.Token);
                     });
                 }
             }
             catch (Exception ex)
             {
-                ErrorHappened?.Invoke(this,ex.Message);
+                ErrorHappened?.Invoke(this, ex.Message);
             }
         }
 
@@ -123,6 +123,87 @@ namespace NotificationsClient.Droid.Model
         internal void RaiseError(string errorMessage)
         {
             ErrorHappened?.Invoke(this, errorMessage);
+        }
+
+
+        public async Task SendRegistrationToServer(string token)
+        {
+            var client = (NotificationsServiceClient)SimpleIoc
+                .Default
+                .GetInstance<INotificationsServiceClient>();
+
+            Exception hubError = null;
+            var configClient = SimpleIoc.Default.GetInstance<ConfigurationClient>();
+
+            try
+            {
+                var hubConfig = configClient.GetConfiguration();
+
+                if (hubConfig == null)
+                {
+                    return;
+                }
+
+                TryRegisterHub(hubConfig, client, token);
+                Settings.IsRegisteredSuccessfully = true;
+            }
+            catch (NotificationHubResourceNotFoundException ex)
+            {
+                // Invalid name
+                hubError = ex;
+            }
+            catch (Exception ex)
+            {
+                if (ex is Java.Lang.AssertionError)
+                {
+                    // Invalid connection string
+                    hubError = ex;
+                }
+                else
+                {
+                    client.RaiseError(ex.Message);
+                }
+            }
+
+            if (hubError != null)
+            {
+                try
+                {
+                    await configClient.RefreshConfiguration();
+                    var hubConfig = configClient.GetConfiguration();
+                    TryRegisterHub(hubConfig, client, token);
+                    Settings.IsRegisteredSuccessfully = true;
+                }
+                catch (Exception ex)
+                {
+                    Settings.IsRegisteredSuccessfully = false;
+                    client.RaiseError(ex.Message);
+                }
+            }
+        }
+
+        private void TryRegisterHub(
+            HubConfiguration config,
+            NotificationsServiceClient client,
+            string token)
+        {
+            var hub = new NotificationHub(
+                config.HubName,
+                config.HubConnectionString,
+                MainActivity.Context);
+
+            // register device with Azure Notification Hub using the token from FCM
+            var registration = hub.Register(token, Constants.NotificationHubTagName);
+
+            // subscribe to the SubscriptionTags list with a simple template.
+            var pnsHandle = registration.PNSHandle;
+            var templateReg = hub.RegisterTemplate(
+                pnsHandle,
+                Constants.NotificationHubTemplateName,
+                Template,
+                Constants.NotificationHubTagName);
+
+            client.RaiseStatusReady();
         }
     }
 }

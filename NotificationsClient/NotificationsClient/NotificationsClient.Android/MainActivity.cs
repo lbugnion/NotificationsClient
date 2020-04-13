@@ -11,8 +11,16 @@ namespace NotificationsClient.Droid
     [Activity(Label = "NotificationsClient", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+        public static MainActivity Context
+        {
+            get;
+            private set;
+        }
+
         protected override void OnCreate(Bundle savedInstanceState)
         {
+            Context = this;
+
             INotificationsServiceClient notificationsServiceClient;
 
             if (!SimpleIoc.Default.IsRegistered<INotificationsServiceClient>())

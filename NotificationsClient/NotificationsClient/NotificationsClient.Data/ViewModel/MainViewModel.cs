@@ -41,6 +41,8 @@ namespace NotificationsClient.ViewModel
 
         public async Task Initialize()
         {
+            ShowInfo("Initializing...");            
+
             SettingsVm.Model.PropertyChanged -= SettingsPropertyChanged;
             SettingsVm.Model.PropertyChanged += SettingsPropertyChanged;
 
@@ -61,6 +63,8 @@ namespace NotificationsClient.ViewModel
 
             if (SettingsVm.Model.IsRegisteredSuccessfully)
             {
+                await client.Initialize(false);
+                ShowInfo("Ready to receive notifications");
                 return;
             }
 
@@ -72,7 +76,7 @@ namespace NotificationsClient.ViewModel
             try
             {
                 await ConfigClient.RefreshConfiguration();
-                await client.Initialize();
+                await client.Initialize(true);
             }
             catch (Exception ex)
             {

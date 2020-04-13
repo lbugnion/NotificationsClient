@@ -42,6 +42,19 @@ namespace NotificationsClient.Model
             FunctionsAppName = settings.FunctionsAppName;
             IsRegisteredSuccessfully = settings.IsRegisteredSuccessfully;
             Token = settings.Token;
+
+#if DEBUG
+            FunctionCode = DebugSettings.FunctionCode;
+            FunctionsAppName = DebugSettings.FunctionsAppName;
+#endif
         }
+
+#if DEBUG
+        public Settings()
+        {
+            FunctionCode = DebugSettings.FunctionCode;
+            FunctionsAppName = DebugSettings.FunctionsAppName;
+        }
+#endif
     }
 }

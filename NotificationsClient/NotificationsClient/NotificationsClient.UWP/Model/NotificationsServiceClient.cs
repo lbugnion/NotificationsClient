@@ -22,8 +22,10 @@ namespace NotificationsClient.UWP.Model
         private Settings Settings =>
             SimpleIoc.Default.GetInstance<Settings>();
 
-        public async Task Initialize()
+        public async Task Initialize(bool registerHub)
         {
+            StatusChanged?.Invoke(this, NotificationStatus.Initializing);
+
             Exception hubError = null;
             var configClient = SimpleIoc.Default.GetInstance<ConfigurationClient>();
             PushNotificationChannel channel = null;
@@ -34,10 +36,25 @@ namespace NotificationsClient.UWP.Model
                     .CreatePushNotificationChannelForApplicationAsync();
 
                 channel.PushNotificationReceived += ChannelPushNotificationReceived;
+            }
+            catch (Exception ex)
+            {
+                ErrorHappened?.Invoke(this, $"Error when creating channel: {ex.Message}");
+                return;
+            }
 
+            if (!registerHub)
+            {
+                StatusChanged?.Invoke(this, NotificationStatus.Ready);
+                return;
+            }
+
+            try
+            {
                 var hubConfig = configClient.GetConfiguration();
                 await TryRegisterHub(hubConfig, channel);
                 Settings.IsRegisteredSuccessfully = true;
+                StatusChanged?.Invoke(this, NotificationStatus.Ready);
             }
             catch (NotificationHubNotFoundException ex)
             {
@@ -61,6 +78,7 @@ namespace NotificationsClient.UWP.Model
                     var hubConfig = configClient.GetConfiguration();
                     await TryRegisterHub(hubConfig, channel);
                     Settings.IsRegisteredSuccessfully = true;
+                    StatusChanged?.Invoke(this, NotificationStatus.Ready);
                 }
                 catch (Exception ex)
                 {
@@ -83,8 +101,6 @@ namespace NotificationsClient.UWP.Model
                 channel.Uri,
                 Template,
                 Constants.NotificationHubTemplateName);
-
-            StatusChanged?.Invoke(this, NotificationStatus.Ready);
         }
 
         private void ChannelPushNotificationReceived(

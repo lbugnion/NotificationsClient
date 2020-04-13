@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Notifications.Endpoint\Notifications.Data\Notifications.Data.csproj" />
-    <ProjectReference Include="..\..\..\NotificationsClient.Endpoint\Notifications.Data\Notifications.Data.csproj" />
     <ProjectReference Include="..\NotificationsClient.Data\NotificationsClient.Data.csproj" />
   </ItemGroup>
 

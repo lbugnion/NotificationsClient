@@ -9,7 +9,7 @@ namespace NotificationsClient.Model
         event EventHandler<string> ErrorHappened;
         event EventHandler<NotificationStatus> StatusChanged;
 
-        Task Initialize();
+        Task Initialize(bool registerHub);
         void RaiseNotificationReceived(Notification notification);
     }
 }
