@@ -5,6 +5,7 @@ using NotificationsClient.Helpers;
 using NotificationsClient.Model;
 using System;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace NotificationsClient.ViewModel
@@ -24,6 +25,9 @@ namespace NotificationsClient.ViewModel
 
         private IDispatcherHelper Dispatcher =>
             SimpleIoc.Default.GetInstance<IDispatcherHelper>();
+
+        private NotificationStorage Storage =>
+            SimpleIoc.Default.GetInstance<NotificationStorage>();
 
         public Notification LastNotification
         {
@@ -53,6 +57,19 @@ namespace NotificationsClient.ViewModel
                 return;
             }
 
+            // Initialize and load the database
+
+            try
+            {
+                await Storage.InitializeAsync();
+            }
+            catch (Exception ex)
+            {
+                ShowInfo($"Error when loading the notifications, try to synchronize ({ex.Message})");
+            }
+
+            // Prepare to receive new notifications
+
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
             client.NotificationReceived -= ClientNotificationReceived;
             client.NotificationReceived += ClientNotificationReceived;
@@ -67,11 +84,6 @@ namespace NotificationsClient.ViewModel
                 ShowInfo("Ready to receive notifications");
                 return;
             }
-
-            ConfigClient.SetVariables(
-                SettingsVm.GetAppFolder(),
-                SettingsVm.Model.FunctionsAppName,
-                SettingsVm.Model.FunctionCode);
 
             try
             {

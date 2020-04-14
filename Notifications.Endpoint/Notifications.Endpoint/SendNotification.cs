@@ -30,7 +30,7 @@ namespace Notifications
 
             string body = data.body;
             string title = data.title;
-            string channel = data.channel;
+            string channel = data.channel ?? string.Empty;
 
             if (string.IsNullOrEmpty(body)
                 || string.IsNullOrEmpty(title))
@@ -39,25 +39,42 @@ namespace Notifications
                     "Please pass a body and a title in the request");
             }
 
+            var uniqueId = Guid.NewGuid().ToString();
+            var sentTimeUtc = DateTime.UtcNow;
+            var argument = FunctionConstants.UwpArgumentTemplate
+                .Replace(FunctionConstants.UniqueId, uniqueId)
+                .Replace(FunctionConstants.Title, title)
+                .Replace(FunctionConstants.Body, body)
+                .Replace(FunctionConstants.SentTimeUtc, sentTimeUtc.ToString(FunctionConstants.DateTimeFormat))
+                .Replace(FunctionConstants.Channel, channel);
+
             var properties = new Dictionary<string, string>
             {
                 {
-                    "body",
-                    body
+                    FunctionConstants.UniqueId,
+                    uniqueId
                 },
                 {
-                    "title",
+                    FunctionConstants.Title,
                     title
                 },
                 {
-                    "argument",
-                    $"{title}|@|{body}|@|{channel}"
+                    FunctionConstants.Body,
+                    body
+                },
+                {
+                    FunctionConstants.SentTimeUtc,
+                    sentTimeUtc.ToString(FunctionConstants.DateTimeFormat)
+                },
+                {
+                    FunctionConstants.Argument,
+                    argument
                 }
             };
 
             if (!string.IsNullOrEmpty(channel))
             {
-                properties.Add("channel", channel);
+                properties.Add(FunctionConstants.Channel, channel);
             }
 
             try

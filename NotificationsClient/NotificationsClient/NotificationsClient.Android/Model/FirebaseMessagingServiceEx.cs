@@ -2,7 +2,9 @@
 using Android.Content;
 using Firebase.Messaging;
 using GalaSoft.MvvmLight.Ioc;
+using Notifications;
 using NotificationsClient.Model;
+using System;
 
 namespace NotificationsClient.Droid.Model
 {
@@ -21,7 +23,10 @@ namespace NotificationsClient.Droid.Model
             Settings.IsRegisteredSuccessfully = false;
 
             // Try to register now
-            var client = (NotificationsServiceClient)SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
+            var client = (NotificationsServiceClient)SimpleIoc
+                .Default
+                .GetInstance<INotificationsServiceClient>();
+
             await client.SendRegistrationToServer(token);
         }
 
@@ -29,30 +34,44 @@ namespace NotificationsClient.Droid.Model
         {
             base.OnMessageReceived(remoteMessage);
 
+            var uniqueId = string.Empty;
             var title = string.Empty;
             var body = string.Empty;
+            var sentTimeUtc = string.Empty;
             var channel = string.Empty;
 
-            if (remoteMessage.Data.ContainsKey("title"))
+            if (remoteMessage.Data.ContainsKey(FunctionConstants.UniqueId))
             {
-                title = remoteMessage.Data["title"];
+                uniqueId = remoteMessage.Data[FunctionConstants.UniqueId];
             }
-            if (remoteMessage.Data.ContainsKey("body"))
+            if (remoteMessage.Data.ContainsKey(FunctionConstants.Title))
             {
-                body = remoteMessage.Data["body"];
+                title = remoteMessage.Data[FunctionConstants.Title];
             }
-            if (remoteMessage.Data.ContainsKey("channel"))
+            if (remoteMessage.Data.ContainsKey(FunctionConstants.Body))
             {
-                channel = remoteMessage.Data["channel"];
+                body = remoteMessage.Data[FunctionConstants.Body];
+            }
+            if (remoteMessage.Data.ContainsKey(FunctionConstants.SentTimeUtc))
+            {
+                sentTimeUtc = remoteMessage.Data[FunctionConstants.SentTimeUtc];
+            }
+            if (remoteMessage.Data.ContainsKey(FunctionConstants.Channel))
+            {
+                channel = remoteMessage.Data[FunctionConstants.Channel];
             }
 
+            var argument = FunctionConstants.UwpArgumentTemplate
+                .Replace(FunctionConstants.UniqueId, uniqueId)
+                .Replace(FunctionConstants.Title, title)
+                .Replace(FunctionConstants.Body, body)
+                .Replace(FunctionConstants.SentTimeUtc, sentTimeUtc)
+                .Replace(FunctionConstants.Channel, channel);
+
+            var notification = NotificationsClient.Model.Notification.Parse(argument);
+
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
-            client.RaiseNotificationReceived(new NotificationsClient.Model.Notification
-            {
-                Body = body,
-                Title = title,
-                Channel = channel
-            });
+            client.RaiseNotificationReceived(notification);
         }
     }
 }

@@ -5,10 +5,16 @@ using Android.OS;
 using NotificationsClient.Droid.Model;
 using GalaSoft.MvvmLight.Ioc;
 using NotificationsClient.Model;
+using Notifications;
 
 namespace NotificationsClient.Droid
 {
-    [Activity(Label = "NotificationsClient", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(
+        Label = "Notifications", 
+        Icon = "@mipmap/icon", 
+        Theme = "@style/MainTheme", 
+        MainLauncher = true, 
+        ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
         public static MainActivity Context
@@ -47,37 +53,42 @@ namespace NotificationsClient.Droid
 
             if (Intent.Extras != null)
             {
-                var message = string.Empty;
-
-                foreach (var key in Intent.Extras.KeySet())
-                {
-                    var value = Intent.Extras.GetString(key);
-                    message += $"{key}:{value} |";
-                }
-
+                var uniqueId = string.Empty;
                 var title = string.Empty;
                 var body = string.Empty;
+                var sentTimeUtc = string.Empty;
                 var channel = string.Empty;
 
-                if (Intent.Extras.ContainsKey("title"))
+                if (Intent.Extras.ContainsKey(FunctionConstants.UniqueId))
                 {
-                    title = Intent.Extras.GetString("title");
+                    uniqueId = Intent.Extras.GetString(FunctionConstants.UniqueId);
                 }
-                if (Intent.Extras.ContainsKey("body"))
+                if (Intent.Extras.ContainsKey(FunctionConstants.Title))
                 {
-                    body = Intent.Extras.GetString("body");
+                    title = Intent.Extras.GetString(FunctionConstants.Title);
                 }
-                if (Intent.Extras.ContainsKey("channel"))
+                if (Intent.Extras.ContainsKey(FunctionConstants.Body))
                 {
-                    channel = Intent.Extras.GetString("channel");
+                    body = Intent.Extras.GetString(FunctionConstants.Body);
+                }
+                if (Intent.Extras.ContainsKey(FunctionConstants.SentTimeUtc))
+                {
+                    sentTimeUtc = Intent.Extras.GetString(FunctionConstants.SentTimeUtc);
+                }
+                if (Intent.Extras.ContainsKey(FunctionConstants.Channel))
+                {
+                    channel = Intent.Extras.GetString(FunctionConstants.Channel);
                 }
 
-                notificationsServiceClient.RaiseNotificationReceived(new NotificationsClient.Model.Notification
-                {
-                    Title = title,
-                    Body = body,
-                    Channel = channel
-                });
+                var argument = FunctionConstants.UwpArgumentTemplate
+                    .Replace(FunctionConstants.UniqueId, uniqueId)
+                    .Replace(FunctionConstants.Title, title)
+                    .Replace(FunctionConstants.Body, body)
+                    .Replace(FunctionConstants.SentTimeUtc, sentTimeUtc)
+                    .Replace(FunctionConstants.Channel, channel);
+
+                var notification = NotificationsClient.Model.Notification.Parse(argument);
+                notificationsServiceClient.RaiseNotificationReceived(notification);
             }
         }
 

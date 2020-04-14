@@ -2,14 +2,12 @@
 using GalaSoft.MvvmLight.Ioc;
 using Newtonsoft.Json;
 using NotificationsClient.Model;
-using System;
 using System.IO;
 
 namespace NotificationsClient.ViewModel
 {
     public class SettingsViewModel : ViewModelBase
     {
-        private const string AppFolderName = "GalaSoft.NotificationsClient";
         private const string SettingsFileName = "settings.json";
 
         private string _settingsFilePath;
@@ -27,7 +25,7 @@ namespace NotificationsClient.ViewModel
         public void LoadSettings()
         {
             _settingsFilePath = Path.Combine(
-                GetAppFolder().FullName,
+                Model.GetAppFolder().FullName,
                 SettingsFileName);
 
             if (File.Exists(_settingsFilePath))
@@ -50,19 +48,6 @@ namespace NotificationsClient.ViewModel
         {
             var json = JsonConvert.SerializeObject(Model);
             File.WriteAllText(_settingsFilePath, json);
-        }
-
-        public DirectoryInfo GetAppFolder()
-        {
-            var rootFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-            var configFolder = new DirectoryInfo(Path.Combine(rootFolderPath, AppFolderName));
-
-            if (!configFolder.Exists)
-            {
-                configFolder.Create();
-            }
-
-            return configFolder;
         }
     }
 }

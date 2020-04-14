@@ -1,9 +1,13 @@
 ﻿using GalaSoft.MvvmLight;
+using System;
+using System.IO;
 
 namespace NotificationsClient.Model
 {
     public class Settings : ObservableObject
     {
+        private const string AppFolderName = "GalaSoft.NotificationsClient";
+
         private string _functionCode = string.Empty;
 
         public string FunctionCode
@@ -56,5 +60,18 @@ namespace NotificationsClient.Model
             FunctionsAppName = DebugSettings.FunctionsAppName;
         }
 #endif
+
+        public DirectoryInfo GetAppFolder()
+        {
+            var rootFolderPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var configFolder = new DirectoryInfo(Path.Combine(rootFolderPath, AppFolderName));
+
+            if (!configFolder.Exists)
+            {
+                configFolder.Create();
+            }
+
+            return configFolder;
+        }
     }
 }

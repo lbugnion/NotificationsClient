@@ -3,7 +3,6 @@ using Android.Gms.Common;
 using Android.OS;
 using GalaSoft.MvvmLight.Ioc;
 using Notifications;
-using NotificationsClient.Helpers;
 using NotificationsClient.Model;
 using System;
 using System.Threading.Tasks;
@@ -13,7 +12,7 @@ namespace NotificationsClient.Droid.Model
 {
     public class NotificationsServiceClient : INotificationsServiceClient
     {
-        private const string Template = "{\"notification\":{\"body\":\"$(body)\",\"title\":\"$(title)\"},\"data\":{\"body\":\"$(body)\",\"title\":\"$(title)\",\"channel\":\"$(channel)\"}}";
+        private static readonly string Template = $"{{\"notification\":{{\"{FunctionConstants.Body}\":\"$({FunctionConstants.Body})\",\"{FunctionConstants.Title}\":\"$({FunctionConstants.Title})\"}},\"data\":{{\"{FunctionConstants.UniqueId}\":\"$({FunctionConstants.UniqueId})\",\"{FunctionConstants.Title}\":\"$({FunctionConstants.Title})\",\"{FunctionConstants.Body}\":\"$({FunctionConstants.Body})\",\"{FunctionConstants.SentTimeUtc}\":\"$({FunctionConstants.SentTimeUtc})\",\"{FunctionConstants.Channel}\":\"$({FunctionConstants.Channel})\"}}}}";
 
         public event EventHandler<NotificationsClient.Model.Notification> NotificationReceived;
         public event EventHandler<string> ErrorHappened;

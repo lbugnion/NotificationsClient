@@ -1,4 +1,5 @@
-﻿using Xamarin.Forms;
+﻿using NotificationsClient.Helpers;
+using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace NotificationsClient
@@ -15,7 +16,7 @@ namespace NotificationsClient
 
         protected override bool OnBackButtonPressed()
         {
-            App.Loc.Main.Initialize();
+            App.Loc.Main.Initialize().SafeFireAndForget(false);
             return base.OnBackButtonPressed();
         }
     }

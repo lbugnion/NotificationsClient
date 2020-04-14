@@ -34,11 +34,19 @@ namespace NotificationsClient
             navService.Configure(ViewModelLocator.MainPageKey, typeof(MainPage));
             navService.Configure(ViewModelLocator.SettingsPageKey, typeof(SettingsPage));
 
-            SimpleIoc.Default.Register<INavigationService>(() => navService);
-            SimpleIoc.Default.Register<IDispatcherHelper, DispatcherHelper>();
+            if (!SimpleIoc.Default.IsRegistered<INavigationService>())
+            {
+                SimpleIoc.Default.Register<INavigationService>(() => navService);
+            }
+
+            if (!SimpleIoc.Default.IsRegistered<IDispatcherHelper>())
+            {
+                SimpleIoc.Default.Register<IDispatcherHelper, DispatcherHelper>();
+            }
 
             Loc.Settings.LoadSettings();
-            Loc.Main.Initialize();
+
+            Loc.Main.Initialize().SafeFireAndForget(false);
 
             InitializeComponent();
 

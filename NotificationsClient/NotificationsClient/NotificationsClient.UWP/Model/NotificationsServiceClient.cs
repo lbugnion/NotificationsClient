@@ -3,6 +3,7 @@ using Microsoft.WindowsAzure.Messaging;
 using Notifications;
 using NotificationsClient.Model;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Networking.PushNotifications;
@@ -15,9 +16,7 @@ namespace NotificationsClient.UWP.Model
         public event EventHandler<string> ErrorHappened;
         public event EventHandler<NotificationStatus> StatusChanged;
 
-        private const string Separator = "|@|";
-
-        private static readonly string Template = $"<toast activationType=\"foreground\" launch=\"$(argument)\"><visual><binding template=\"ToastGeneric\"><text id=\"1\">$(title)</text><text id=\"2\">$(body)</text></binding></visual></toast>";
+        private static readonly string Template = $"<toast activationType=\"foreground\" launch=\"$(argument)\"><visual><binding template=\"ToastGeneric\"><text id=\"1\">$({FunctionConstants.Title})</text><text id=\"2\">$({FunctionConstants.Body})</text></binding></visual></toast>";
 
         private Settings Settings =>
             SimpleIoc.Default.GetInstance<Settings>();
@@ -126,17 +125,8 @@ namespace NotificationsClient.UWP.Model
 
         internal void RaiseNotificationReceived(string arguments)
         {
-            var notificationParts = arguments.Split(Separator, StringSplitOptions.RemoveEmptyEntries);
-
-            if (notificationParts.Length == 3)
-            {
-                RaiseNotificationReceived(new Notification
-                {
-                    Title = notificationParts[0],
-                    Body = notificationParts[1],
-                    Channel = notificationParts[2]
-                });
-            }
+            var notification = Notification.Parse(arguments);
+            RaiseNotificationReceived(notification);
         }
     }
 }
