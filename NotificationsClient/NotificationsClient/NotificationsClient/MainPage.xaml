@@ -59,6 +59,18 @@
                    FontAttributes="Italic"
                    HorizontalOptions="Center"
                    VerticalOptions="CenterAndExpand" />
+
+            <StackLayout Orientation="Horizontal"
+                         HorizontalOptions="Center"
+                         VerticalOptions="CenterAndExpand">
+                <Label Text="Sent at: "
+                       FontAttributes="Italic" />
+
+                <Label Text="{Binding LastNotification.SentTimeUtc}"
+                       FontAttributes="Italic"
+                       HorizontalOptions="Center"
+                       VerticalOptions="CenterAndExpand" />
+            </StackLayout>
         </StackLayout>
 
         <Label Text="{Binding Status}"

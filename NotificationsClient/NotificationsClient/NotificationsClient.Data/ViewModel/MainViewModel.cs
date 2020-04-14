@@ -133,7 +133,7 @@ namespace NotificationsClient.ViewModel
 
         private void ClientNotificationReceived(object sender, Notification notification)
         {
-            ShowInfo("Notification received at " + DateTime.Now);
+            ShowInfo($"Notification received at {notification.ReceivedTimeUtc}");
             LastNotification = notification;
         }
 
