@@ -3,30 +3,69 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
+             xmlns:ignore="http://galasoft.ch/ignore"
+             mc:Ignorable="d ignore"
              x:Class="NotificationsClient.MainPage">
 
-    <StackLayout>
-        <StackLayout VerticalOptions="CenterAndExpand">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="100" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <BoxView BackgroundColor="#AF0000"
+                     Grid.ColumnSpan="2" />
+
+            <Image Source="Title.png"
+                   HorizontalOptions="Start"
+                   Margin="10,10,10,10" />
+
+            <ImageButton Source="Settings.png"
+                         Grid.Column="1"
+                         WidthRequest="50"
+                         HeightRequest="50"
+                         BackgroundColor="Transparent"
+                         Clicked="SettingsButtonClicked"
+                         Margin="0,0,10,0" />
+        </Grid>
+
+        <Image Source="Alarm.png"
+               Grid.Row="1"
+               Grid.RowSpan="2"
+               VerticalOptions="Center"
+               HorizontalOptions="Center"
+               Opacity="0.1" />
+
+        <StackLayout Grid.Row="1"
+                     VerticalOptions="Center"
+                     HorizontalOptions="Fill">
             <Label Text="{Binding LastNotification.Title}"
+                   FontAttributes="Bold"
                    HorizontalOptions="Center"
                    VerticalOptions="CenterAndExpand" />
-
+            
             <Label Text="{Binding LastNotification.Body}"
                    HorizontalOptions="Center"
                    VerticalOptions="CenterAndExpand" />
 
             <Label Text="{Binding LastNotification.Channel}"
+                   FontAttributes="Italic"
                    HorizontalOptions="Center"
                    VerticalOptions="CenterAndExpand" />
         </StackLayout>
 
-        <Button Text="Settings..."
-                Clicked="SettingsButtonClicked" />
-
         <Label Text="{Binding Status}"
+               Margin="10,0,10,5"
+               Grid.Row="2"
+               HorizontalTextAlignment="Center"
                HorizontalOptions="Center"
                VerticalOptions="EndAndExpand" />
-        
-    </StackLayout>
+    </Grid>
 </ContentPage>

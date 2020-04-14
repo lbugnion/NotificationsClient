@@ -27,7 +27,6 @@ namespace NotificationsClient
 
         public App()
         {
-            NavigationPage.SetHasNavigationBar(this, false);
             var navPage = new NavigationPage(new MainPage());
             var navService = new NavigationService();
             navService.Initialize(navPage);

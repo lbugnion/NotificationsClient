@@ -10,6 +10,7 @@ namespace NotificationsClient
         {
             InitializeComponent();
             BindingContext = App.Loc.Settings;
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         protected override bool OnBackButtonPressed()

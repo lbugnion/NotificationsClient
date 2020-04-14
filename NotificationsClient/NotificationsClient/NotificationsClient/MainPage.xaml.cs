@@ -19,6 +19,7 @@ namespace NotificationsClient
         {
             InitializeComponent();
             BindingContext = App.Loc.Main;
+            NavigationPage.SetHasNavigationBar(this, false);
         }
 
         private void SettingsButtonClicked(object sender, EventArgs e)
