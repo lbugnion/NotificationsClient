@@ -6,6 +6,7 @@ namespace NotificationsClient.ViewModel
     public class ViewModelLocator
     {
         public static readonly string MainPageKey = "MainPage";
+        public static readonly string ChannelPageKey = "ChannelPage";
         public static readonly string SettingsPageKey = "SettingsPage";
 
         static ViewModelLocator()

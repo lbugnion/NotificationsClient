@@ -40,14 +40,14 @@ namespace NotificationsClient.Model
 
         public async Task InitializeAsync()
         {
-            if (!_initialized)
-            {
-                if (!_database.TableMappings.Any(m => m.MappedType.Name == typeof(Notification).Name))
-                {
-                    await _database.CreateTablesAsync(CreateFlags.None, typeof(Notification)).ConfigureAwait(false);
-                    _initialized = true;
-                }
-            }
+            //if (!_initialized)
+            //{
+            //    if (!_database.TableMappings.Any(m => m.MappedType.Name == typeof(Notification).Name))
+            //    {
+            //        await _database.CreateTablesAsync(CreateFlags.None, typeof(Notification)).ConfigureAwait(false);
+            //        _initialized = true;
+            //    }
+            //}
         }
 
         private IList<Notification> GetChannelNotifications(string channel)

@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Views;
 using NotificationsClient.ViewModel;
 using System;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace NotificationsClient
@@ -29,6 +30,21 @@ namespace NotificationsClient
 
         protected override void OnAppearing()
         {
+        }
+
+        private void ChannelTapped(object sender, EventArgs e)
+        {
+            var item = (Cell)sender;
+            App.Loc.Main.NavigateToChannelCommand.Execute(item.BindingContext);
+        }
+
+        private async void ListViewRefreshing(object sender, EventArgs e)
+        {
+            await Task.Run(async () =>
+            {
+                await Task.Delay(1000);
+                ((ListView)sender).IsRefreshing = false;
+            });
         }
     }
 }

@@ -28,15 +28,25 @@ namespace NotificationsClient
         public App()
         {
             var navPage = new NavigationPage(new MainPage());
-            var navService = new NavigationService();
-            navService.Initialize(navPage);
-
-            navService.Configure(ViewModelLocator.MainPageKey, typeof(MainPage));
-            navService.Configure(ViewModelLocator.SettingsPageKey, typeof(SettingsPage));
 
             if (!SimpleIoc.Default.IsRegistered<INavigationService>())
             {
+                var navService = new NavigationService();
+                navService.Initialize(navPage);
+
+                navService.Configure(ViewModelLocator.MainPageKey, typeof(MainPage));
+                navService.Configure(ViewModelLocator.ChannelPageKey, typeof(ChannelPage));
+                navService.Configure(ViewModelLocator.SettingsPageKey, typeof(SettingsPage));
+
                 SimpleIoc.Default.Register<INavigationService>(() => navService);
+            }
+
+            if (!SimpleIoc.Default.IsRegistered<IDialogService>())
+            {
+                var dialogService = new DialogService();
+                dialogService.Initialize(navPage);
+
+                SimpleIoc.Default.Register<IDialogService>(() => dialogService);
             }
 
             if (!SimpleIoc.Default.IsRegistered<IDispatcherHelper>())
@@ -45,7 +55,6 @@ namespace NotificationsClient
             }
 
             Loc.Settings.LoadSettings();
-
             Loc.Main.Initialize().SafeFireAndForget(false);
 
             InitializeComponent();

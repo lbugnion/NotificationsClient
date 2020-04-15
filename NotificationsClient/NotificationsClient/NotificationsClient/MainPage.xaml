@@ -4,12 +4,13 @@
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ignore="http://galasoft.ch/ignore"
+             xmlns:helpers="clr-namespace:NotificationsClient.Helpers"
              mc:Ignorable="d ignore"
              x:Class="NotificationsClient.MainPage">
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
+            <RowDefinition Height="90" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -43,35 +44,68 @@
                HorizontalOptions="Center"
                Opacity="0.1" />
 
-        <StackLayout Grid.Row="1"
-                     VerticalOptions="Center"
-                     HorizontalOptions="Fill">
+        <ListView Grid.Row="1"
+                  VerticalOptions="Fill"
+                  HorizontalOptions="Fill"
+                  ItemsSource="{Binding Channels}"
+                  HasUnevenRows="True"
+                  IsPullToRefreshEnabled="True"
+                  Refreshing="ListViewRefreshing">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell Tapped="ChannelTapped">
+                        <ViewCell.ContextActions>
+                            <MenuItem Command="{Binding DeleteCommand}"
+                                      Text="Delete" />
+                        </ViewCell.ContextActions>                        
+                        
+                        <StackLayout Padding="10,0,10,5">
+                            <Label Text="{Binding Model.ChannelName}"
+                                   FontSize="Title" />
+
+                            <StackLayout Orientation="Horizontal">
+                                <Label Text="{Binding NumberOfNotifications}"
+                                       HorizontalOptions="Start"
+                                       FontSize="Subtitle"/>
+                                <Label Text=" notifications"
+                                       HorizontalOptions="StartAndExpand"
+                                       FontSize="Subtitle" />
+                            </StackLayout>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <!--<StackLayout Grid.Row="1"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Fill">
             <Label Text="{Binding LastNotification.Title}"
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"
-                   VerticalOptions="CenterAndExpand" />
+                    FontAttributes="Bold"
+                    HorizontalOptions="Center"
+                    VerticalOptions="CenterAndExpand" />
             
             <Label Text="{Binding LastNotification.Body}"
-                   HorizontalOptions="Center"
-                   VerticalOptions="CenterAndExpand" />
+                    HorizontalOptions="Center"
+                    VerticalOptions="CenterAndExpand" />
 
             <Label Text="{Binding LastNotification.Channel}"
-                   FontAttributes="Italic"
-                   HorizontalOptions="Center"
-                   VerticalOptions="CenterAndExpand" />
+                    FontAttributes="Italic"
+                    HorizontalOptions="Center"
+                    VerticalOptions="CenterAndExpand" />
 
             <StackLayout Orientation="Horizontal"
-                         HorizontalOptions="Center"
-                         VerticalOptions="CenterAndExpand">
+                            HorizontalOptions="Center"
+                            VerticalOptions="CenterAndExpand">
                 <Label Text="Sent at: "
-                       FontAttributes="Italic" />
+                        FontAttributes="Italic" />
 
                 <Label Text="{Binding LastNotification.SentTimeUtc}"
-                       FontAttributes="Italic"
-                       HorizontalOptions="Center"
-                       VerticalOptions="CenterAndExpand" />
+                        FontAttributes="Italic"
+                        HorizontalOptions="Center"
+                        VerticalOptions="CenterAndExpand" />
             </StackLayout>
-        </StackLayout>
+        </StackLayout>-->
 
         <Label Text="{Binding Status}"
                Margin="10,0,10,5"

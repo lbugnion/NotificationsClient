@@ -1,19 +1,19 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Helpers;
 using NotificationsClient.Model;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NotificationsClient.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        private Notification _lastNotification = null;
-
         private SettingsViewModel SettingsVm => 
             SimpleIoc.Default.GetInstance<SettingsViewModel>();
 
@@ -23,24 +23,86 @@ namespace NotificationsClient.ViewModel
         private INavigationService Nav => 
             SimpleIoc.Default.GetInstance<INavigationService>();
 
+        private IDialogService Dialog =>
+            SimpleIoc.Default.GetInstance<IDialogService>();
+
         private IDispatcherHelper Dispatcher =>
             SimpleIoc.Default.GetInstance<IDispatcherHelper>();
 
         private NotificationStorage Storage =>
             SimpleIoc.Default.GetInstance<NotificationStorage>();
 
-        public Notification LastNotification
+        public async Task DeleteChannel(ChannelInfoViewModel channelInfo)
         {
-            get => _lastNotification;
-            set => Set(() => LastNotification, ref _lastNotification, value);
+            if (channelInfo.NumberOfNotifications == 0)
+            {
+                return;
+            }
+
+            if (!await Dialog.ShowMessage(
+                "This is irreversible and will also delete all these notifications on other devices!!",
+                "Are you sure?",
+                "Yes",
+                "No",
+                null))
+            {
+                return;
+            }
+
+            if (channelInfo == _allNotifications)
+            {
+                _allNotifications.Clear();                
+                
+                while (Channels.Count > 1)
+                {
+                    Channels.Remove(Channels.Last());
+                }
+            }
+            else
+            {
+                if (Channels.Contains(channelInfo))
+                {
+                    foreach (var notif in channelInfo.Model.Notifications)
+                    {
+                        _allNotifications.RemoveNotification(notif);
+                    }
+
+                    Channels.Remove(channelInfo);
+                }
+            }
         }
 
         private string _status = string.Empty;
+
+        public ObservableCollection<ChannelInfoViewModel> Channels
+        {
+            get;
+            private set;
+        }
+
+        private ChannelInfoViewModel _allNotifications;
 
         public string Status
         {
             get => _status;
             set => Set(() => Status, ref _status, value);
+        }
+
+        private RelayCommand<ChannelInfoViewModel> _navigateToChannelCommand;
+
+        public RelayCommand<ChannelInfoViewModel> NavigateToChannelCommand
+        {
+            get => _navigateToChannelCommand
+                ?? (_navigateToChannelCommand = new RelayCommand<ChannelInfoViewModel>(
+                channel =>
+                {
+                    Nav.NavigateTo(ViewModelLocator.ChannelPageKey, channel);
+                }));
+        }
+
+        public MainViewModel()
+        {
+            Channels = new ObservableCollection<ChannelInfoViewModel>();
         }
 
         public async Task Initialize()
@@ -62,11 +124,17 @@ namespace NotificationsClient.ViewModel
             try
             {
                 await Storage.InitializeAsync();
+
+                // TODO Load the Channels collection
+
             }
             catch (Exception ex)
             {
                 ShowInfo($"Error when loading the notifications, try to synchronize ({ex.Message})");
             }
+
+            Channels.Add(_allNotifications = new ChannelInfoViewModel(
+                new ChannelInfo("All notifications")));
 
             // Prepare to receive new notifications
 
@@ -134,7 +202,20 @@ namespace NotificationsClient.ViewModel
         private void ClientNotificationReceived(object sender, Notification notification)
         {
             ShowInfo($"Notification received at {notification.ReceivedTimeUtc}");
-            LastNotification = notification;
+
+            Dispatcher.CheckBeginInvokeOnUI(() =>
+            {
+                var channel = Channels.FirstOrDefault(c => c.Model.ChannelName == notification.Channel);
+
+                if (channel == null)
+                {
+                    channel = new ChannelInfoViewModel(new ChannelInfo(notification.Channel));
+                    Channels.Add(channel);
+                }
+
+                _allNotifications.AddNotification(notification);
+                channel.AddNotification(notification);
+            });
         }
 
         // TODO Handle isError
