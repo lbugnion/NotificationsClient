@@ -6,7 +6,9 @@ namespace NotificationsClient.Helpers
 {
     public static class ObservableCollectionExtensions
     {
-        public static void Sort<T>(this ObservableCollection<T> collection, Comparison<T> comparison)
+        public static void Sort<T>(
+            this ObservableCollection<T> collection, 
+            Comparison<T> comparison)
         {
             var sortableList = new List<T>(collection);
             sortableList.Sort(comparison);

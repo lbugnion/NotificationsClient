@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Notifications;
-using SQLite;
 using System;
 using System.Globalization;
 
@@ -9,7 +8,7 @@ namespace NotificationsClient.Model
     public class Notification
     {
         [JsonIgnore]
-        [PrimaryKey, AutoIncrement]
+        [SQLite.PrimaryKey, SQLite.AutoIncrement]
         public int Id
         {
             get;

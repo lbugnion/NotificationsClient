@@ -3,6 +3,7 @@ using SQLite;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace NotificationsClient.Model
@@ -39,29 +40,63 @@ namespace NotificationsClient.Model
 
         public async Task InitializeAsync()
         {
-            //if (!_initialized)
-            //{
-            //    if (!_database.TableMappings.Any(m => m.MappedType.Name == typeof(Notification).Name))
-            //    {
-            //        await _database.CreateTablesAsync(CreateFlags.None, typeof(Notification)).ConfigureAwait(false);
-            //        _initialized = true;
-            //    }
-            //}
+            if (!_initialized)
+            {
+                if (!_database.TableMappings.Any(
+                    m => m.MappedType.Name == typeof(Notification).Name))
+                {
+                    await _database.CreateTablesAsync(
+                        CreateFlags.None, 
+                        typeof(Notification)).ConfigureAwait(false);
+                }
+
+                if (!_database.TableMappings.Any(
+                    m => m.MappedType.Name == typeof(ChannelInfo).Name))
+                {
+                    await _database.CreateTablesAsync(
+                        CreateFlags.None,
+                        typeof(ChannelInfo)).ConfigureAwait(false);
+                }
+
+                _initialized = true;
+            }
         }
 
-        private IList<Notification> GetChannelNotifications(string channel)
+        public Task<List<ChannelInfo>> GetAllChannels()
         {
-            return null;
+            return _database.Table<ChannelInfo>().ToListAsync();
         }
 
-        public void SaveNotification(Notification notif)
+        public Task<List<Notification>> GetChannelNotifications(ChannelInfo channel)
         {
-            // Save in today's storage
+            return _database.Table<Notification>()
+                .Where(n => n.Channel == channel.ChannelName)
+                .OrderByDescending(n => n.ReceivedTimeUtc)
+                .ToListAsync();
+        }
 
+        public Task<int> SaveChannelInfo(ChannelInfo channel)
+        {
+            if (channel.Id != 0)
+            {
+                return _database.UpdateAsync(channel);
+            }
+            else
+            {
+                return _database.InsertAsync(channel);
+            }
+        }
 
-            // Save in channel storage
-
-
+        public Task<int> SaveNotification(Notification notification)
+        {
+            if (notification.Id != 0)
+            {
+                return _database.UpdateAsync(notification);
+            }
+            else
+            {
+                return _database.InsertAsync(notification);
+            }
         }
 
         public IList<Notification> GetNotifications(DateTime startDate, int days)

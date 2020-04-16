@@ -17,6 +17,7 @@ namespace NotificationsClient.ViewModel
         {
             SimpleIoc.Default.Register<MainViewModel>();
             SimpleIoc.Default.Register<ConfigurationClient>();
+            SimpleIoc.Default.Register<NotificationStorage>();
             SimpleIoc.Default.Register<SettingsViewModel>();
         }
 

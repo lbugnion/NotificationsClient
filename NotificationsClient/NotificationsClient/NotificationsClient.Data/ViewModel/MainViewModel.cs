@@ -140,19 +140,37 @@ namespace NotificationsClient.ViewModel
 
             try
             {
-                //await Storage.InitializeAsync();
+                _allNotifications = new ChannelInfoViewModel(
+                    new ChannelInfo(Texts.AllNotificationsChannelTitle),
+                    true);
+                
+                await Storage.InitializeAsync();
 
-                // TODO Load the Channels collection
+                var channelsInDb = await Storage.GetAllChannels();
 
+                foreach (var channel in channelsInDb)
+                {
+                    var notificationsInChannel = await Storage.GetChannelNotifications(channel);
+                    
+                    // TODO Use Add Range
+                    
+                    foreach (var notification in notificationsInChannel)
+                    {
+                        channel.Notifications.Add(notification);
+                        _allNotifications.Model.Notifications.Add(notification);
+                    }
+
+                    Channels.Add(new ChannelInfoViewModel(channel));
+                }
+
+                _allNotifications.Model.Notifications.Sort((a, b) => b.ReceivedTimeUtc.CompareTo(a.ReceivedTimeUtc));
             }
             catch (Exception ex)
             {
                 ShowInfo(string.Format(Texts.ErrorLoadingFromStorage, ex.Message));
             }
 
-            Channels.Insert(0, _allNotifications = new ChannelInfoViewModel(
-                new ChannelInfo(Texts.AllNotificationsChannelTitle),
-                true));
+            Channels.Insert(0, _allNotifications);
 
             _isDatabaseLoaded = true;
 
@@ -247,10 +265,13 @@ namespace NotificationsClient.ViewModel
                 {
                     channel = new ChannelInfoViewModel(new ChannelInfo(notification.Channel));
                     Channels.Add(channel);
+                    Storage.SaveChannelInfo(channel.Model);
                 }
 
                 _allNotifications.AddNewNotification(notification);
                 channel.AddNewNotification(notification);
+
+                Storage.SaveNotification(notification);
 
                 Channels.Sort((a, b) => 
                 {
