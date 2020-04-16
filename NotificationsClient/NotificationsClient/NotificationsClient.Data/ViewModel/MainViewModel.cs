@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Helpers;
 using NotificationsClient.Model;
+using NotificationsClient.Resources;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -40,10 +41,10 @@ namespace NotificationsClient.ViewModel
             }
 
             if (!await Dialog.ShowMessage(
-                "This is irreversible and will also delete all these notifications on other devices!!",
-                "Are you sure?",
-                "Yes",
-                "No",
+                Texts.DeleteNotificationWarningMessage,
+                Texts.AreYouSure,
+                Texts.Yes,
+                Texts.No,
                 null))
             {
                 return;
@@ -70,9 +71,11 @@ namespace NotificationsClient.ViewModel
                     Channels.Remove(channelInfo);
                 }
             }
+
+            ShowInfo(Texts.ReadyForNotifications);
         }
 
-        private string _status = string.Empty;
+        private string _status = Texts.StartingUp;
 
         public ObservableCollection<ChannelInfoViewModel> Channels
         {
@@ -88,7 +91,16 @@ namespace NotificationsClient.ViewModel
             set => Set(() => Status, ref _status, value);
         }
 
+        private bool _isStatusBlinking;
+
+        public bool IsStatusBlinking
+        {
+            get => _isStatusBlinking;
+            set => Set(ref _isStatusBlinking, value);
+        }
+
         private RelayCommand<ChannelInfoViewModel> _navigateToChannelCommand;
+        private bool _isDatabaseLoaded;
 
         public RelayCommand<ChannelInfoViewModel> NavigateToChannelCommand
         {
@@ -107,7 +119,7 @@ namespace NotificationsClient.ViewModel
 
         public async Task Initialize()
         {
-            ShowInfo("Initializing...");            
+            ShowInfo(Texts.Initializing);            
 
             SettingsVm.Model.PropertyChanged -= SettingsPropertyChanged;
             SettingsVm.Model.PropertyChanged += SettingsPropertyChanged;
@@ -119,22 +131,30 @@ namespace NotificationsClient.ViewModel
                 return;
             }
 
+            if (_isDatabaseLoaded)
+            {
+                return;
+            }
+
             // Initialize and load the database
 
             try
             {
-                await Storage.InitializeAsync();
+                //await Storage.InitializeAsync();
 
                 // TODO Load the Channels collection
 
             }
             catch (Exception ex)
             {
-                ShowInfo($"Error when loading the notifications, try to synchronize ({ex.Message})");
+                ShowInfo(string.Format(Texts.ErrorLoadingFromStorage, ex.Message));
             }
 
-            Channels.Add(_allNotifications = new ChannelInfoViewModel(
-                new ChannelInfo("All notifications")));
+            Channels.Insert(0, _allNotifications = new ChannelInfoViewModel(
+                new ChannelInfo(Texts.AllNotificationsChannelTitle),
+                true));
+
+            _isDatabaseLoaded = true;
 
             // Prepare to receive new notifications
 
@@ -146,10 +166,17 @@ namespace NotificationsClient.ViewModel
             client.StatusChanged -= ClientStatusChanged;
             client.StatusChanged += ClientStatusChanged;
 
+#if DEBUG
+            if (ViewModelLocator.UseDesignData)
+            {
+                DesignDataGenerator.SendRandomNotifications(200, 12);
+            }
+#endif
+
             if (SettingsVm.Model.IsRegisteredSuccessfully)
             {
                 await client.Initialize(false);
-                ShowInfo("Ready to receive notifications");
+                ShowInfo(Texts.ReadyForNotifications);
                 return;
             }
 
@@ -161,7 +188,7 @@ namespace NotificationsClient.ViewModel
             catch (Exception ex)
             {
                 SettingsVm.Model.IsRegisteredSuccessfully = false;
-                ShowInfo($"Error when initializing: {ex.Message}", true);
+                ShowInfo(string.Format(Texts.ErrorInitializing, ex.Message), true);
             }
         }
 
@@ -185,11 +212,11 @@ namespace NotificationsClient.ViewModel
             switch (e)
             {
                 case NotificationStatus.Initializing:
-                    ShowInfo("Initializing...");
+                    ShowInfo(Texts.Initializing);
                     break;
 
                 case NotificationStatus.Ready:
-                    ShowInfo("Ready to receive notifications");
+                    ShowInfo(Texts.ReadyForNotifications);
                     break;
             }
         }
@@ -201,7 +228,16 @@ namespace NotificationsClient.ViewModel
 
         private void ClientNotificationReceived(object sender, Notification notification)
         {
-            ShowInfo($"Notification received at {notification.ReceivedTimeUtc}");
+            if (notification.ReceivedTimeUtc <= DateTime.MinValue)
+            {
+                notification.ReceivedTimeUtc = DateTime.UtcNow;
+            }
+
+            ShowInfo(string.Format(
+                Texts.NotificationReceived, 
+                notification.ReceivedTimeUtc));
+
+            IsStatusBlinking = true;
 
             Dispatcher.CheckBeginInvokeOnUI(() =>
             {
@@ -213,18 +249,30 @@ namespace NotificationsClient.ViewModel
                     Channels.Add(channel);
                 }
 
-                _allNotifications.AddNotification(notification);
-                channel.AddNotification(notification);
+                _allNotifications.AddNewNotification(notification);
+                channel.AddNewNotification(notification);
+
+                Channels.Sort((a, b) => 
+                {
+                    if (a.IsAllNotifications)
+                    {
+                        return -1;
+                    }
+
+                    if (b.IsAllNotifications)
+                    {
+                        return 1;
+                    }
+
+                    return b.LastReceived.CompareTo(a.LastReceived);
+                });
             });
         }
 
-        // TODO Handle isError
         public void ShowInfo(string message, bool isError = false)
         {
-            Dispatcher.CheckBeginInvokeOnUI(() =>
-            {
-                Status = message;
-            });
+            Status = message;
+            IsStatusBlinking = isError;
         }
     }
 }

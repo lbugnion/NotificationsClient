@@ -3,12 +3,14 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Model;
+using System;
+using System.Linq;
 
 namespace NotificationsClient.ViewModel
 {
     public class ChannelInfoViewModel : ViewModelBase
     {
-        private MainViewModel Main =>
+        public MainViewModel Main =>
             SimpleIoc.Default.GetInstance<MainViewModel>();
 
         private INavigationService Nav =>
@@ -18,6 +20,8 @@ namespace NotificationsClient.ViewModel
         {
             get;
         }
+
+        public bool IsAllNotifications { get; }
 
         private RelayCommand<bool> _deleteCommand;
 
@@ -36,14 +40,27 @@ namespace NotificationsClient.ViewModel
                 }));
         }
 
-        public int NumberOfNotifications
+        public int NumberOfNotifications => Model.Notifications.Count;
+
+        public DateTime LastReceived
         {
-            get => Model.Notifications.Count;
+            get
+            {
+                if (Model.Notifications.Count == 0)
+                {
+                    return DateTime.MinValue;
+                }
+
+                return Model.Notifications.First().ReceivedTimeUtc;
+            }
         }
 
-        public ChannelInfoViewModel(ChannelInfo model)
+        public bool IsLastReceivedVisible => LastReceived > DateTime.MinValue;
+
+        public ChannelInfoViewModel(ChannelInfo model, bool isAllNotifications = false)
         {
             Model = model;
+            IsAllNotifications = isAllNotifications;
         }
 
         public void RemoveNotification(Notification notification)
@@ -55,10 +72,12 @@ namespace NotificationsClient.ViewModel
             }
         }
 
-        public void AddNotification(Notification notification)
+        public void AddNewNotification(Notification notification)
         {
-            Model.Notifications.Add(notification);
+            Model.Notifications.Insert(0, notification);
             RaisePropertyChanged(() => NumberOfNotifications);
+            RaisePropertyChanged(() => IsLastReceivedVisible);
+            RaisePropertyChanged(() => LastReceived);
         }
 
         public void Clear()

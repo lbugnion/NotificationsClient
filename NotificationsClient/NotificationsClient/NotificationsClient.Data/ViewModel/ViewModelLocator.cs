@@ -5,6 +5,10 @@ namespace NotificationsClient.ViewModel
 {
     public class ViewModelLocator
     {
+#if DEBUG
+        public const bool UseDesignData = false;
+#endif
+
         public static readonly string MainPageKey = "MainPage";
         public static readonly string ChannelPageKey = "ChannelPage";
         public static readonly string SettingsPageKey = "SettingsPage";

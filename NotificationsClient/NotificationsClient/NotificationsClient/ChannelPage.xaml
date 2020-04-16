@@ -3,20 +3,86 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d"
+             xmlns:controls="clr-namespace:NotificationsClient.Controls"
+             xmlns:ignore="http://galasoft.ch/ignore"
+             mc:Ignorable="d ignore"
              x:Class="NotificationsClient.ChannelPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary Source="Styles/Colors.xaml" />
+        <ResourceDictionary Source="Styles/TextStyles.xaml" />
+        <ResourceDictionary Source="Styles/MiscStyles.xaml" />
+        <ResourceDictionary Source="Styles/ListStyles.xaml" />
+    </ContentPage.Resources>
+
     <ContentPage.Content>
-        <StackLayout VerticalOptions="CenterAndExpand"
-                     HorizontalOptions="CenterAndExpand">
-            <Label Text="{Binding Model.ChannelName}" />
 
-            <StackLayout Orientation="Horizontal">
-                <Label Text="{Binding NumberOfNotifications}"
-                       HorizontalOptions="Center" />
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-                <Label Text=" notifications"
-                       HorizontalOptions="Center" />
-            </StackLayout>
-        </StackLayout>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <BoxView BackgroundColor="{StaticResource TitleBackgroundColor}"
+                         Grid.ColumnSpan="2" />
+
+                <Label Text="{Binding Model.ChannelName}"
+                       Style="{StaticResource ListHeaderStyle}" />
+
+                <ImageButton Source="Settings.png"
+                             Grid.Column="1"
+                             Style="{StaticResource ImageButtonStyle}"
+                             Clicked="TestClicked" />
+            </Grid>
+
+            <Image Source="Alarm.png"
+                   Grid.Row="1"
+                   Grid.RowSpan="2"
+                   Style="{StaticResource HeroImageStyle}" />
+
+            <ListView ItemsSource="{Binding Model.Notifications}"
+                      Grid.Row="1"
+                      VerticalOptions="Fill"
+                      Style="{StaticResource ListStyle}">
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell>
+                            <StackLayout Padding="20,5,20,10">
+                                <Label Text="{Binding Title}"
+                                       Style="{StaticResource ListTitleStyle}" />
+
+                                <Label Text="{Binding Body}"
+                                       Style="{StaticResource ListBodyStyle}" />
+
+                                <StackLayout Orientation="Horizontal"
+                                             IsVisible="{Binding IsLastReceivedVisible}">
+                                    <Label Text="Received"
+                                           Style="{StaticResource ListSubTitleStyle}" />
+
+                                    <Label Text="{Binding ReceivedTimeUtc}"
+                                           Style="{StaticResource ListSubTitleStyle}" />
+                                </StackLayout>
+
+                                <BoxView Style="{StaticResource SeparatorStyle}" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>                
+            </ListView>
+
+            <controls:StatusBar x:Name="Status"
+                                IsBlinking="{Binding Main.IsStatusBlinking, Mode=TwoWay}"
+                                StatusText="{Binding Main.Status}"
+                                Grid.Row="2" />
+
+        </Grid>        
     </ContentPage.Content>
 </ContentPage>

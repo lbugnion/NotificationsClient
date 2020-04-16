@@ -3,10 +3,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:d="http://xamarin.com/schemas/2014/forms/design"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:NotificationsClient.Controls"
              xmlns:ignore="http://galasoft.ch/ignore"
-             xmlns:helpers="clr-namespace:NotificationsClient.Helpers"
              mc:Ignorable="d ignore"
              x:Class="NotificationsClient.MainPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary Source="Styles/Colors.xaml" />
+        <ResourceDictionary Source="Styles/TextStyles.xaml" />
+        <ResourceDictionary Source="Styles/MiscStyles.xaml" />
+        <ResourceDictionary Source="Styles/ListStyles.xaml" />
+    </ContentPage.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -21,34 +28,26 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <BoxView BackgroundColor="#AF0000"
+            <BoxView BackgroundColor="{StaticResource TitleBackgroundColor}"
                      Grid.ColumnSpan="2" />
 
             <Image Source="Title.png"
-                   HorizontalOptions="Start"
-                   Margin="10,10,10,10" />
+                   Style="{StaticResource TitleImageStyle}" />
 
             <ImageButton Source="Settings.png"
                          Grid.Column="1"
-                         WidthRequest="50"
-                         HeightRequest="50"
-                         BackgroundColor="Transparent"
-                         Clicked="SettingsButtonClicked"
-                         Margin="0,0,10,0" />
+                         Style="{StaticResource ImageButtonStyle}"
+                         Clicked="SettingsButtonClicked" />
         </Grid>
 
         <Image Source="Alarm.png"
                Grid.Row="1"
                Grid.RowSpan="2"
-               VerticalOptions="Center"
-               HorizontalOptions="Center"
-               Opacity="0.1" />
+               Style="{StaticResource HeroImageStyle}" />
 
         <ListView Grid.Row="1"
-                  VerticalOptions="Fill"
-                  HorizontalOptions="Fill"
+                  Style="{StaticResource ListStyle}"
                   ItemsSource="{Binding Channels}"
-                  HasUnevenRows="True"
                   IsPullToRefreshEnabled="True"
                   Refreshing="ListViewRefreshing">
             <ListView.ItemTemplate>
@@ -57,61 +56,36 @@
                         <ViewCell.ContextActions>
                             <MenuItem Command="{Binding DeleteCommand}"
                                       Text="Delete" />
-                        </ViewCell.ContextActions>                        
-                        
-                        <StackLayout Padding="10,0,10,5">
-                            <Label Text="{Binding Model.ChannelName}"
-                                   FontSize="Title" />
+                        </ViewCell.ContextActions>
 
-                            <StackLayout Orientation="Horizontal">
-                                <Label Text="{Binding NumberOfNotifications}"
-                                       HorizontalOptions="Start"
-                                       FontSize="Subtitle"/>
-                                <Label Text=" notifications"
-                                       HorizontalOptions="StartAndExpand"
-                                       FontSize="Subtitle" />
+                        <Frame Style="{StaticResource TemplateContainerStyle}">
+                            <StackLayout>
+                                <Label Text="{Binding Model.ChannelName}"
+                                       Style="{StaticResource ListTitleStyle}" />
+
+                                <StackLayout Orientation="Horizontal">
+                                    <Label Text="{Binding NumberOfNotifications}"
+                                           Style="{StaticResource ListSubTitleStyle}" />
+
+                                    <Label Text="notifications"
+                                           Style="{StaticResource ListSubTitleStyle}" />
+
+                                    <Label Text="{Binding LastReceived}"
+                                           Style="{StaticResource ListSubTitleStyle}"
+                                           IsVisible="{Binding IsLastReceivedVisible}" />
+                                </StackLayout>
+
+                                <BoxView Style="{StaticResource SeparatorStyle}" />
                             </StackLayout>
-                        </StackLayout>
+                        </Frame>                        
                     </ViewCell>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <!--<StackLayout Grid.Row="1"
-                        VerticalOptions="Center"
-                        HorizontalOptions="Fill">
-            <Label Text="{Binding LastNotification.Title}"
-                    FontAttributes="Bold"
-                    HorizontalOptions="Center"
-                    VerticalOptions="CenterAndExpand" />
-            
-            <Label Text="{Binding LastNotification.Body}"
-                    HorizontalOptions="Center"
-                    VerticalOptions="CenterAndExpand" />
-
-            <Label Text="{Binding LastNotification.Channel}"
-                    FontAttributes="Italic"
-                    HorizontalOptions="Center"
-                    VerticalOptions="CenterAndExpand" />
-
-            <StackLayout Orientation="Horizontal"
-                            HorizontalOptions="Center"
-                            VerticalOptions="CenterAndExpand">
-                <Label Text="Sent at: "
-                        FontAttributes="Italic" />
-
-                <Label Text="{Binding LastNotification.SentTimeUtc}"
-                        FontAttributes="Italic"
-                        HorizontalOptions="Center"
-                        VerticalOptions="CenterAndExpand" />
-            </StackLayout>
-        </StackLayout>-->
-
-        <Label Text="{Binding Status}"
-               Margin="10,0,10,5"
-               Grid.Row="2"
-               HorizontalTextAlignment="Center"
-               HorizontalOptions="Center"
-               VerticalOptions="EndAndExpand" />
+        <controls:StatusBar x:Name="Status"
+                            IsBlinking="{Binding IsStatusBlinking, Mode=TwoWay}"
+                            StatusText="{Binding Status}"
+                            Grid.Row="2" />
     </Grid>
 </ContentPage>

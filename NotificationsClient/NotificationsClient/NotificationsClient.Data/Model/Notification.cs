@@ -101,7 +101,6 @@ namespace NotificationsClient.Model
                 notification.Channel = notificationParts[(int)UwpArgumentsParts.Channel];
             }
 
-            notification.ReceivedTimeUtc = DateTime.UtcNow;
             return notification;
         }
     }
