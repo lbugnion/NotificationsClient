@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight.Ioc;
 using Newtonsoft.Json;
 using Notifications;
+using NotificationsClient.Resources;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -69,7 +70,8 @@ namespace NotificationsClient.Model
 
             if (!response.IsSuccessStatusCode)
             {
-                throw new InvalidOperationException($"Invalid response in ConfigurationClient with {Settings.FunctionsAppName} and {Settings.FunctionCode}");
+                throw new InvalidOperationException(
+                    Texts.ErrorLoadingConfiguration);
             };
 
             var json = await response.Content.ReadAsStringAsync();

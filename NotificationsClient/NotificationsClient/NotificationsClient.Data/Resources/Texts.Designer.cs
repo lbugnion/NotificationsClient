@@ -97,6 +97,15 @@ namespace NotificationsClient.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Error loading the configuration, please check the settings.
+        /// </summary>
+        internal static string ErrorLoadingConfiguration {
+            get {
+                return ResourceManager.GetString("ErrorLoadingConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error when loading the notifications, try to synchronize ({0}).
         /// </summary>
         internal static string ErrorLoadingFromStorage {

@@ -133,6 +133,10 @@
     <value>Error when initializing ({0})</value>
     <comment>Error when initializing ({0})</comment>
   </data>
+  <data name="ErrorLoadingConfiguration" xml:space="preserve">
+    <value>Error loading the configuration, please check the settings</value>
+    <comment>Error loading the configuration, please check the settings</comment>
+  </data>
   <data name="ErrorLoadingFromStorage" xml:space="preserve">
     <value>Error when loading the notifications, try to synchronize ({0})</value>
     <comment>Error when loading the notifications, try to synchronize ({0})</comment>
