@@ -23,8 +23,7 @@
                    BorderColor="{StaticResource TitleBackgroundColor}">
                 <Label x:Name="ErrorLabel"
                        TextColor="{StaticResource StatusAccentColor}"
-                       Style="{StaticResource StatusTextStyle}"
-                       FontAttributes="Bold" />
+                       Style="{StaticResource StatusTextStyle}" />
             </Frame>
 
             <Frame BackgroundColor="{StaticResource StatusAccentColor}"

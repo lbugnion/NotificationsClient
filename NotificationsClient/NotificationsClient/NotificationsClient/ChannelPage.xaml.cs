@@ -13,10 +13,5 @@ namespace NotificationsClient
             BindingContext = selectedChannel;
             NavigationPage.SetHasNavigationBar(this, false);
         }
-
-        private void TestClicked(object sender, System.EventArgs e)
-        {
-            Status.IsBlinking = !Status.IsBlinking;
-        }
     }
 }

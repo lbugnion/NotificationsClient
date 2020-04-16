@@ -35,11 +35,6 @@
 
                 <Label Text="{Binding Model.ChannelName}"
                        Style="{StaticResource ListHeaderStyle}" />
-
-                <ImageButton Source="Settings.png"
-                             Grid.Column="1"
-                             Style="{StaticResource ImageButtonStyle}"
-                             Clicked="TestClicked" />
             </Grid>
 
             <Image Source="Alarm.png"
