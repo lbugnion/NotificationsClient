@@ -34,7 +34,7 @@ namespace NotificationsClient
 
                 var channel = $"Channel {groupIndex}";
                 var notification = GetRandomNotification(channel);
-                client.RaiseNotificationReceived(notification);
+                client.RaiseNotificationReceived(notification, false);
             }
         }
     }

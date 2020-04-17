@@ -71,7 +71,7 @@ namespace NotificationsClient.Droid.Model
             var notification = NotificationsClient.Model.Notification.Parse(argument);
 
             var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
-            client.RaiseNotificationReceived(notification);
+            client.RaiseNotificationReceived(notification, false);
         }
     }
 }

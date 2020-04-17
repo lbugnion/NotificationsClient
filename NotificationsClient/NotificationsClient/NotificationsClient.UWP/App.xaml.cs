@@ -131,7 +131,7 @@ namespace NotificationsClient.UWP
 
             if (!string.IsNullOrEmpty(arguments))
             {
-                notificationsServiceClient.RaiseNotificationReceived(arguments);
+                notificationsServiceClient.RaiseNotificationReceived(arguments, true);
             }
         }
     }

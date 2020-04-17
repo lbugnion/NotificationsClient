@@ -3,16 +3,17 @@ using Microsoft.WindowsAzure.Messaging;
 using Notifications;
 using NotificationsClient.Model;
 using System;
-using System.Globalization;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Networking.PushNotifications;
 
+// TODO Maybe we can rationalize this code with the other NotificationsServiceClient
 namespace NotificationsClient.UWP.Model
 {
     public class NotificationsServiceClient : INotificationsServiceClient
     {
-        public event EventHandler<Notification> NotificationReceived;
+        public event EventHandler<NotificationEventArgs> NotificationReceived;
         public event EventHandler<string> ErrorHappened;
         public event EventHandler<NotificationStatus> StatusChanged;
 
@@ -20,6 +21,9 @@ namespace NotificationsClient.UWP.Model
 
         private Settings Settings =>
             SimpleIoc.Default.GetInstance<Settings>();
+
+        private List<Notification> _delayedNotifications
+            = new List<Notification>();
 
         public async Task Initialize(bool registerHub)
         {
@@ -114,19 +118,46 @@ namespace NotificationsClient.UWP.Model
                     .FirstChild; // toast
 
                 var launchAttribute = toastNode.Attributes.FirstOrDefault(a => a.NodeName == "launch");
-                RaiseNotificationReceived(launchAttribute.NodeValue.ToString());
+                RaiseNotificationReceived(launchAttribute.NodeValue.ToString(), false);
             }
         }
 
-        public void RaiseNotificationReceived(Notification notification)
+        public void RaiseNotificationReceived(Notification notification, bool isDelayed)
         {
-            NotificationReceived?.Invoke(this, notification);
+            if (isDelayed)
+            {
+                _delayedNotifications.Add(notification);
+            }
+            else
+            {
+                NotificationReceived?.Invoke(this, new NotificationEventArgs
+                {
+                    Notification = notification
+                });
+            }
         }
 
-        internal void RaiseNotificationReceived(string arguments)
+        internal void RaiseNotificationReceived(string arguments, bool isDelayed)
         {
             var notification = Notification.Parse(arguments);
-            RaiseNotificationReceived(notification);
+            RaiseNotificationReceived(notification, isDelayed);
+        }
+
+        public void RaiseDelayedNotifications()
+        {
+            if (NotificationReceived == null)
+            {
+                return;
+            }
+
+            foreach (var notification in _delayedNotifications)
+            {
+                NotificationReceived(this, new NotificationEventArgs
+                {
+                    Notification = notification,
+                    IsDelayed = true
+                });
+            }
         }
     }
 }

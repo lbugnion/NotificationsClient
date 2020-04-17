@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Helpers;
 using NotificationsClient.ViewModel;
+using System.Diagnostics;
 using Xamarin.Forms;
 
 namespace NotificationsClient
@@ -29,24 +30,33 @@ namespace NotificationsClient
         {
             var navPage = new NavigationPage(new MainPage());
 
+            NavigationService navigationService;
+
             if (!SimpleIoc.Default.IsRegistered<INavigationService>())
             {
-                var navService = new NavigationService();
-                navService.Initialize(navPage);
+                navigationService = new NavigationService();
 
-                navService.Configure(ViewModelLocator.MainPageKey, typeof(MainPage));
-                navService.Configure(ViewModelLocator.ChannelPageKey, typeof(ChannelPage));
-                navService.Configure(ViewModelLocator.SettingsPageKey, typeof(SettingsPage));
+                navigationService.Configure(ViewModelLocator.MainPageKey, typeof(MainPage));
+                navigationService.Configure(ViewModelLocator.ChannelPageKey, typeof(ChannelPage));
+                navigationService.Configure(ViewModelLocator.SettingsPageKey, typeof(SettingsPage));
 
-                SimpleIoc.Default.Register<INavigationService>(() => navService);
+                SimpleIoc.Default.Register<INavigationService>(() => navigationService);
             }
+            else
+            {
+                navigationService = (NavigationService)SimpleIoc.Default.GetInstance<INavigationService>();
+            }
+
+            DialogService dialogService;
 
             if (!SimpleIoc.Default.IsRegistered<IDialogService>())
             {
-                var dialogService = new DialogService();
-                dialogService.Initialize(navPage);
-
+                dialogService = new DialogService();
                 SimpleIoc.Default.Register<IDialogService>(() => dialogService);
+            }
+            else
+            {
+                dialogService = (DialogService)SimpleIoc.Default.GetInstance<IDialogService>();
             }
 
             if (!SimpleIoc.Default.IsRegistered<IDispatcherHelper>())
@@ -55,11 +65,13 @@ namespace NotificationsClient
             }
 
             Loc.Settings.LoadSettings();
-            Loc.Main.Initialize().SafeFireAndForget(false);
+
+            dialogService.Initialize(navPage);
+            navigationService.Initialize(navPage);
 
             InitializeComponent();
-
             MainPage = navPage;
+            Loc.Main.Initialize().SafeFireAndForget(false);
         }
 
         protected override void OnStart()

@@ -131,6 +131,17 @@ namespace NotificationsClient.ViewModel
                 return;
             }
 
+            // Prepare to receive new notifications
+
+            var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
+            client.NotificationReceived -= ClientNotificationReceived;
+            client.NotificationReceived += ClientNotificationReceived;
+            client.ErrorHappened -= ClientErrorHappened;
+            client.ErrorHappened += ClientErrorHappened;
+            client.StatusChanged -= ClientStatusChanged;
+            client.StatusChanged += ClientStatusChanged;
+            client.RaiseDelayedNotifications();
+
             if (_isDatabaseLoaded)
             {
                 return;
@@ -173,16 +184,6 @@ namespace NotificationsClient.ViewModel
             Channels.Insert(0, _allNotifications);
 
             _isDatabaseLoaded = true;
-
-            // Prepare to receive new notifications
-
-            var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
-            client.NotificationReceived -= ClientNotificationReceived;
-            client.NotificationReceived += ClientNotificationReceived;
-            client.ErrorHappened -= ClientErrorHappened;
-            client.ErrorHappened += ClientErrorHappened;
-            client.StatusChanged -= ClientStatusChanged;
-            client.StatusChanged += ClientStatusChanged;
 
 #if DEBUG
             if (ViewModelLocator.UseDesignData)
@@ -244,34 +245,37 @@ namespace NotificationsClient.ViewModel
             ShowInfo(message, true);
         }
 
-        private void ClientNotificationReceived(object sender, Notification notification)
+        private void ClientNotificationReceived(object sender, NotificationEventArgs args)
         {
-            if (notification.ReceivedTimeUtc <= DateTime.MinValue)
+            if (args.Notification.ReceivedTimeUtc <= DateTime.MinValue)
             {
-                notification.ReceivedTimeUtc = DateTime.UtcNow;
+                args.Notification.ReceivedTimeUtc = DateTime.UtcNow;
             }
 
             ShowInfo(string.Format(
-                Texts.NotificationReceived, 
-                notification.ReceivedTimeUtc));
+                Texts.NotificationReceived,
+                args.Notification.ReceivedTimeUtc));
 
-            IsStatusBlinking = true;
+            IsStatusBlinking = !args.IsDelayed;
 
             Dispatcher.CheckBeginInvokeOnUI(() =>
             {
-                var channel = Channels.FirstOrDefault(c => c.Model.ChannelName == notification.Channel);
+                var channel = Channels.FirstOrDefault(
+                    c => c.Model.ChannelName == args.Notification.Channel);
 
                 if (channel == null)
                 {
-                    channel = new ChannelInfoViewModel(new ChannelInfo(notification.Channel));
+                    channel = new ChannelInfoViewModel(
+                        new ChannelInfo(args.Notification.Channel));
+
                     Channels.Add(channel);
                     Storage.SaveChannelInfo(channel.Model);
                 }
 
-                _allNotifications.AddNewNotification(notification);
-                channel.AddNewNotification(notification);
+                _allNotifications.AddNewNotification(args.Notification);
+                channel.AddNewNotification(args.Notification);
 
-                Storage.SaveNotification(notification);
+                Storage.SaveNotification(args.Notification);
 
                 Channels.Sort((a, b) => 
                 {

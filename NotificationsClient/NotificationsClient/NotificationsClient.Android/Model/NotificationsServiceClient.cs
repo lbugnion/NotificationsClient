@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.Ioc;
 using Notifications;
 using NotificationsClient.Model;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using WindowsAzure.Messaging;
 
@@ -14,12 +15,15 @@ namespace NotificationsClient.Droid.Model
     {
         private static readonly string Template = $"{{\"notification\":{{\"{FunctionConstants.Body}\":\"$({FunctionConstants.Body})\",\"{FunctionConstants.Title}\":\"$({FunctionConstants.Title})\"}},\"data\":{{\"{FunctionConstants.UniqueId}\":\"$({FunctionConstants.UniqueId})\",\"{FunctionConstants.Title}\":\"$({FunctionConstants.Title})\",\"{FunctionConstants.Body}\":\"$({FunctionConstants.Body})\",\"{FunctionConstants.SentTimeUtc}\":\"$({FunctionConstants.SentTimeUtc})\",\"{FunctionConstants.Channel}\":\"$({FunctionConstants.Channel})\"}}}}";
 
-        public event EventHandler<NotificationsClient.Model.Notification> NotificationReceived;
+        public event EventHandler<NotificationEventArgs> NotificationReceived;
         public event EventHandler<string> ErrorHappened;
         public event EventHandler<NotificationStatus> StatusChanged;
 
         private const string ChannelId = "NotificationsClient.Channel";
         public const int NotificationId = 100;
+
+        private List<NotificationsClient.Model.Notification> _delayedNotifications 
+            = new List<NotificationsClient.Model.Notification>();
 
         private Settings Settings =>
             SimpleIoc.Default.GetInstance<Settings>();
@@ -109,9 +113,21 @@ namespace NotificationsClient.Droid.Model
             }
         }
 
-        public void RaiseNotificationReceived(NotificationsClient.Model.Notification notification)
+        public void RaiseNotificationReceived(
+            NotificationsClient.Model.Notification notification,
+            bool isDelayed)
         {
-            NotificationReceived?.Invoke(this, notification);
+            if (isDelayed)
+            {
+                _delayedNotifications.Add(notification);
+            }
+            else
+            {
+                NotificationReceived?.Invoke(this, new NotificationEventArgs
+                {
+                    Notification = notification
+                });
+            }
         }
 
         internal void RaiseStatusReady()
@@ -203,6 +219,23 @@ namespace NotificationsClient.Droid.Model
                 Constants.NotificationHubTagName);
 
             client.RaiseStatusReady();
+        }
+
+        public void RaiseDelayedNotifications()
+        {
+            if (NotificationReceived == null)
+            {
+                return;
+            }
+
+            foreach (var notification in _delayedNotifications)
+            {
+                NotificationReceived(this, new NotificationEventArgs
+                {
+                    Notification = notification,
+                    IsDelayed = true
+                });
+            }
         }
     }
 }
