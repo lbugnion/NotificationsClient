@@ -57,8 +57,7 @@
                                 <Label Text="{Binding Body}"
                                        Style="{StaticResource ListBodyStyle}" />
 
-                                <StackLayout Orientation="Horizontal"
-                                             IsVisible="{Binding IsLastReceivedVisible}">
+                                <StackLayout Orientation="Horizontal">
                                     <Label Text="Received"
                                            Style="{StaticResource ListSubTitleStyle}" />
 
