@@ -19,6 +19,8 @@
            x:Key="TemplateContainerStyle">
         <Setter Property="Padding"
                 Value="20,5,20,10" />
+        <Setter Property="BackgroundColor"
+                Value="Transparent" />
     </Style>
 
     <Style TargetType="BoxView"
