@@ -157,14 +157,15 @@ namespace NotificationsClient.ViewModel
                 
                 await Storage.InitializeAsync();
 
-                var channelsInDb = await Storage.GetAllChannels();
+                var channelsInDb = (await Storage.GetAllChannels());
 
                 foreach (var channel in channelsInDb)
                 {
-                    var notificationsInChannel = await Storage.GetChannelNotifications(channel);
-                    
+                    var notificationsInChannel = (await Storage.GetChannelNotifications(channel))
+                        .OrderByDescending(n => n.ReceivedTimeUtc);
+
                     // TODO Use Add Range
-                    
+
                     foreach (var notification in notificationsInChannel)
                     {
                         channel.Notifications.Add(notification);
@@ -174,7 +175,11 @@ namespace NotificationsClient.ViewModel
                     Channels.Add(new ChannelInfoViewModel(channel));
                 }
 
-                _allNotifications.Model.Notifications.Sort((a, b) => b.ReceivedTimeUtc.CompareTo(a.ReceivedTimeUtc));
+                _allNotifications.Model.Notifications
+                    .Sort((a, b) => b.ReceivedTimeUtc.CompareTo(a.ReceivedTimeUtc));
+
+                Channels.Sort((a, b) => b.Model.LastReceived.CompareTo(a.Model.LastReceived));
+
             }
             catch (Exception ex)
             {
@@ -289,7 +294,7 @@ namespace NotificationsClient.ViewModel
                         return 1;
                     }
 
-                    return b.LastReceived.CompareTo(a.LastReceived);
+                    return b.Model.LastReceived.CompareTo(a.Model.LastReceived);
                 });
             });
         }

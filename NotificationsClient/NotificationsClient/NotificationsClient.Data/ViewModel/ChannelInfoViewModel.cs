@@ -4,7 +4,6 @@ using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Model;
 using System;
-using System.Linq;
 
 namespace NotificationsClient.ViewModel
 {
@@ -42,20 +41,7 @@ namespace NotificationsClient.ViewModel
 
         public int NumberOfNotifications => Model.Notifications.Count;
 
-        public DateTime LastReceived
-        {
-            get
-            {
-                if (Model.Notifications.Count == 0)
-                {
-                    return DateTime.MinValue;
-                }
-
-                return Model.Notifications.First().ReceivedTimeUtc;
-            }
-        }
-
-        public bool IsLastReceivedVisible => LastReceived > DateTime.MinValue;
+        public bool IsLastReceivedVisible => Model.LastReceived > DateTime.MinValue;
 
         public ChannelInfoViewModel(ChannelInfo model, bool isAllNotifications = false)
         {
@@ -77,7 +63,7 @@ namespace NotificationsClient.ViewModel
             Model.Notifications.Insert(0, notification);
             RaisePropertyChanged(() => NumberOfNotifications);
             RaisePropertyChanged(() => IsLastReceivedVisible);
-            RaisePropertyChanged(() => LastReceived);
+            Model.RaisePropertyChanged(() => Model.LastReceived);
         }
 
         public void Clear()

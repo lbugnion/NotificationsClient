@@ -2,6 +2,7 @@
 using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -64,14 +65,16 @@ namespace NotificationsClient.Model
 
         public Task<List<ChannelInfo>> GetAllChannels()
         {
-            return _database.Table<ChannelInfo>().ToListAsync();
+            var table = _database.Table<ChannelInfo>()
+                .ToListAsync();
+
+            return table;
         }
 
         public Task<List<Notification>> GetChannelNotifications(ChannelInfo channel)
         {
             return _database.Table<Notification>()
                 .Where(n => n.Channel == channel.ChannelName)
-                .OrderByDescending(n => n.ReceivedTimeUtc)
                 .ToListAsync();
         }
 

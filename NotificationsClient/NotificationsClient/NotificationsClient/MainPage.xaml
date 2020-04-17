@@ -70,7 +70,7 @@
                                     <Label Text="notifications"
                                            Style="{StaticResource ListSubTitleStyle}" />
 
-                                    <Label Text="{Binding LastReceived}"
+                                    <Label Text="{Binding Model.LastReceived}"
                                            Style="{StaticResource ListSubTitleStyle}"
                                            IsVisible="{Binding IsLastReceivedVisible}" />
                                 </StackLayout>
