@@ -249,7 +249,8 @@ namespace NotificationsClient.ViewModel
                 var channel = Channels.FirstOrDefault(
                     c => c.Model.ChannelName == args.Notification.Channel);
 
-                if (channel == null)
+                if (channel == null
+                    && !string.IsNullOrEmpty(args.Notification.Channel))
                 {
                     channel = new ChannelInfoViewModel(
                         new ChannelInfo
@@ -264,7 +265,7 @@ namespace NotificationsClient.ViewModel
                 var notificationVm = new NotificationViewModel(args.Notification);
 
                 _allNotifications.AddNewNotification(notificationVm);
-                channel.AddNewNotification(notificationVm);
+                channel?.AddNewNotification(notificationVm);
                 Storage.SaveNotification(args.Notification);
 
                 Channels.Sort((a, b) => 
