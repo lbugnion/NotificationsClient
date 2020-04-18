@@ -37,4 +37,16 @@
 
     </Style>
 
+    <Style TargetType="ImageButton"
+           x:Key="SmallAlarmStyle">
+
+        <Setter Property="HeightRequest"
+                Value="50" />
+        <Setter Property="VerticalOptions"
+                Value="Start" />
+        <Setter Property="BackgroundColor"
+                Value="Transparent" />
+
+    </Style>
+
 </ResourceDictionary>

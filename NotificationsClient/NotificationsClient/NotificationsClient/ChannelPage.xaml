@@ -42,31 +42,52 @@
                    Grid.RowSpan="2"
                    Style="{StaticResource HeroImageStyle}" />
 
-            <ListView ItemsSource="{Binding Model.Notifications}"
+            <ListView ItemsSource="{Binding Notifications}"
                       Grid.Row="1"
-                      VerticalOptions="Fill"
-                      Style="{StaticResource ListStyle}">
+                      Style="{StaticResource ListStyle}"
+                      ItemTapped="NotificationTapped">
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Padding="20,5,20,10">
-                                <Label Text="{Binding Title}"
-                                       Style="{StaticResource ListTitleStyle}" />
+                            <ViewCell.ContextActions>
+                                <MenuItem Command="{Binding DeleteCommand}"
+                                          Text="Delete" />
+                            </ViewCell.ContextActions>
 
-                                <Label Text="{Binding Body}"
-                                       Style="{StaticResource ListBodyStyle}" />
+                            <Frame Style="{StaticResource TemplateContainerStyle}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
 
-                                <StackLayout Orientation="Horizontal">
-                                    <Label Text="Received"
-                                           Style="{StaticResource ListSubTitleStyle}" />
+                                    <StackLayout>
+                                        <Label Text="{Binding Model.Title}"
+                                               Style="{StaticResource ListTitleStyle}" />
 
-                                    <Label Text="{Binding ReceivedTimeUtc}"
-                                           Style="{StaticResource ListSubTitleStyle}" />
-                                </StackLayout>
+                                        <Label Text="{Binding Model.Body}"
+                                               Style="{StaticResource ListBodyStyle}" />
 
-                                <BoxView Style="{StaticResource SeparatorStyle}" />
-                            </StackLayout>
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text="Received"
+                                                   Style="{StaticResource ListSubTitleStyle}" />
+
+                                            <Label Text="{Binding Model.ReceivedTimeUtc}"
+                                                   Style="{StaticResource ListSubTitleStyle}" />
+                                        </StackLayout>
+                                    </StackLayout>
+
+                                    <ImageButton Source="SmallAlarm.png"
+                                                 Grid.Column="1"
+                                                 IsVisible="{Binding Model.IsUnread}"
+                                                 Style="{StaticResource SmallAlarmStyle}"
+                                                 Command="{Binding MarkReadUnreadCommand}" />
+
+                                    <BoxView Style="{StaticResource SeparatorStyle}"
+                                             Grid.ColumnSpan="2" />
+                                </Grid>
+                            </Frame>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>                

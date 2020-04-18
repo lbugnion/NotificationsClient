@@ -39,7 +39,9 @@ namespace NotificationsClient.ViewModel
             Model.PropertyChanged += ModelPropertyChanged;
         }
 
-        private void ModelPropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ModelPropertyChanged(
+            object sender, 
+            System.ComponentModel.PropertyChangedEventArgs e)
         {
             Save();
         }

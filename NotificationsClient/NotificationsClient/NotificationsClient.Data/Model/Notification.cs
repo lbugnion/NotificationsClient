@@ -1,11 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
+using GalaSoft.MvvmLight.Ioc;
+using Newtonsoft.Json;
 using Notifications;
 using System;
 using System.Globalization;
 
 namespace NotificationsClient.Model
 {
-    public class Notification
+    public class Notification : ObservableObject
     {
         [JsonIgnore]
         [SQLite.PrimaryKey, SQLite.AutoIncrement]
@@ -55,6 +58,14 @@ namespace NotificationsClient.Model
         {
             get;
             set;
+        }
+
+        private bool _isUnread;
+
+        public bool IsUnread
+        {
+            get => _isUnread;
+            set => Set(ref _isUnread, value);
         }
 
         public static Notification Parse(string argument)

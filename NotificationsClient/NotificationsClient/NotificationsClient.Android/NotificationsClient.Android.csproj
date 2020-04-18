@@ -145,5 +145,10 @@
       <Link>Resources\drawable\Settings.png</Link>
     </AndroidResource>
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="..\NotificationsClient.UWP\SmallAlarm.png">
+      <Link>Resources\drawable\SmallAlarm.png</Link>
+    </AndroidResource>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

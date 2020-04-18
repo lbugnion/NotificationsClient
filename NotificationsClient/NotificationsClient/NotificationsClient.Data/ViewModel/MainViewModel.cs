@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
+using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Helpers;
 using NotificationsClient.Model;
@@ -15,13 +16,19 @@ namespace NotificationsClient.ViewModel
 {
     public class MainViewModel : ViewModelBase
     {
-        private SettingsViewModel SettingsVm => 
+        private ChannelInfoViewModel _allNotifications;
+        private string _status = Texts.StartingUp;
+        private bool _isStatusBlinking;
+        private RelayCommand<ChannelInfoViewModel> _navigateToChannelCommand;
+        private bool _isDatabaseLoaded;
+
+        private SettingsViewModel SettingsVm =>
             SimpleIoc.Default.GetInstance<SettingsViewModel>();
 
         private ConfigurationClient ConfigClient =>
             SimpleIoc.Default.GetInstance<ConfigurationClient>();
 
-        private INavigationService Nav => 
+        private INavigationService Nav =>
             SimpleIoc.Default.GetInstance<INavigationService>();
 
         private IDialogService Dialog =>
@@ -33,57 +40,11 @@ namespace NotificationsClient.ViewModel
         private NotificationStorage Storage =>
             SimpleIoc.Default.GetInstance<NotificationStorage>();
 
-        public async Task DeleteChannel(ChannelInfoViewModel channelInfo)
-        {
-            if (channelInfo.NumberOfNotifications == 0)
-            {
-                return;
-            }
-
-            if (!await Dialog.ShowMessage(
-                Texts.DeleteNotificationWarningMessage,
-                Texts.AreYouSure,
-                Texts.Yes,
-                Texts.No,
-                null))
-            {
-                return;
-            }
-
-            if (channelInfo == _allNotifications)
-            {
-                _allNotifications.Clear();                
-                
-                while (Channels.Count > 1)
-                {
-                    Channels.Remove(Channels.Last());
-                }
-            }
-            else
-            {
-                if (Channels.Contains(channelInfo))
-                {
-                    foreach (var notif in channelInfo.Model.Notifications)
-                    {
-                        _allNotifications.RemoveNotification(notif);
-                    }
-
-                    Channels.Remove(channelInfo);
-                }
-            }
-
-            ShowInfo(Texts.ReadyForNotifications);
-        }
-
-        private string _status = Texts.StartingUp;
-
         public ObservableCollection<ChannelInfoViewModel> Channels
         {
             get;
             private set;
         }
-
-        private ChannelInfoViewModel _allNotifications;
 
         public string Status
         {
@@ -91,16 +52,11 @@ namespace NotificationsClient.ViewModel
             set => Set(() => Status, ref _status, value);
         }
 
-        private bool _isStatusBlinking;
-
         public bool IsStatusBlinking
         {
             get => _isStatusBlinking;
             set => Set(ref _isStatusBlinking, value);
         }
-
-        private RelayCommand<ChannelInfoViewModel> _navigateToChannelCommand;
-        private bool _isDatabaseLoaded;
 
         public RelayCommand<ChannelInfoViewModel> NavigateToChannelCommand
         {
@@ -121,6 +77,7 @@ namespace NotificationsClient.ViewModel
         {
             ShowInfo(Texts.Initializing);            
 
+            // TODO Remove this and handle in SettingsVm instead.
             SettingsVm.Model.PropertyChanged -= SettingsPropertyChanged;
             SettingsVm.Model.PropertyChanged += SettingsPropertyChanged;
 
@@ -152,9 +109,12 @@ namespace NotificationsClient.ViewModel
             try
             {
                 _allNotifications = new ChannelInfoViewModel(
-                    new ChannelInfo(Texts.AllNotificationsChannelTitle),
+                    new ChannelInfo
+                    {
+                        ChannelName = Texts.AllNotificationsChannelTitle
+                    },
                     true);
-                
+
                 await Storage.InitializeAsync();
 
                 var channelsInDb = (await Storage.GetAllChannels());
@@ -164,21 +124,25 @@ namespace NotificationsClient.ViewModel
                     var notificationsInChannel = (await Storage.GetChannelNotifications(channel))
                         .OrderByDescending(n => n.ReceivedTimeUtc);
 
-                    // TODO Use Add Range
+                    var channelVm = new ChannelInfoViewModel(channel);
 
                     foreach (var notification in notificationsInChannel)
                     {
-                        channel.Notifications.Add(notification);
-                        _allNotifications.Model.Notifications.Add(notification);
+                        var notificationVm = new NotificationViewModel(notification);
+                        channelVm.AddNewNotification(notificationVm);
+                        _allNotifications.AddNewNotification(notificationVm);
                     }
 
-                    Channels.Add(new ChannelInfoViewModel(channel));
+                    Channels.Add(channelVm);
                 }
 
-                _allNotifications.Model.Notifications
-                    .Sort((a, b) => b.ReceivedTimeUtc.CompareTo(a.ReceivedTimeUtc));
+                // Notifications in one channel are already sorted when
+                // we get them from the DB
 
-                Channels.Sort((a, b) => b.Model.LastReceived.CompareTo(a.Model.LastReceived));
+                _allNotifications.Notifications
+                    .Sort((a, b) => b.Model.ReceivedTimeUtc.CompareTo(a.Model.ReceivedTimeUtc));
+
+                Channels.Sort((a, b) => b.LastReceived.CompareTo(a.LastReceived));
 
             }
             catch (Exception ex)
@@ -187,8 +151,8 @@ namespace NotificationsClient.ViewModel
             }
 
             Channels.Insert(0, _allNotifications);
-
             _isDatabaseLoaded = true;
+            Messenger.Default.Register<ReadUnreadMessage>(this, HandleReadUnreadMessage);
 
 #if DEBUG
             if (ViewModelLocator.UseDesignData)
@@ -214,6 +178,21 @@ namespace NotificationsClient.ViewModel
                 SettingsVm.Model.IsRegisteredSuccessfully = false;
                 ShowInfo(string.Format(Texts.ErrorInitializing, ex.Message), true);
             }
+        }
+
+        private void HandleReadUnreadMessage(ReadUnreadMessage message)
+        {
+            var sender = message.Sender as NotificationViewModel;
+
+            if (sender == null)
+            {
+                return;
+            }
+
+            _allNotifications.RaisePropertyChanged(() => _allNotifications.IsUnread);
+
+            var channel = Channels.FirstOrDefault(c => c.Model.ChannelName == sender.Model.Channel);
+            channel?.RaisePropertyChanged(() => channel.IsUnread);
         }
 
         private void SettingsPropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -257,6 +236,8 @@ namespace NotificationsClient.ViewModel
                 args.Notification.ReceivedTimeUtc = DateTime.UtcNow;
             }
 
+            args.Notification.IsUnread = true;
+
             ShowInfo(string.Format(
                 Texts.NotificationReceived,
                 args.Notification.ReceivedTimeUtc));
@@ -271,15 +252,19 @@ namespace NotificationsClient.ViewModel
                 if (channel == null)
                 {
                     channel = new ChannelInfoViewModel(
-                        new ChannelInfo(args.Notification.Channel));
+                        new ChannelInfo
+                        {
+                            ChannelName = args.Notification.Channel
+                        });
 
                     Channels.Add(channel);
                     Storage.SaveChannelInfo(channel.Model);
                 }
 
-                _allNotifications.AddNewNotification(args.Notification);
-                channel.AddNewNotification(args.Notification);
+                var notificationVm = new NotificationViewModel(args.Notification);
 
+                _allNotifications.AddNewNotification(notificationVm);
+                channel.AddNewNotification(notificationVm);
                 Storage.SaveNotification(args.Notification);
 
                 Channels.Sort((a, b) => 
@@ -294,7 +279,7 @@ namespace NotificationsClient.ViewModel
                         return 1;
                     }
 
-                    return b.Model.LastReceived.CompareTo(a.Model.LastReceived);
+                    return b.LastReceived.CompareTo(a.LastReceived);
                 });
             });
         }
@@ -304,5 +289,40 @@ namespace NotificationsClient.ViewModel
             Status = message;
             IsStatusBlinking = isError;
         }
+
+        public async Task DeleteChannel(ChannelInfoViewModel channelInfo)
+        {
+            if (!await Dialog.ShowMessage(
+                Texts.DeleteNotificationWarningMessage,
+                Texts.AreYouSure,
+                Texts.Yes,
+                Texts.No,
+                null))
+            {
+                return;
+            }
+
+            if (channelInfo == _allNotifications)
+            {
+                _allNotifications.Clear();
+
+                while (Channels.Count > 1)
+                {
+                    var channel = Channels.Last();
+                    Channels.Remove(channel);
+                }
+            }
+            else
+            {
+                if (Channels.Contains(channelInfo))
+                {
+                    channelInfo.Clear();
+                    Channels.Remove(channelInfo);
+                }
+            }
+
+            ShowInfo(Texts.ReadyForNotifications);
+        }
+
     }
 }

@@ -44,11 +44,10 @@
                Grid.Row="1"
                Grid.RowSpan="2"
                Style="{StaticResource HeroImageStyle}" />
-
+        
         <ListView Grid.Row="1"
                   Style="{StaticResource ListStyle}"
                   ItemsSource="{Binding Channels}"
-                  IsPullToRefreshEnabled="True"
                   Refreshing="ListViewRefreshing">
             <ListView.ItemTemplate>
                 <DataTemplate>
@@ -56,27 +55,43 @@
                         <ViewCell.ContextActions>
                             <MenuItem Command="{Binding DeleteCommand}"
                                       Text="Delete" />
+                            
+                            <MenuItem Command="{Binding MarkReadUnreadCommand}"
+                                      Text="Read/Unread" />
                         </ViewCell.ContextActions>
 
                         <Frame Style="{StaticResource TemplateContainerStyle}">
-                            <StackLayout>
-                                <Label Text="{Binding Model.ChannelName}"
-                                       Style="{StaticResource ListTitleStyle}" />
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
 
-                                <StackLayout Orientation="Horizontal">
-                                    <Label Text="{Binding NumberOfNotifications}"
-                                           Style="{StaticResource ListSubTitleStyle}" />
+                                <StackLayout>
+                                    <Label Text="{Binding Model.ChannelName}"
+                                           Style="{StaticResource ListTitleStyle}" />
 
-                                    <Label Text="notifications"
-                                           Style="{StaticResource ListSubTitleStyle}" />
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="{Binding NumberOfNotifications}"
+                                               Style="{StaticResource ListSubTitleStyle}" />
 
-                                    <Label Text="{Binding Model.LastReceived}"
-                                           Style="{StaticResource ListSubTitleStyle}"
-                                           IsVisible="{Binding IsLastReceivedVisible}" />
+                                        <Label Text="notifications"
+                                               Style="{StaticResource ListSubTitleStyle}" />
+
+                                        <Label Text="{Binding Model.LastReceived}"
+                                               Style="{StaticResource ListSubTitleStyle}"
+                                               IsVisible="{Binding IsLastReceivedVisible}" />
+                                    </StackLayout>
                                 </StackLayout>
 
-                                <BoxView Style="{StaticResource SeparatorStyle}" />
-                            </StackLayout>
+                                <Image Source="SmallAlarm.png"
+                                       Grid.Column="1"
+                                       IsVisible="{Binding IsUnread}"
+                                       Style="{StaticResource SmallAlarmStyle}" />
+
+                                <BoxView Style="{StaticResource SeparatorStyle}"
+                                         Grid.ColumnSpan="2" />
+                            </Grid>
                         </Frame>                        
                     </ViewCell>
                 </DataTemplate>
