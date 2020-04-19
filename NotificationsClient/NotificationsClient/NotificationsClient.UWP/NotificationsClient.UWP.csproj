@@ -159,7 +159,7 @@
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Settings.png" />
-    <Content Include="SmallAlarm-gray.png" />
+    <Content Include="SmallAlarmGray.png" />
     <Content Include="SmallAlarm.png" />
     <Content Include="Title.png" />
     <None Include="Package.StoreAssociation.xml" />

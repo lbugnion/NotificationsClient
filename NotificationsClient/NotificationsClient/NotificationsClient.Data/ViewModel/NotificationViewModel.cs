@@ -10,6 +10,10 @@ namespace NotificationsClient.ViewModel
 {
     public class NotificationViewModel : ViewModelBase
     {
+        private bool _isSelected;
+        private bool _isSelectVisible;
+        private bool _mustDelete = false;
+
         private NotificationStorage Storage =>
             SimpleIoc.Default.GetInstance<NotificationStorage>();
 
@@ -25,6 +29,24 @@ namespace NotificationsClient.ViewModel
             get => _markReadUnreadCommand
                 ?? (_markReadUnreadCommand = new RelayCommand(
                 () => Model.IsUnread = !Model.IsUnread));
+        }
+
+        public bool IsSelectVisible
+        {
+            get => _isSelectVisible;
+            set => Set(ref _isSelectVisible, value);
+        }
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set => Set(ref _isSelected, value);
+        }
+
+        public bool MustDelete
+        {
+            get => _mustDelete;
+            set => Set(ref _mustDelete, value);
         }
 
         public NotificationViewModel(Notification model)

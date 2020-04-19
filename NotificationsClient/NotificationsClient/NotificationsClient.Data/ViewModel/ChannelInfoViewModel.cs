@@ -11,8 +11,12 @@ namespace NotificationsClient.ViewModel
 {
     public class ChannelInfoViewModel : ViewModelBase
     {
+        public event EventHandler<NotificationDeletedEventArgs> NotificationDeleted;
+
         private RelayCommand<bool> _deleteCommand;
         private RelayCommand _markReadUnreadCommand;
+        private bool _isSelectionVisible;
+        private RelayCommand _deleteSelectionCommand;
 
         public MainViewModel Main =>
             SimpleIoc.Default.GetInstance<MainViewModel>();
@@ -89,6 +93,44 @@ namespace NotificationsClient.ViewModel
             }
         }
 
+        public bool IsSelectionVisible
+        {
+            get => _isSelectionVisible;
+            set
+            {
+                if (Set(ref _isSelectionVisible, value))
+                {
+                    foreach (var notification in Notifications)
+                    {
+                        notification.IsSelectVisible = value;
+
+                        if (!value)
+                        {
+                            notification.IsSelected = false;
+                        }
+                    }
+                }
+            }
+        }
+
+        public RelayCommand DeleteSelectionCommand
+        {
+            get => _deleteSelectionCommand
+                ?? (_deleteSelectionCommand = new RelayCommand(
+                () =>
+                {
+                    // TODO Ask for confirmation (based on settings)
+
+                    var list = Notifications.Where(n => n.IsSelected).ToList();
+
+                    foreach (var notification in list)
+                    {
+                        notification.MustDelete = true;
+                    }
+                },
+                () => Notifications.FirstOrDefault(n => n.IsSelected) != null));
+        }
+
         public int NumberOfNotifications => Notifications.Count;
 
         public bool IsLastReceivedVisible => LastReceived > DateTime.MinValue;
@@ -116,14 +158,40 @@ namespace NotificationsClient.ViewModel
             RaisePropertyChanged(() => IsUnread);
         }
 
-        public void RemoveNotification(NotificationViewModel notification)
+        private async void NotificationPropertyChanged(
+            object sender, 
+            System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(NotificationViewModel.IsSelected))
+            {
+                DeleteSelectionCommand.RaiseCanExecuteChanged();
+            }
+            else if (e.PropertyName == nameof(NotificationViewModel.MustDelete))
+            {
+                // TODO If settings say that deletion are synchronized with server,
+                // set the corresponding property to IsDeleted and save.
+
+                var notification = (NotificationViewModel)sender;
+
+                if (Notifications.Contains(notification))
+                {
+                    Notifications.Remove(notification);
+                    NotificationDeleted?.Invoke(this, new NotificationDeletedEventArgs
+                    {
+                        Notification = notification
+                    });
+
+                    await Storage.Delete(notification.Model);
+                }
+            }
+        }
+
+        internal void Remove(NotificationViewModel notification)
         {
             if (Notifications.Contains(notification))
             {
-                notification.PropertyChanged -= NotificationPropertyChanged;
-
-                // TODO Save
                 Notifications.Remove(notification);
+
                 RaisePropertyChanged(() => NumberOfNotifications);
                 RaisePropertyChanged(() => IsLastReceivedVisible);
                 RaisePropertyChanged(() => LastReceived);
@@ -131,29 +199,14 @@ namespace NotificationsClient.ViewModel
             }
         }
 
-        public void Clear()
+        public void UnselectAll()
         {
             foreach (var notification in Notifications)
             {
-                notification.PropertyChanged -= NotificationPropertyChanged;
+                notification.IsSelected = false;
             }
 
-            // TODO Save
-            Notifications.Clear();
-            RaisePropertyChanged(() => NumberOfNotifications);
-            RaisePropertyChanged(() => IsLastReceivedVisible);
-            RaisePropertyChanged(() => LastReceived);
-            RaisePropertyChanged(() => IsUnread);
-        }
-
-        private void NotificationPropertyChanged(
-            object sender, 
-            System.ComponentModel.PropertyChangedEventArgs e)
-        {
-            if (e.PropertyName == nameof(Notification.IsUnread))
-            {
-                RaisePropertyChanged(() => IsUnread);
-            }
+            IsSelectionVisible = false;
         }
     }
 }

@@ -122,7 +122,13 @@ namespace NotificationsClient.ViewModel
                 foreach (var channel in channelsInDb)
                 {
                     var notificationsInChannel = (await Storage.GetChannelNotifications(channel))
-                        .OrderByDescending(n => n.ReceivedTimeUtc);
+                        .OrderBy(n => n.ReceivedTimeUtc);
+
+                    if (notificationsInChannel.Count() == 0)
+                    {
+                        await Storage.Delete(channel);
+                        continue;
+                    }
 
                     var channelVm = new ChannelInfoViewModel(channel);
 
@@ -134,6 +140,7 @@ namespace NotificationsClient.ViewModel
                     }
 
                     Channels.Add(channelVm);
+                    channelVm.NotificationDeleted += ChannelVmNotificationDeleted;
                 }
 
                 // Notifications in one channel are already sorted when
@@ -141,6 +148,7 @@ namespace NotificationsClient.ViewModel
 
                 _allNotifications.Notifications
                     .Sort((a, b) => b.Model.ReceivedTimeUtc.CompareTo(a.Model.ReceivedTimeUtc));
+                _allNotifications.NotificationDeleted += AllNotificationsNotificationDeleted;
 
                 Channels.Sort((a, b) => b.LastReceived.CompareTo(a.LastReceived));
 
@@ -177,6 +185,26 @@ namespace NotificationsClient.ViewModel
             {
                 SettingsVm.Model.IsRegisteredSuccessfully = false;
                 ShowInfo(string.Format(Texts.ErrorInitializing, ex.Message), true);
+            }
+        }
+
+        private void ChannelVmNotificationDeleted(object sender, NotificationDeletedEventArgs e)
+        {
+            if (_allNotifications.Notifications.Contains(e.Notification))
+            {
+                _allNotifications.Remove(e.Notification);
+            }
+        }
+
+        private void AllNotificationsNotificationDeleted(object sender, NotificationDeletedEventArgs e)
+        {
+            foreach (var channel in Channels)
+            {
+                if (channel.Notifications.Contains(e.Notification))
+                {
+                    channel.Remove(e.Notification);
+                    return;
+                }
             }
         }
 
@@ -303,26 +331,26 @@ namespace NotificationsClient.ViewModel
                 return;
             }
 
-            if (channelInfo == _allNotifications)
-            {
-                _allNotifications.Clear();
+            //if (channelInfo == _allNotifications)
+            //{
+            //    _allNotifications.Clear();
 
-                while (Channels.Count > 1)
-                {
-                    var channel = Channels.Last();
-                    Channels.Remove(channel);
-                }
-            }
-            else
-            {
-                if (Channels.Contains(channelInfo))
-                {
-                    channelInfo.Clear();
-                    Channels.Remove(channelInfo);
-                }
-            }
+            //    while (Channels.Count > 1)
+            //    {
+            //        var channel = Channels.Last();
+            //        Channels.Remove(channel);
+            //    }
+            //}
+            //else
+            //{
+            //    if (Channels.Contains(channelInfo))
+            //    {
+            //        channelInfo.Clear();
+            //        Channels.Remove(channelInfo);
+            //    }
+            //}
 
-            ShowInfo(Texts.ReadyForNotifications);
+            //ShowInfo(Texts.ReadyForNotifications);
         }
 
     }

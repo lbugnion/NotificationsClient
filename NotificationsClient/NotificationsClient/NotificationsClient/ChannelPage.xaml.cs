@@ -25,5 +25,12 @@ namespace NotificationsClient
             //var notification = e.Item as NotificationViewModel;
             //Vm.Main.
         }
+
+        protected override void OnDisappearing()
+        {
+            Vm.UnselectAll();
+
+            base.OnDisappearing();
+        }
     }
 }
