@@ -16,7 +16,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  outputDirectory: '$(build.binariesDirectory)/$(buildConfiguration)'
+  outputDirectory: '$(build.binariesDirectory)/Android/$(buildConfiguration)'
 
 steps:
 - task: NuGetToolInstaller@1
