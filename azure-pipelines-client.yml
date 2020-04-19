@@ -11,6 +11,11 @@ trigger:
   include:
   - NotificationsClient/*
 
+variables:
+  solution: NotificationsClient.sln
+  androidproject: NotificationsClient.Android.csproj
+  windowsproject: NotificationsClient.UWP.csproj
+
 jobs:
 
 - job: Android
@@ -20,17 +25,18 @@ jobs:
   variables:
     buildConfiguration: 'Release'
     outputDirectory: '$(build.binariesDirectory)/$(buildConfiguration)'
+    solution: '$(solution)'
 
   steps:
   - task: NuGetToolInstaller@0
 
   - task: NuGetCommand@2
     inputs:
-      restoreSolution: '**/*.sln'
+      restoreSolution: '$(solution)'
 
   - task: XamarinAndroid@1
     inputs:
-      projectFile: '**/*droid*.csproj'
+      projectFile: '**/$(androidproject)'
       outputDirectory: '$(outputDirectory)'
       configuration: '$(buildConfiguration)'
 
@@ -49,7 +55,7 @@ jobs:
     vmImage: 'windows-2019'
 
   variables:
-    solution: '**/*.sln'
+    solution: '$(solution)'
     buildPlatform: 'x86|x64|ARM'
     buildConfiguration: 'Release'
     appxPackageDir: '$(build.artifactStagingDirectory)\AppxPackages\\'
