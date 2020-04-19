@@ -1,0 +1,71 @@
+# Xamarin.Android and Xamarin.UWP
+# Build a Xamarin.Android and Xamarin.UWP app.
+# Add steps that test, sign, and distribute the app, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/xamarin
+
+trigger:
+ branches:
+  include:
+   - master
+ paths:
+  include:
+  - NotificationsClient/*
+
+jobs:
+
+- job: Android
+  pool:
+    vmImage: 'windows-2019'
+
+  variables:
+    buildConfiguration: 'Release'
+    outputDirectory: '$(build.binariesDirectory)/$(buildConfiguration)'
+
+  steps:
+  - task: NuGetToolInstaller@0
+
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: '**/*.sln'
+
+  - task: XamarinAndroid@1
+    inputs:
+      projectFile: '**/*droid*.csproj'
+      outputDirectory: '$(outputDirectory)'
+      configuration: '$(buildConfiguration)'
+
+  - task: AndroidSigning@3
+    inputs:
+      apksign: false
+      zipalign: false
+      apkFiles: '$(outputDirectory)/*.apk'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(outputDirectory)'
+
+- job: Windows
+  pool:
+    vmImage: 'windows-2019'
+
+  variables:
+    buildConfiguration: 'Release'
+    outputDirectory: '$(build.binariesDirectory)/$(buildConfiguration)'
+
+  steps:
+  - task: NuGetToolInstaller@0
+
+  - task: NuGetCommand@2
+    inputs:
+      restoreSolution: '**/*.sln'
+
+  - task: XamarinAndroid@1
+    inputs:
+      projectFile: '**/*UWP*.csproj'
+      outputDirectory: '$(outputDirectory)'
+      configuration: '$(buildConfiguration)'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathtoPublish: '$(outputDirectory)'
+
