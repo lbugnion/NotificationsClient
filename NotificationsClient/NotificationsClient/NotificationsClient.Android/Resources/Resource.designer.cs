@@ -8478,13 +8478,16 @@ namespace NotificationsClient.Droid
 			public const int Settings = 2131165324;
 			
 			// aapt resource value: 0x7F07008D
-			public const int Title = 2131165325;
+			public const int SmallAlarm = 2131165325;
 			
 			// aapt resource value: 0x7F07008E
-			public const int tooltip_frame_dark = 2131165326;
+			public const int Title = 2131165326;
 			
 			// aapt resource value: 0x7F07008F
-			public const int tooltip_frame_light = 2131165327;
+			public const int tooltip_frame_dark = 2131165327;
+			
+			// aapt resource value: 0x7F070090
+			public const int tooltip_frame_light = 2131165328;
 			
 			static Drawable()
 			{

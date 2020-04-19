@@ -9,9 +9,9 @@
   <Identity
     Name="61441GalaSoft.NotificationsClient"
     Publisher="CN=34995E11-E112-479E-9295-CD9FD6FEB9E4"
-    Version="1.0.0.0" />
+    Version="0.1.0.0" />
 
-  <mp:PhoneIdentity PhoneProductId="f4eaa7c5-4615-4a9f-9e34-ffc883d1f2d7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="fca68fb1-1257-4e95-a39e-d79fc2152e6e" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>NotificationsClient</DisplayName>
