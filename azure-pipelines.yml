@@ -33,3 +33,11 @@ steps:
     solution: '$(solution)'
     configuration: '$(buildConfiguration)'
     msbuildArgs: '/p:AppxBundlePlatforms="$(buildPlatform)" /p:AppxPackageDir="$(appxPackageDir)" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload /p:AppxPackageSigningEnabled=false'
+
+- task: AzureFileCopy@4
+  inputs:
+    SourcePath: '$(appxPackageDir)\*.*'
+    azureSubscription: 'ca-lbugnion-demo-test (6e69cf24-0859-4dec-84e2-695e2618e473)'
+    Destination: 'AzureBlob'
+    storage: 'storageaccountlbnotb2a5'
+    ContainerName: 'artifacts-uwp'
