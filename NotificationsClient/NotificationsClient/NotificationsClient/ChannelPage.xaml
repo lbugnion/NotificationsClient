@@ -78,6 +78,11 @@
                                         </StackLayout>
                                     </StackLayout>
 
+                                    <ImageButton Source="SmallAlarm-gray.png"
+                                                 Grid.Column="1"
+                                                 Style="{StaticResource SmallAlarmStyle}"
+                                                 Command="{Binding MarkReadUnreadCommand}" />
+
                                     <ImageButton Source="SmallAlarm.png"
                                                  Grid.Column="1"
                                                  IsVisible="{Binding Model.IsUnread}"

@@ -4,7 +4,6 @@ using Firebase.Messaging;
 using GalaSoft.MvvmLight.Ioc;
 using Notifications;
 using NotificationsClient.Model;
-using System;
 
 namespace NotificationsClient.Droid.Model
 {
