@@ -109,9 +109,14 @@ namespace NotificationsClient.Model
             return null;
         }
 
-        public void Delete(Notification notif)
+        public async Task<int> Delete(ChannelInfo channel)
         {
-            // Move to Deleted storage
+            return await _database.DeleteAsync(channel);
+        }
+
+        public async Task<int> Delete(Notification notification)
+        {
+            return await _database.DeleteAsync(notification);
         }
 
         public async Task Synchronize()

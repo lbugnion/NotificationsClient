@@ -35,6 +35,15 @@
 
                 <Label Text="{Binding Model.ChannelName}"
                        Style="{StaticResource ListHeaderStyle}" />
+
+                <StackLayout Orientation="Horizontal"
+                             Grid.Column="1">
+                    <Button Text="Delete"
+                            Command="{Binding DeleteSelectionCommand}" />
+
+                    <CheckBox IsChecked="{Binding IsSelectionVisible}"
+                              Color="White" />
+                </StackLayout>
             </Grid>
 
             <Image Source="Alarm.png"
@@ -58,11 +67,23 @@
                             <Frame Style="{StaticResource TemplateContainerStyle}">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <StackLayout>
+                                    <BoxView Grid.ColumnSpan="3"
+                                             BackgroundColor="{StaticResource TitleBackgroundColor}"
+                                             IsVisible="{Binding IsSelected}"
+                                             Margin="-20,-5,-20,-10"
+                                             Opacity="0.5" />
+
+                                    <CheckBox IsVisible="{Binding IsSelectVisible}"
+                                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                              Color="Black"
+                                              VerticalOptions="Start"/>
+
+                                    <StackLayout Grid.Column="1">
                                         <Label Text="{Binding Model.Title}"
                                                Style="{StaticResource ListTitleStyle}" />
 
@@ -75,17 +96,28 @@
 
                                             <Label Text="{Binding Model.ReceivedTimeUtc}"
                                                    Style="{StaticResource ListSubTitleStyle}" />
+
+                                            <Label Text="|"
+                                                   Style="{StaticResource ListSubTitleStyle}" />
+
+                                            <Label Text="{Binding Model.Channel}"
+                                                   Style="{StaticResource ListSubTitleStyle}" />
                                         </StackLayout>
                                     </StackLayout>
 
+                                    <ImageButton Source="SmallAlarmGray.png"
+                                                 Grid.Column="2"
+                                                 Style="{StaticResource SmallAlarmStyle}"
+                                                 Command="{Binding MarkReadUnreadCommand}" />
+
                                     <ImageButton Source="SmallAlarm.png"
-                                                 Grid.Column="1"
+                                                 Grid.Column="2"
                                                  IsVisible="{Binding Model.IsUnread}"
                                                  Style="{StaticResource SmallAlarmStyle}"
                                                  Command="{Binding MarkReadUnreadCommand}" />
 
                                     <BoxView Style="{StaticResource SeparatorStyle}"
-                                             Grid.ColumnSpan="2" />
+                                             Grid.ColumnSpan="3" />
                                 </Grid>
                             </Frame>
                         </ViewCell>
