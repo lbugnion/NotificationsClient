@@ -12,9 +12,8 @@ trigger:
   - NotificationsClient/*
 
 variables:
-  solution: NotificationsClient.sln
-  androidproject: NotificationsClient.Android.csproj
-  windowsproject: NotificationsClient.UWP.csproj
+  solution: 'NotificationsClient.sln'
+  androidproject: 'NotificationsClient.Android.csproj'
 
 jobs:
 
