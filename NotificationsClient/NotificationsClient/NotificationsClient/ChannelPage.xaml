@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:NotificationsClient.Controls"
              xmlns:ignore="http://galasoft.ch/ignore"
+             xmlns:helpers="clr-namespace:NotificationsClient.Helpers"
              mc:Ignorable="d ignore"
              x:Class="NotificationsClient.ChannelPage">
 
@@ -13,6 +14,9 @@
         <ResourceDictionary Source="Styles/TextStyles.xaml" />
         <ResourceDictionary Source="Styles/MiscStyles.xaml" />
         <ResourceDictionary Source="Styles/ListStyles.xaml" />
+
+        <helpers:SelectedToColorConverter x:Key="SelectedToColorConverter" />
+
     </ContentPage.Resources>
 
     <ContentPage.Content>
@@ -38,10 +42,13 @@
 
                 <StackLayout Orientation="Horizontal"
                              Grid.Column="1">
-                    <Button Text="Delete"
-                            Command="{Binding DeleteSelectionCommand}" />
+                    <ImageButton Source="Delete.png"
+                                 Style="{StaticResource ImageButtonStyle}"
+                                 Command="{Binding DeleteSelectionCommand}"
+                                 Opacity="{Binding DeleteButtonOpacity}" />
 
                     <CheckBox IsChecked="{Binding IsSelectionVisible}"
+                              Margin="0,0,20,0"
                               Color="White" />
                 </StackLayout>
             </Grid>
@@ -54,36 +61,25 @@
             <ListView ItemsSource="{Binding Notifications}"
                       Grid.Row="1"
                       Style="{StaticResource ListStyle}"
-                      ItemTapped="NotificationTapped">
+                      SeparatorVisibility="None">
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <ViewCell.ContextActions>
-                                <MenuItem Command="{Binding DeleteCommand}"
-                                          Text="Delete" />
-                            </ViewCell.ContextActions>
-
-                            <Frame Style="{StaticResource TemplateContainerStyle}">
+                            <Frame Style="{StaticResource TemplateContainerStyle}"
+                                   BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedToColorConverter}}"
+                                   Margin="-5,0,-5,0">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
-                                    <BoxView Grid.ColumnSpan="3"
-                                             BackgroundColor="{StaticResource TitleBackgroundColor}"
-                                             IsVisible="{Binding IsSelected}"
-                                             Margin="-20,-5,-20,-10"
-                                             Opacity="0.5" />
+                                    <StackLayout Margin="0,0,0,10">
+                                        <Label Text="{Binding Model.Channel}"
+                                               Style="{StaticResource ListSubTitleStyle}"
+                                               Margin="0,0,0,-3"/>
 
-                                    <CheckBox IsVisible="{Binding IsSelectVisible}"
-                                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
-                                              Color="Black"
-                                              VerticalOptions="Start"/>
-
-                                    <StackLayout Grid.Column="1">
                                         <Label Text="{Binding Model.Title}"
                                                Style="{StaticResource ListTitleStyle}" />
 
@@ -96,33 +92,35 @@
 
                                             <Label Text="{Binding Model.ReceivedTimeUtc}"
                                                    Style="{StaticResource ListSubTitleStyle}" />
-
-                                            <Label Text="|"
-                                                   Style="{StaticResource ListSubTitleStyle}" />
-
-                                            <Label Text="{Binding Model.Channel}"
-                                                   Style="{StaticResource ListSubTitleStyle}" />
                                         </StackLayout>
                                     </StackLayout>
 
                                     <ImageButton Source="SmallAlarmGray.png"
-                                                 Grid.Column="2"
+                                                 Grid.Column="1"
                                                  Style="{StaticResource SmallAlarmStyle}"
                                                  Command="{Binding MarkReadUnreadCommand}" />
 
                                     <ImageButton Source="SmallAlarm.png"
-                                                 Grid.Column="2"
+                                                 Grid.Column="1"
                                                  IsVisible="{Binding Model.IsUnread}"
                                                  Style="{StaticResource SmallAlarmStyle}"
                                                  Command="{Binding MarkReadUnreadCommand}" />
 
+                                    <CheckBox IsVisible="{Binding IsSelectVisible}"
+                                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                              Grid.Column="1"
+                                              Color="Black"
+                                              VerticalOptions="End"
+                                              HorizontalOptions="End"
+                                              Margin="0,0,0,5"/>
+
                                     <BoxView Style="{StaticResource SeparatorStyle}"
-                                             Grid.ColumnSpan="3" />
+                                             Grid.ColumnSpan="2" />
                                 </Grid>
                             </Frame>
                         </ViewCell>
                     </DataTemplate>
-                </ListView.ItemTemplate>                
+                </ListView.ItemTemplate>
             </ListView>
 
             <controls:StatusBar x:Name="Status"
@@ -130,6 +128,6 @@
                                 StatusText="{Binding Main.Status}"
                                 Grid.Row="2" />
 
-        </Grid>        
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

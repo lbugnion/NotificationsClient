@@ -20,12 +20,6 @@ namespace NotificationsClient
             NavigationPage.SetHasNavigationBar(this, false);
         }
 
-        private void NotificationTapped(object sender, ItemTappedEventArgs e)
-        {
-            //var notification = e.Item as NotificationViewModel;
-            //Vm.Main.
-        }
-
         protected override void OnDisappearing()
         {
             Vm.UnselectAll();

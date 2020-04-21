@@ -67,7 +67,7 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
 
-                                <StackLayout>
+                                <StackLayout Margin="0,0,0,10">
                                     <Label Text="{Binding Model.ChannelName}"
                                            Style="{StaticResource ListTitleStyle}" />
 
@@ -78,7 +78,7 @@
                                         <Label Text="notifications"
                                                Style="{StaticResource ListSubTitleStyle}" />
 
-                                        <Label Text="{Binding Model.LastReceived}"
+                                        <Label Text="{Binding LastReceived}"
                                                Style="{StaticResource ListSubTitleStyle}"
                                                IsVisible="{Binding IsLastReceivedVisible}" />
                                     </StackLayout>
