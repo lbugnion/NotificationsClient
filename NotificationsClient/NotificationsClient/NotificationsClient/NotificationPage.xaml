@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:NotificationsClient.Controls"
+             xmlns:ignore="http://galasoft.ch/ignore"
+             mc:Ignorable="d controls"
+             x:Class="NotificationsClient.NotificationPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary Source="Styles/Colors.xaml" />
+        <ResourceDictionary Source="Styles/TextStyles.xaml" />
+        <ResourceDictionary Source="Styles/MiscStyles.xaml" />
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <BoxView BackgroundColor="{StaticResource TitleBackgroundColor}"
+                         Grid.ColumnSpan="2" />
+
+                <Label Text="{Binding Model.Title}"
+                       Style="{StaticResource ListHeaderStyle}" />
+
+                <ImageButton Source="Delete.png"
+                             Grid.Column="1"
+                             Style="{StaticResource ImageButtonStyle}"
+                             Command="{Binding DeleteCommand}" />
+            </Grid>
+
+            <Image Source="Alarm.png"
+                   Grid.Row="1"
+                   Grid.RowSpan="2"
+                   Style="{StaticResource HeroImageStyle}" />
+
+            <ScrollView Grid.Row="1"
+                        VerticalOptions="Fill"
+                        HorizontalOptions="Fill">
+
+                <StackLayout VerticalOptions="Fill"
+                             HorizontalOptions="Fill">
+
+                    <Label Text="Title" />
+                    <Label Text="{Binding Model.Title}" />
+                    <Label Text="Body" />
+                    <Label Text="{Binding Model.Body}" />
+
+                    <Label Text="Channel" />
+                    <Label Text="{Binding Model.Channel}" />
+
+                    <Label Text="IsUnread" />
+                    <Label Text="{Binding Model.IsUnread}" />
+
+                    <Label Text="Unusual" />
+                    <Label Text="{Binding Model.Unusual}" />
+
+                    <Label Text="Sent (UTC)" />
+                    <Label Text="{Binding Model.SentTimeUtc}" />
+                    <Label Text="Received (UTC)" />
+                    <Label Text="{Binding Model.ReceivedTimeUtc}" />
+
+
+
+                    <Label Text="Unique ID" />
+                    <Label Text="{Binding Model.UniqueId}" />
+
+                </StackLayout>
+                
+            </ScrollView>
+
+            <controls:StatusBar x:Name="Status"
+                                IsBlinking="{Binding Main.IsStatusBlinking, Mode=TwoWay}"
+                                StatusText="{Binding Main.Status}"
+                                Grid.Row="2" />
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

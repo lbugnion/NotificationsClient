@@ -214,7 +214,6 @@ namespace NotificationsClient.ViewModel
 
                 Channels.Remove(channel);
             }
-
         }
 
         private void ChannelVmNotificationDeleted(object sender, NotificationDeletedEventArgs e)

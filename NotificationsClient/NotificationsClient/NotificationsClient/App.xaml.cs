@@ -38,6 +38,7 @@ namespace NotificationsClient
 
                 navigationService.Configure(ViewModelLocator.MainPageKey, typeof(MainPage));
                 navigationService.Configure(ViewModelLocator.ChannelPageKey, typeof(ChannelPage));
+                navigationService.Configure(ViewModelLocator.NotificationsPageKey, typeof(NotificationPage));
                 navigationService.Configure(ViewModelLocator.SettingsPageKey, typeof(SettingsPage));
 
                 SimpleIoc.Default.Register<INavigationService>(() => navigationService);

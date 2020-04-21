@@ -16,6 +16,11 @@ namespace NotificationsClient
         public INavigationService NavService => 
             SimpleIoc.Default.GetInstance<INavigationService>();
 
+        public MainViewModel Vm
+        {
+            get => (MainViewModel)BindingContext;
+        }
+
         public MainPage()
         {
             InitializeComponent();
@@ -35,7 +40,7 @@ namespace NotificationsClient
         private void ChannelTapped(object sender, EventArgs e)
         {
             var item = (Cell)sender;
-            App.Loc.Main.NavigateToChannelCommand.Execute(item.BindingContext);
+            Vm.NavigateToChannelCommand.Execute(item.BindingContext);
         }
 
         private async void ListViewRefreshing(object sender, EventArgs e)

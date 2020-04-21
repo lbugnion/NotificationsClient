@@ -8,10 +8,7 @@ namespace NotificationsClient
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ChannelPage : ContentPage
     {
-        public ChannelInfoViewModel Vm
-        {
-            get => (ChannelInfoViewModel)BindingContext;
-        }
+        public ChannelInfoViewModel Vm => (ChannelInfoViewModel)BindingContext;
 
         public ChannelPage(ChannelInfoViewModel selectedChannel)
         {
@@ -25,6 +22,12 @@ namespace NotificationsClient
             Vm.UnselectAll();
 
             base.OnDisappearing();
+        }
+
+        private void NotificationTapped(object sender, System.EventArgs e)
+        {
+            var item = (Cell)sender;
+            Vm.NavigateToNotificationCommand.Execute(item.BindingContext);
         }
     }
 }

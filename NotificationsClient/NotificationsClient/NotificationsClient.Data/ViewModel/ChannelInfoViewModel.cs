@@ -140,16 +140,29 @@ namespace NotificationsClient.ViewModel
                 () => Notifications.FirstOrDefault(n => n.IsSelected) != null));
         }
 
-        public double DeleteButtonOpacity
+        private RelayCommand<NotificationViewModel> _navigateToNotificationCommand;
+
+        public RelayCommand<NotificationViewModel> NavigateToNotificationCommand
         {
-            get => Notifications.FirstOrDefault(n => n.IsSelected) == null ? 0.5 : 1.0;
+            get => _navigateToNotificationCommand
+                ?? (_navigateToNotificationCommand = new RelayCommand<NotificationViewModel>(
+                notification =>
+                {
+                    Nav.NavigateTo(ViewModelLocator.NotificationsPageKey, notification);
+                }));
         }
 
-        public int NumberOfNotifications => Notifications.Count;
+        public double DeleteButtonOpacity 
+            => Notifications.FirstOrDefault(n => n.IsSelected) == null ? 0.5 : 1.0;
 
-        public bool IsLastReceivedVisible => LastReceived > DateTime.MinValue;
+        public int NumberOfNotifications 
+            => Notifications.Count;
 
-        public bool IsUnread => Notifications.FirstOrDefault(n => n.Model.IsUnread) != null;
+        public bool IsLastReceivedVisible 
+            => LastReceived > DateTime.MinValue;
+
+        public bool IsUnread 
+            => Notifications.FirstOrDefault(n => n.Model.IsUnread) != null;
 
         public ChannelInfoViewModel(
             ChannelInfo model, 
