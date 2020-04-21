@@ -1,6 +1,7 @@
 ﻿#if DEBUG
 
 using GalaSoft.MvvmLight.Ioc;
+using NotificationsClient.Helpers;
 using NotificationsClient.Model;
 using System;
 
@@ -8,6 +9,8 @@ namespace NotificationsClient
 {
     public static class DesignDataGenerator
     {
+        private static Random _random = new Random();
+
         public static Notification GetRandomNotification(string channel)
         {
             return new Notification
@@ -16,25 +19,38 @@ namespace NotificationsClient
                 Body = $"Random body {Guid.NewGuid()}",
                 SentTimeUtc = DateTime.UtcNow - TimeSpan.FromHours(1),
                 Channel = channel,
-                UniqueId = Guid.NewGuid().ToString()
+                UniqueId = Guid.NewGuid().ToString(),
+                ReceivedTimeUtc = DateTime.Now - TimeSpan.FromMinutes(_random.NextDouble() * 14400)
             };
         }
 
-        public static void SendRandomNotifications(int numberOfNotifications, int groupSize)
+        public static void SaveRandomNotifications(int numberOfNotifications, int numberOfGroups)
         {
-            var groupIndex = 0;
-            var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
+            var storage = SimpleIoc.Default.GetInstance<NotificationStorage>();
+
+            var groupIndex = 1;
+            var saveChannel = true;
 
             for (var index = 0; index < numberOfNotifications; index++)
             {
-                if (++groupIndex >= groupSize)
+                if (saveChannel)
                 {
-                    groupIndex = 0;
+                    var currentChannel = new ChannelInfo
+                    {
+                        ChannelName = "Channel " + groupIndex
+                    };
+
+                    storage.SaveChannelInfo(currentChannel);
                 }
 
-                var channel = $"Channel {groupIndex}";
-                var notification = GetRandomNotification(channel);
-                client.RaiseNotificationReceived(notification, false);
+                var notification = GetRandomNotification("Channel " + groupIndex);
+                storage.SaveNotification(notification);
+
+                if (++groupIndex >= numberOfGroups)
+                {
+                    groupIndex = 1;
+                    saveChannel = false;
+                }
             }
         }
     }

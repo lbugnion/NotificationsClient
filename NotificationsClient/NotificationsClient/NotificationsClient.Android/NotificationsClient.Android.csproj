@@ -155,5 +155,10 @@
       <Link>Resources\drawable\SmallAlarmGray.png</Link>
     </AndroidResource>
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="..\NotificationsClient.UWP\Delete.png">
+      <Link>Resources\drawable\Delete.png</Link>
+    </AndroidResource>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

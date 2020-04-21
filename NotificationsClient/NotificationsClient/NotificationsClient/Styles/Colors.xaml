@@ -5,5 +5,8 @@
 
     <Color x:Key="TitleBackgroundColor">#AF0000</Color>
     <Color x:Key="ListHeaderTextColor">White</Color>
+    <Color x:Key="ListSeparatorColor">#AAAAAA</Color>
+    <Color x:Key="SelectedBackgroundColor">#33AF0000</Color>
+    <Color x:Key="UnselectedBackgroundColor">Transparent</Color>
 
 </ResourceDictionary>

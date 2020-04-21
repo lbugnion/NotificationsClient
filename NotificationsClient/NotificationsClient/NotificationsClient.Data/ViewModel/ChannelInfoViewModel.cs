@@ -131,6 +131,11 @@ namespace NotificationsClient.ViewModel
                 () => Notifications.FirstOrDefault(n => n.IsSelected) != null));
         }
 
+        public double DeleteButtonOpacity
+        {
+            get => Notifications.FirstOrDefault(n => n.IsSelected) == null ? 0.5 : 1.0;
+        }
+
         public int NumberOfNotifications => Notifications.Count;
 
         public bool IsLastReceivedVisible => LastReceived > DateTime.MinValue;
@@ -165,6 +170,7 @@ namespace NotificationsClient.ViewModel
             if (e.PropertyName == nameof(NotificationViewModel.IsSelected))
             {
                 DeleteSelectionCommand.RaiseCanExecuteChanged();
+                RaisePropertyChanged(() => DeleteButtonOpacity);
             }
             else if (e.PropertyName == nameof(NotificationViewModel.MustDelete))
             {
@@ -182,6 +188,13 @@ namespace NotificationsClient.ViewModel
                     });
 
                     await Storage.Delete(notification.Model);
+
+                    RaisePropertyChanged(() => NumberOfNotifications);
+                    RaisePropertyChanged(() => IsLastReceivedVisible);
+                    RaisePropertyChanged(() => LastReceived);
+                    RaisePropertyChanged(() => IsUnread);
+                    IsSelectionVisible = false;
+                    RaisePropertyChanged(() => DeleteButtonOpacity);
                 }
             }
         }
