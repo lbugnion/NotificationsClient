@@ -158,6 +158,7 @@ namespace NotificationsClient.ViewModel
 
                     Channels.Add(channelVm);
                     channelVm.NotificationDeleted += ChannelVmNotificationDeleted;
+                    channelVm.PropertyChanged += ChannelVmPropertyChanged;
                 }
 
                 // Notifications in one channel are already sorted when
@@ -196,6 +197,24 @@ namespace NotificationsClient.ViewModel
                 SettingsVm.Model.IsRegisteredSuccessfully = false;
                 ShowInfo(string.Format(Texts.ErrorInitializing, ex.Message), true);
             }
+        }
+
+        private void ChannelVmPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(ChannelInfoViewModel.MustDelete))
+            {
+                var channel = (ChannelInfoViewModel)sender;
+                channel.NotificationDeleted -= ChannelVmNotificationDeleted;
+                channel.PropertyChanged -= ChannelVmPropertyChanged;
+
+                foreach (var notification in channel.Notifications)
+                {
+                    _allNotifications.Remove(notification);
+                }
+
+                Channels.Remove(channel);
+            }
+
         }
 
         private void ChannelVmNotificationDeleted(object sender, NotificationDeletedEventArgs e)
@@ -343,40 +362,5 @@ namespace NotificationsClient.ViewModel
             Status = message;
             IsStatusBlinking = isError;
         }
-
-        public async Task DeleteChannel(ChannelInfoViewModel channelInfo)
-        {
-            if (!await Dialog.ShowMessage(
-                Texts.DeleteNotificationWarningMessage,
-                Texts.AreYouSure,
-                Texts.Yes,
-                Texts.No,
-                null))
-            {
-                return;
-            }
-
-            //if (channelInfo == _allNotifications)
-            //{
-            //    _allNotifications.Clear();
-
-            //    while (Channels.Count > 1)
-            //    {
-            //        var channel = Channels.Last();
-            //        Channels.Remove(channel);
-            //    }
-            //}
-            //else
-            //{
-            //    if (Channels.Contains(channelInfo))
-            //    {
-            //        channelInfo.Clear();
-            //        Channels.Remove(channelInfo);
-            //    }
-            //}
-
-            //ShowInfo(Texts.ReadyForNotifications);
-        }
-
     }
 }

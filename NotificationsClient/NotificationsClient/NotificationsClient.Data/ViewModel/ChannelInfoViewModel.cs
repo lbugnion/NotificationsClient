@@ -13,10 +13,11 @@ namespace NotificationsClient.ViewModel
     {
         public event EventHandler<NotificationDeletedEventArgs> NotificationDeleted;
 
-        private RelayCommand<bool> _deleteCommand;
+        private RelayCommand _deleteCommand;
         private RelayCommand _markReadUnreadCommand;
         private bool _isSelectionVisible;
         private RelayCommand _deleteSelectionCommand;
+        private bool _mustDelete;
 
         public MainViewModel Main =>
             SimpleIoc.Default.GetInstance<MainViewModel>();
@@ -40,19 +41,27 @@ namespace NotificationsClient.ViewModel
 
         public bool IsAllNotifications { get; }
 
-        public RelayCommand<bool> DeleteCommand
+        public RelayCommand DeleteCommand
         {
             get => _deleteCommand
-                ?? (_deleteCommand = new RelayCommand<bool>(
-                async navigateBack =>
+                ?? (_deleteCommand = new RelayCommand(
+                async () =>
                 {
-                    await Main.DeleteChannel(this);
-
-                    if (navigateBack)
+                    foreach (var notification in Notifications)
                     {
-                        Nav.GoBack();
+                        notification.PropertyChanged -= NotificationPropertyChanged;
+                        await Storage.Delete(notification.Model);
                     }
+
+                    await Storage.Delete(Model);
+                    MustDelete = true;
                 }));
+        }
+
+        public bool MustDelete
+        {
+            get => _mustDelete;
+            set => Set(ref _mustDelete, value);
         }
 
         public RelayCommand MarkReadUnreadCommand
@@ -203,6 +212,8 @@ namespace NotificationsClient.ViewModel
         {
             if (Notifications.Contains(notification))
             {
+                notification.PropertyChanged -= NotificationPropertyChanged;
+
                 Notifications.Remove(notification);
 
                 RaisePropertyChanged(() => NumberOfNotifications);
