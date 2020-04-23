@@ -90,7 +90,7 @@
                                             <Label Text="Received"
                                                    Style="{StaticResource ListSubTitleStyle}" />
 
-                                            <Label Text="{Binding Model.ReceivedTimeUtc}"
+                                            <Label Text="{Binding ReceivedTimeLocal}"
                                                    Style="{StaticResource ListSubTitleStyle}" />
                                         </StackLayout>
                                     </StackLayout>

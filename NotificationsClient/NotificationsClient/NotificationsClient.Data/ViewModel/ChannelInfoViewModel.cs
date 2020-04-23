@@ -98,7 +98,7 @@ namespace NotificationsClient.ViewModel
                     return DateTime.MinValue;
                 }
 
-                return Notifications.First().Model.ReceivedTimeUtc;
+                return Notifications.First().ReceivedTimeLocal;
             }
         }
 
