@@ -5,7 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:controls="clr-namespace:NotificationsClient.Controls"
              xmlns:ignore="http://galasoft.ch/ignore"
-             mc:Ignorable="d controls"
+             mc:Ignorable="d ignore"
              x:Class="NotificationsClient.NotificationPage">
 
     <ContentPage.Resources>
@@ -31,8 +31,9 @@
                 <BoxView BackgroundColor="{StaticResource TitleBackgroundColor}"
                          Grid.ColumnSpan="2" />
 
-                <Label Text="{Binding Model.Title}"
-                       Style="{StaticResource ListHeaderStyle}" />
+                <Label Text="Notification Received!"
+                       Style="{StaticResource ListHeaderStyle}"
+                       LineBreakMode="TailTruncation" />
 
                 <ImageButton Source="Delete.png"
                              Grid.Column="1"
@@ -50,31 +51,57 @@
                         HorizontalOptions="Fill">
 
                 <StackLayout VerticalOptions="Fill"
-                             HorizontalOptions="Fill">
+                             HorizontalOptions="Fill"
+                             Padding="20,10,20,0">
 
-                    <Label Text="Title" />
-                    <Label Text="{Binding Model.Title}" />
-                    <Label Text="Body" />
-                    <Label Text="{Binding Model.Body}" />
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
 
-                    <Label Text="Channel" />
-                    <Label Text="{Binding Model.Channel}" />
+                        <Label Text="{Binding Model.Title}"
+                               VerticalOptions="Center"
+                               Style="{StaticResource PageValueStyleBold}" />
 
-                    <Label Text="IsUnread" />
-                    <Label Text="{Binding Model.IsUnread}" />
+                        <ImageButton Source="SmallAlarmGray.png"
+                                     Grid.Column="1"
+                                     Style="{StaticResource SmallAlarmStyle}"
+                                     Command="{Binding MarkReadUnreadCommand}" />
 
-                    <Label Text="Unusual" />
-                    <Label Text="{Binding Model.Unusual}" />
+                        <ImageButton Source="SmallAlarm.png"
+                                     Grid.Column="1"
+                                     IsVisible="{Binding Model.IsUnread}"
+                                     Style="{StaticResource SmallAlarmStyle}"
+                                     Command="{Binding MarkReadUnreadCommand}" />
+                    </Grid>
+                    
+                    <Label Text="{Binding Model.Body}"
+                           Style="{StaticResource PageValueStyle}" />
 
-                    <Label Text="Sent (UTC)" />
-                    <Label Text="{Binding Model.SentTimeUtc}" />
-                    <Label Text="Received (UTC)" />
-                    <Label Text="{Binding Model.ReceivedTimeUtc}" />
+                    <Label Text="Channel"
+                           Style="{StaticResource PageLabelStyle}" />
 
+                    <Label Text="{Binding Model.Channel}"
+                           Style="{StaticResource PageValueStyle}" />
 
+                    <Label Text="Sent"
+                           Style="{StaticResource PageLabelStyle}" />
 
-                    <Label Text="Unique ID" />
-                    <Label Text="{Binding Model.UniqueId}" />
+                    <Label Text="{Binding SentTimeLocal}"
+                           Style="{StaticResource PageValueStyle}" />
+
+                    <Label Text="Received"
+                           Style="{StaticResource PageLabelStyle}" />
+
+                    <Label Text="{Binding ReceivedTimeLocal}"
+                           Style="{StaticResource PageValueStyle}" />
+                    
+                    <Label Text="Unique ID"
+                           Style="{StaticResource PageLabelStyle}" />
+
+                    <Label Text="{Binding Model.UniqueId}"
+                           Style="{StaticResource PageValueStyle}" />
 
                 </StackLayout>
                 

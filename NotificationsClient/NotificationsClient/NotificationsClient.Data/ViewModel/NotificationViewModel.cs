@@ -14,6 +14,11 @@ namespace NotificationsClient.ViewModel
         private bool _isSelected;
         private bool _isSelectVisible;
         private bool _mustDelete = false;
+        private RelayCommand _markReadUnreadCommand;
+        private RelayCommand _deleteCommand;
+
+        public MainViewModel Main =>
+            SimpleIoc.Default.GetInstance<MainViewModel>();
 
         private NotificationStorage Storage =>
             SimpleIoc.Default.GetInstance<NotificationStorage>();
@@ -26,16 +31,12 @@ namespace NotificationsClient.ViewModel
             get;
         }
 
-        private RelayCommand _markReadUnreadCommand;
-
         public RelayCommand MarkReadUnreadCommand
         {
             get => _markReadUnreadCommand
                 ?? (_markReadUnreadCommand = new RelayCommand(
                 () => Model.IsUnread = !Model.IsUnread));
         }
-
-        private RelayCommand _deleteCommand;
 
         public RelayCommand DeleteCommand
         {
@@ -65,6 +66,9 @@ namespace NotificationsClient.ViewModel
             get => _mustDelete;
             set => Set(ref _mustDelete, value);
         }
+
+        public DateTime SentTimeLocal => Model.SentTimeUtc.ToLocalTime();
+        public DateTime ReceivedTimeLocal => Model.ReceivedTimeUtc.ToLocalTime();
 
         public NotificationViewModel(Notification model)
         {
