@@ -40,3 +40,12 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(outputDirectory)'
+
+- task: AzureFileCopy@4
+  inputs:
+    SourcePath: '$(outputDirectory)'
+    azureSubscription: 'ca-lbugnion-demo-test (6e69cf24-0859-4dec-84e2-695e2618e473)'
+    Destination: 'AzureBlob'
+    storage: 'storageaccountlbnotb2a5'
+    ContainerName: 'BuildOutput'
+    BlobPrefix: '$(Build.BuildNumber)'
