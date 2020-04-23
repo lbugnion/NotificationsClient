@@ -140,7 +140,11 @@ namespace NotificationsClient.UWP.Model
         internal void RaiseNotificationReceived(string arguments, bool isDelayed)
         {
             var notification = Notification.Parse(arguments);
-            RaiseNotificationReceived(notification, isDelayed);
+
+            if (notification != null)
+            {
+                RaiseNotificationReceived(notification, isDelayed);
+            }
         }
 
         public void RaiseDelayedNotifications()
