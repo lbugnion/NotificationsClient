@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Messaging;
+using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Helpers;
 using NotificationsClient.Model;
 using System;
@@ -13,22 +14,39 @@ namespace NotificationsClient.ViewModel
         private bool _isSelected;
         private bool _isSelectVisible;
         private bool _mustDelete = false;
+        private RelayCommand _markReadUnreadCommand;
+        private RelayCommand _deleteCommand;
+
+        public MainViewModel Main =>
+            SimpleIoc.Default.GetInstance<MainViewModel>();
 
         private NotificationStorage Storage =>
             SimpleIoc.Default.GetInstance<NotificationStorage>();
+
+        private INavigationService Nav =>
+            SimpleIoc.Default.GetInstance<INavigationService>();
 
         public Notification Model
         {
             get;
         }
 
-        private RelayCommand _markReadUnreadCommand;
-
         public RelayCommand MarkReadUnreadCommand
         {
             get => _markReadUnreadCommand
                 ?? (_markReadUnreadCommand = new RelayCommand(
                 () => Model.IsUnread = !Model.IsUnread));
+        }
+
+        public RelayCommand DeleteCommand
+        {
+            get => _deleteCommand
+                ?? (_deleteCommand = new RelayCommand(
+                () =>
+                {
+                    MustDelete = true;
+                    Nav.GoBack();
+                }));
         }
 
         public bool IsSelectVisible
@@ -48,6 +66,9 @@ namespace NotificationsClient.ViewModel
             get => _mustDelete;
             set => Set(ref _mustDelete, value);
         }
+
+        public DateTime SentTimeLocal => Model.SentTimeUtc.ToLocalTime();
+        public DateTime ReceivedTimeLocal => Model.ReceivedTimeUtc.ToLocalTime();
 
         public NotificationViewModel(Notification model)
         {

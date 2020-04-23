@@ -52,42 +52,36 @@ namespace NotificationsClient.Droid
 
             if (Intent.Extras != null)
             {
-                var uniqueId = string.Empty;
-                var title = string.Empty;
-                var body = string.Empty;
-                var sentTimeUtc = string.Empty;
-                var channel = string.Empty;
+                if (Intent.Extras.ContainsKey(FunctionConstants.UniqueId)
+                && Intent.Extras.ContainsKey(FunctionConstants.Title)
+                && Intent.Extras.ContainsKey(FunctionConstants.Body)
+                && Intent.Extras.ContainsKey(FunctionConstants.SentTimeUtc))
+                {
+                    var uniqueId = Intent.Extras.GetString(FunctionConstants.UniqueId);
+                    var title = Intent.Extras.GetString(FunctionConstants.Title);
+                    var body = Intent.Extras.GetString(FunctionConstants.Body);
+                    var sentTimeUtc = Intent.Extras.GetString(FunctionConstants.SentTimeUtc);
+                    var channel = string.Empty;
 
-                if (Intent.Extras.ContainsKey(FunctionConstants.UniqueId))
-                {
-                    uniqueId = Intent.Extras.GetString(FunctionConstants.UniqueId);
-                }
-                if (Intent.Extras.ContainsKey(FunctionConstants.Title))
-                {
-                    title = Intent.Extras.GetString(FunctionConstants.Title);
-                }
-                if (Intent.Extras.ContainsKey(FunctionConstants.Body))
-                {
-                    body = Intent.Extras.GetString(FunctionConstants.Body);
-                }
-                if (Intent.Extras.ContainsKey(FunctionConstants.SentTimeUtc))
-                {
-                    sentTimeUtc = Intent.Extras.GetString(FunctionConstants.SentTimeUtc);
-                }
-                if (Intent.Extras.ContainsKey(FunctionConstants.Channel))
-                {
-                    channel = Intent.Extras.GetString(FunctionConstants.Channel);
-                }
+                    if (Intent.Extras.ContainsKey(FunctionConstants.Channel))
+                    {
+                        channel = Intent.Extras.GetString(FunctionConstants.Channel);
+                    }
 
-                var argument = FunctionConstants.UwpArgumentTemplate
-                    .Replace(FunctionConstants.UniqueId, uniqueId)
-                    .Replace(FunctionConstants.Title, title)
-                    .Replace(FunctionConstants.Body, body)
-                    .Replace(FunctionConstants.SentTimeUtc, sentTimeUtc)
-                    .Replace(FunctionConstants.Channel, channel);
+                    var argument = FunctionConstants.UwpArgumentTemplate
+                        .Replace(FunctionConstants.UniqueId, uniqueId)
+                        .Replace(FunctionConstants.Title, title)
+                        .Replace(FunctionConstants.Body, body)
+                        .Replace(FunctionConstants.SentTimeUtc, sentTimeUtc)
+                        .Replace(FunctionConstants.Channel, channel);
 
-                var notification = NotificationsClient.Model.Notification.Parse(argument);
-                notificationsServiceClient.RaiseNotificationReceived(notification, true);
+                    var notification = NotificationsClient.Model.Notification.Parse(argument);
+
+                    if (notification != null)
+                    {
+                        notificationsServiceClient.RaiseNotificationReceived(notification, true);
+                    }
+                }
             }
 
             LoadApplication(new App());

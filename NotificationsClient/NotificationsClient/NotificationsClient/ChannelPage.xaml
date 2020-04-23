@@ -65,7 +65,7 @@
 
                 <ListView.ItemTemplate>
                     <DataTemplate>
-                        <ViewCell>
+                        <ViewCell Tapped="NotificationTapped">
                             <Frame Style="{StaticResource TemplateContainerStyle}"
                                    BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedToColorConverter}}"
                                    Margin="-5,0,-5,0">
@@ -90,7 +90,7 @@
                                             <Label Text="Received"
                                                    Style="{StaticResource ListSubTitleStyle}" />
 
-                                            <Label Text="{Binding Model.ReceivedTimeUtc}"
+                                            <Label Text="{Binding ReceivedTimeLocal}"
                                                    Style="{StaticResource ListSubTitleStyle}" />
                                         </StackLayout>
                                     </StackLayout>

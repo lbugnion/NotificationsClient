@@ -6,11 +6,12 @@ namespace NotificationsClient.ViewModel
     public class ViewModelLocator
     {
 #if DEBUG
-        public const bool UseDesignData = true;
+        public const bool UseDesignData = false;
 #endif
 
         public static readonly string MainPageKey = "MainPage";
         public static readonly string ChannelPageKey = "ChannelPage";
+        public static readonly string NotificationsPageKey = "NotificationPage";
         public static readonly string SettingsPageKey = "SettingsPage";
 
         static ViewModelLocator()

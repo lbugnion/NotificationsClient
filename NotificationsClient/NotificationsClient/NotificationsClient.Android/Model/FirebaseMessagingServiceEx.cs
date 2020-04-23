@@ -33,33 +33,26 @@ namespace NotificationsClient.Droid.Model
         {
             base.OnMessageReceived(remoteMessage);
 
-            var uniqueId = string.Empty;
-            var title = string.Empty;
-            var body = string.Empty;
-            var sentTimeUtc = string.Empty;
+            if (!remoteMessage.Data.ContainsKey(FunctionConstants.UniqueId)
+                || !remoteMessage.Data.ContainsKey(FunctionConstants.Title)
+                || !remoteMessage.Data.ContainsKey(FunctionConstants.Body)
+                || !remoteMessage.Data.ContainsKey(FunctionConstants.SentTimeUtc))
+            {
+                // Invalid notification received
+                return;
+            }
+
+            var uniqueId = remoteMessage.Data[FunctionConstants.UniqueId];
+            var title = remoteMessage.Data[FunctionConstants.Title];
+            var body = remoteMessage.Data[FunctionConstants.Body];
+            var sentTimeUtc = remoteMessage.Data[FunctionConstants.SentTimeUtc];
             var channel = string.Empty;
 
-            if (remoteMessage.Data.ContainsKey(FunctionConstants.UniqueId))
-            {
-                uniqueId = remoteMessage.Data[FunctionConstants.UniqueId];
-            }
-            if (remoteMessage.Data.ContainsKey(FunctionConstants.Title))
-            {
-                title = remoteMessage.Data[FunctionConstants.Title];
-            }
-            if (remoteMessage.Data.ContainsKey(FunctionConstants.Body))
-            {
-                body = remoteMessage.Data[FunctionConstants.Body];
-            }
-            if (remoteMessage.Data.ContainsKey(FunctionConstants.SentTimeUtc))
-            {
-                sentTimeUtc = remoteMessage.Data[FunctionConstants.SentTimeUtc];
-            }
             if (remoteMessage.Data.ContainsKey(FunctionConstants.Channel))
             {
                 channel = remoteMessage.Data[FunctionConstants.Channel];
             }
-
+            
             var argument = FunctionConstants.UwpArgumentTemplate
                 .Replace(FunctionConstants.UniqueId, uniqueId)
                 .Replace(FunctionConstants.Title, title)
@@ -69,8 +62,11 @@ namespace NotificationsClient.Droid.Model
 
             var notification = NotificationsClient.Model.Notification.Parse(argument);
 
-            var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
-            client.RaiseNotificationReceived(notification, false);
+            if (notification != null)
+            {
+                var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
+                client.RaiseNotificationReceived(notification, false);
+            }
         }
     }
 }

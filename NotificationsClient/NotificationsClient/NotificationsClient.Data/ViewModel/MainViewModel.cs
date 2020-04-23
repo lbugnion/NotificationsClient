@@ -214,7 +214,6 @@ namespace NotificationsClient.ViewModel
 
                 Channels.Remove(channel);
             }
-
         }
 
         private void ChannelVmNotificationDeleted(object sender, NotificationDeletedEventArgs e)
@@ -286,75 +285,82 @@ namespace NotificationsClient.ViewModel
             ShowInfo(message, true);
         }
 
-        private void ClientNotificationReceived(object sender, NotificationEventArgs args)
+        private async void ClientNotificationReceived(object sender, NotificationEventArgs args)
         {
-            lock (Channels)
+            var channel = Channels.FirstOrDefault(
+                c => c.Model.ChannelName == args.Notification.Channel);
+
+            if (channel != null)
             {
-                var channel = Channels.FirstOrDefault(
-                    c => c.Model.ChannelName == args.Notification.Channel);
+                var existingNotification = channel.Notifications
+                    .FirstOrDefault(n => n.Model.UniqueId == args.Notification.UniqueId);
 
-                if (channel != null)
+                if (existingNotification != null)
                 {
-                    var existingNotification = channel.Notifications
-                        .FirstOrDefault(n => n.Model.UniqueId == args.Notification.UniqueId);
+                    // We already received this one
+                    return;
+                }
+            }
 
-                    if (existingNotification != null)
+            if (args.Notification.ReceivedTimeUtc <= DateTime.MinValue)
+            {
+                args.Notification.ReceivedTimeUtc = DateTime.UtcNow;
+            }
+
+            args.Notification.IsUnread = true;
+
+            ShowInfo(string.Format(
+                Texts.NotificationReceived,
+                args.Notification.ReceivedTimeUtc));
+
+            IsStatusBlinking = !args.IsDelayed;
+
+            var notificationVm = new NotificationViewModel(args.Notification);
+
+            Dispatcher.CheckBeginInvokeOnUI(() =>
+            {
+                if (channel == null
+                    && !string.IsNullOrEmpty(args.Notification.Channel))
+                {
+                    channel = new ChannelInfoViewModel(
+                        new ChannelInfo
+                        {
+                            ChannelName = args.Notification.Channel
+                        });
+
+                    Channels.Add(channel);
+                    Storage.SaveChannelInfo(channel.Model);
+                }
+
+                _allNotifications.AddNewNotification(notificationVm);
+                channel?.AddNewNotification(notificationVm);
+                Storage.SaveNotification(args.Notification);
+
+                Channels.Sort((a, b) =>
+                {
+                    if (a.IsAllNotifications)
                     {
-                        // We already received this one
-                        return;
+                        return -1;
                     }
-                }
 
-                if (args.Notification.ReceivedTimeUtc <= DateTime.MinValue)
-                {
-                    args.Notification.ReceivedTimeUtc = DateTime.UtcNow;
-                }
+                    if (b.IsAllNotifications)
+                    {
+                        return 1;
+                    }
 
-                args.Notification.IsUnread = true;
+                    return b.LastReceived.CompareTo(a.LastReceived);
+                });
+            });
 
-                ShowInfo(string.Format(
-                    Texts.NotificationReceived,
-                    args.Notification.ReceivedTimeUtc));
-
-                IsStatusBlinking = !args.IsDelayed;
+            await Task.Run(async () =>
+            {
+                await Task.Delay(100);
 
                 Dispatcher.CheckBeginInvokeOnUI(() =>
                 {
-                    if (channel == null
-                        && !string.IsNullOrEmpty(args.Notification.Channel))
-                    {
-                        channel = new ChannelInfoViewModel(
-                            new ChannelInfo
-                            {
-                                ChannelName = args.Notification.Channel
-                            });
-
-                        Channels.Add(channel);
-                        Storage.SaveChannelInfo(channel.Model);
-                    }
-
-                    var notificationVm = new NotificationViewModel(args.Notification);
-
-                    _allNotifications.AddNewNotification(notificationVm);
-                    channel?.AddNewNotification(notificationVm);
-                    Storage.SaveNotification(args.Notification);
-
-                    Channels.Sort((a, b) =>
-                    {
-                        if (a.IsAllNotifications)
-                        {
-                            return -1;
-                        }
-
-                        if (b.IsAllNotifications)
-                        {
-                            return 1;
-                        }
-
-                        return b.LastReceived.CompareTo(a.LastReceived);
-                    });
+                    Nav.NavigateTo(ViewModelLocator.NotificationsPageKey, notificationVm);
                 });
-            }
+            });
         }
 
         public void ShowInfo(string message, bool isError = false)

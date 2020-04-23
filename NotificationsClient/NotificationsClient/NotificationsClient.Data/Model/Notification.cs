@@ -1,6 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Ioc;
 using Newtonsoft.Json;
 using Notifications;
 using System;
@@ -54,12 +52,6 @@ namespace NotificationsClient.Model
             set;
         }
 
-        public string Unusual
-        {
-            get;
-            set;
-        }
-
         private bool _isUnread;
 
         public bool IsUnread
@@ -77,33 +69,39 @@ namespace NotificationsClient.Model
                 },
                 StringSplitOptions.RemoveEmptyEntries);
 
+            if (notificationParts.Length < FunctionConstants.UwpArgumentTemplateParts - 2)
+            {
+                return null;
+            }
+
             var notification = new Notification();
 
-            if (notificationParts.Length < FunctionConstants.UwpArgumentTemplateParts - 1)
+            var success = DateTime.TryParseExact(
+                notificationParts[(int)UwpArgumentsParts.SentTimeUtc],
+                FunctionConstants.DateTimeFormat,
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal,
+                out DateTime sentTimeUtc);
+
+            if (success)
             {
-                notification.Unusual = argument;
+                notification.UniqueId = notificationParts[(int)UwpArgumentsParts.UniqueId];
+                notification.Title = notificationParts[(int)UwpArgumentsParts.Title];
+                notification.Body = notificationParts[(int)UwpArgumentsParts.Body];
+                notification.SentTimeUtc = sentTimeUtc;
             }
             else
             {
-                DateTime sentTimeUtc;
-                var success = DateTime.TryParseExact(
-                    notificationParts[(int)UwpArgumentsParts.SentTimeUtc],
-                    FunctionConstants.DateTimeFormat,
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeLocal,
-                    out sentTimeUtc);
+                // Invalid notification
+                return null;
+            }
 
-                if (success)
-                {
-                    notification.UniqueId = notificationParts[(int)UwpArgumentsParts.UniqueId];
-                    notification.Title = notificationParts[(int)UwpArgumentsParts.Title];
-                    notification.Body = notificationParts[(int)UwpArgumentsParts.Body];
-                    notification.SentTimeUtc = sentTimeUtc;
-                }
-                else
-                {
-                    notification.Unusual = argument;
-                }
+            if (string.IsNullOrEmpty(notification.UniqueId)
+                || string.IsNullOrEmpty(notification.Title)
+                || string.IsNullOrEmpty(notification.Body))
+            {
+                // Invalid notification
+                return null;
             }
 
             if (notificationParts.Length > FunctionConstants.UwpArgumentTemplateParts - 1)

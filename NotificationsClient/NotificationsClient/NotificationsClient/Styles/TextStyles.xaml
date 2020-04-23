@@ -38,7 +38,9 @@
                 Value="20,10,10,10" />
         <Setter Property="TextColor"
                 Value="{DynamicResource ListHeaderTextColor}" />
-        
+        <Setter Property="MaxLines"
+                Value="2" />
+
     </Style>
 
     <Style TargetType="Label"
@@ -49,6 +51,37 @@
         <Setter Property="HorizontalOptions"
                 Value="Start" />
         
+    </Style>
+
+    <Style TargetType="Label"
+           x:Key="PageLabelStyle">
+
+        <Setter Property="FontSize"
+                Value="18" />
+        <Setter Property="HorizontalOptions"
+                Value="Start" />
+        <Setter Property="Margin"
+                Value="0,10,0,-5" />
+
+    </Style>
+
+    <Style TargetType="Label"
+           x:Key="PageValueStyle">
+
+        <Setter Property="FontSize"
+                Value="22" />
+        <Setter Property="HorizontalOptions"
+                Value="Start" />
+
+    </Style>
+
+    <Style TargetType="Label"
+           x:Key="PageValueStyleBold"
+           BasedOn="{StaticResource PageValueStyle}">
+
+        <Setter Property="FontAttributes"
+                Value="Bold" />
+
     </Style>
 
 </ResourceDictionary>
