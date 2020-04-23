@@ -12,10 +12,8 @@ namespace NotificationsClient.ViewModel
 
         private string _settingsFilePath;
 
-        public Settings Model
-        {
-            get => SimpleIoc.Default.GetInstance<Settings>();
-        }
+        public MainViewModel Main => SimpleIoc.Default.GetInstance<MainViewModel>();
+        public Settings Model => SimpleIoc.Default.GetInstance<Settings>();
 
         static SettingsViewModel()
         {

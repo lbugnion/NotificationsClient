@@ -125,9 +125,17 @@
     <value>Are you sure?</value>
     <comment>Are you sure?</comment>
   </data>
-  <data name="DeleteNotificationWarningMessage" xml:space="preserve">
-    <value>This is irreversible and will also delete all these notifications on other devices!!</value>
-    <comment>This is irreversible and will also delete all these notifications on other devices!!</comment>
+  <data name="DeletingChannel" xml:space="preserve">
+    <value>Deleting this channel will delete all the notifications it contains. This is irreversible</value>
+    <comment>Deleting this channel will delete all the notifications it contains. This is irreversible</comment>
+  </data>
+  <data name="DeletingManyNotifications" xml:space="preserve">
+    <value>Deleting these notifications is irreversible</value>
+    <comment>Deleting these notifications is irreversible</comment>
+  </data>
+  <data name="DeletingOneNotification" xml:space="preserve">
+    <value>Deleting this notification is irreversible</value>
+    <comment>Deleting this notification is irreversible</comment>
   </data>
   <data name="ErrorInitializing" xml:space="preserve">
     <value>Error when initializing ({0})</value>
@@ -145,6 +153,10 @@
     <value>Initializing...</value>
     <comment>Initializing...</comment>
   </data>
+  <data name="MarkingChannel" xml:space="preserve">
+    <value>Marking this channel {0} will also mark all the notifications it contains</value>
+    <comment>Marking this channel {0} will also mark all the notifications it contains</comment>
+  </data>
   <data name="No" xml:space="preserve">
     <value>No</value>
     <comment>No</comment>
@@ -153,6 +165,10 @@
     <value>Notification received at {0}</value>
     <comment>Notification received at {0}</comment>
   </data>
+  <data name="Read" xml:space="preserve">
+    <value>read</value>
+    <comment>read</comment>
+  </data>
   <data name="ReadyForNotifications" xml:space="preserve">
     <value>Ready to receive notifications...</value>
     <comment>Ready to receive notifications...</comment>
@@ -160,6 +176,10 @@
   <data name="StartingUp" xml:space="preserve">
     <value>Starting up...</value>
     <comment>Starting up...</comment>
+  </data>
+  <data name="Unread" xml:space="preserve">
+    <value>unread</value>
+    <comment>unread</comment>
   </data>
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>

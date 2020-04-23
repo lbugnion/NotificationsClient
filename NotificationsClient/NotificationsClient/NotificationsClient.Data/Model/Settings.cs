@@ -40,12 +40,48 @@ namespace NotificationsClient.Model
             set => Set(ref _token, value);
         }
 
+        private bool _confirmOneDelete = false;
+
+        public bool ConfirmOneDelete
+        {
+            get => _confirmOneDelete;
+            set => Set(ref _confirmOneDelete, value);
+        }
+
+        private bool _confirmManyDelete = true;
+
+        public bool ConfirmManyDelete
+        {
+            get => _confirmManyDelete;
+            set => Set(ref _confirmManyDelete, value);
+        }
+
+        private bool _confirmChannelReadUnread = true;
+
+        public bool ConfirmChannelReadUnread
+        {
+            get => _confirmChannelReadUnread;
+            set => Set(ref _confirmChannelReadUnread, value);
+        }
+
+        private bool _confirmChannelDelete = true;
+
+        public bool ConfirmChannelDelete
+        {
+            get => _confirmChannelDelete;
+            set => Set(ref _confirmChannelDelete, value);
+        }
+
         public void Set(Settings settings)
         {
             FunctionCode = settings.FunctionCode;
             FunctionsAppName = settings.FunctionsAppName;
             IsRegisteredSuccessfully = settings.IsRegisteredSuccessfully;
             Token = settings.Token;
+            ConfirmChannelDelete = settings.ConfirmChannelDelete;
+            ConfirmChannelReadUnread = settings.ConfirmChannelReadUnread;
+            ConfirmManyDelete = settings.ConfirmManyDelete;
+            ConfirmOneDelete = settings.ConfirmOneDelete;
 
 #if DEBUG
             FunctionCode = DebugSettings.FunctionCode;

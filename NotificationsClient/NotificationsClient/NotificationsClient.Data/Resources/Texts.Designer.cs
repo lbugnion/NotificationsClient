@@ -79,11 +79,29 @@ namespace NotificationsClient.Resources {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This is irreversible and will also delete all these notifications on other devices!!.
+        ///   Looks up a localized string similar to Deleting this channel will delete all the notifications it contains. This is irreversible.
         /// </summary>
-        internal static string DeleteNotificationWarningMessage {
+        internal static string DeletingChannel {
             get {
-                return ResourceManager.GetString("DeleteNotificationWarningMessage", resourceCulture);
+                return ResourceManager.GetString("DeletingChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleting these notifications is irreversible.
+        /// </summary>
+        internal static string DeletingManyNotifications {
+            get {
+                return ResourceManager.GetString("DeletingManyNotifications", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Deleting this notification is irreversible.
+        /// </summary>
+        internal static string DeletingOneNotification {
+            get {
+                return ResourceManager.GetString("DeletingOneNotification", resourceCulture);
             }
         }
         
@@ -124,6 +142,15 @@ namespace NotificationsClient.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Marking this channel {0} will also mark all the notifications it contains.
+        /// </summary>
+        internal static string MarkingChannel {
+            get {
+                return ResourceManager.GetString("MarkingChannel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No.
         /// </summary>
         internal static string No {
@@ -142,6 +169,15 @@ namespace NotificationsClient.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to read.
+        /// </summary>
+        internal static string Read {
+            get {
+                return ResourceManager.GetString("Read", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ready to receive notifications....
         /// </summary>
         internal static string ReadyForNotifications {
@@ -156,6 +192,15 @@ namespace NotificationsClient.Resources {
         internal static string StartingUp {
             get {
                 return ResourceManager.GetString("StartingUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to unread.
+        /// </summary>
+        internal static string Unread {
+            get {
+                return ResourceManager.GetString("Unread", resourceCulture);
             }
         }
         

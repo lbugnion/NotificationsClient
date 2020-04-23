@@ -32,8 +32,7 @@
                          Grid.ColumnSpan="2" />
 
                 <Label Text="Notification Received!"
-                       Style="{StaticResource ListHeaderStyle}"
-                       LineBreakMode="TailTruncation" />
+                       Style="{StaticResource ListHeaderStyle}" />
 
                 <ImageButton Source="Delete.png"
                              Grid.Column="1"

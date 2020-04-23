@@ -5,6 +5,7 @@ using GalaSoft.MvvmLight.Messaging;
 using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Helpers;
 using NotificationsClient.Model;
+using NotificationsClient.Resources;
 using System;
 
 namespace NotificationsClient.ViewModel
@@ -12,7 +13,6 @@ namespace NotificationsClient.ViewModel
     public class NotificationViewModel : ViewModelBase
     {
         private bool _isSelected;
-        private bool _isSelectVisible;
         private bool _mustDelete = false;
         private RelayCommand _markReadUnreadCommand;
         private RelayCommand _deleteCommand;
@@ -23,8 +23,14 @@ namespace NotificationsClient.ViewModel
         private NotificationStorage Storage =>
             SimpleIoc.Default.GetInstance<NotificationStorage>();
 
+        private Settings Settings =>
+            SimpleIoc.Default.GetInstance<Settings>();
+
         private INavigationService Nav =>
             SimpleIoc.Default.GetInstance<INavigationService>();
+
+        private IDialogService Dialog =>
+            SimpleIoc.Default.GetInstance<IDialogService>();
 
         public Notification Model
         {
@@ -42,17 +48,24 @@ namespace NotificationsClient.ViewModel
         {
             get => _deleteCommand
                 ?? (_deleteCommand = new RelayCommand(
-                () =>
+                async () =>
                 {
+                    if (Settings.ConfirmManyDelete)
+                    {
+                        if (!await Dialog.ShowMessage(
+                            Texts.DeletingOneNotification,
+                            Texts.AreYouSure,
+                            "Yes",
+                            "No",
+                            null))
+                        {
+                            return;
+                        }
+                    }
+
                     MustDelete = true;
                     Nav.GoBack();
                 }));
-        }
-
-        public bool IsSelectVisible
-        {
-            get => _isSelectVisible;
-            set => Set(ref _isSelectVisible, value);
         }
 
         public bool IsSelected

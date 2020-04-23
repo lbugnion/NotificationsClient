@@ -40,6 +40,8 @@
                 Value="{DynamicResource ListHeaderTextColor}" />
         <Setter Property="MaxLines"
                 Value="2" />
+        <Setter Property="LineBreakMode"
+                Value="TailTruncation" />
 
     </Style>
 

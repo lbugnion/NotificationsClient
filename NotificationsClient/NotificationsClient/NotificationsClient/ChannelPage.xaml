@@ -40,17 +40,11 @@
                 <Label Text="{Binding Model.ChannelName}"
                        Style="{StaticResource ListHeaderStyle}" />
 
-                <StackLayout Orientation="Horizontal"
-                             Grid.Column="1">
-                    <ImageButton Source="Delete.png"
-                                 Style="{StaticResource ImageButtonStyle}"
-                                 Command="{Binding DeleteSelectionCommand}"
-                                 Opacity="{Binding DeleteButtonOpacity}" />
-
-                    <CheckBox IsChecked="{Binding IsSelectionVisible}"
-                              Margin="0,0,20,0"
-                              Color="White" />
-                </StackLayout>
+                <ImageButton Source="Delete.png"
+                             Grid.Column="1"
+                             Style="{StaticResource ImageButtonStyle}"
+                             Command="{Binding DeleteSelectionCommand}"
+                             Opacity="{Binding DeleteButtonOpacity}" />
             </Grid>
 
             <Image Source="Alarm.png"

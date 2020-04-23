@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Ioc;
 using GalaSoft.MvvmLight.Views;
 using NotificationsClient.Model;
+using NotificationsClient.Resources;
 using System;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -15,7 +16,6 @@ namespace NotificationsClient.ViewModel
 
         private RelayCommand _deleteCommand;
         private RelayCommand _markReadUnreadCommand;
-        private bool _isSelectionVisible;
         private RelayCommand _deleteSelectionCommand;
         private bool _mustDelete;
 
@@ -25,8 +25,14 @@ namespace NotificationsClient.ViewModel
         private INavigationService Nav =>
             SimpleIoc.Default.GetInstance<INavigationService>();
 
+        private IDialogService Dialog =>
+            SimpleIoc.Default.GetInstance<IDialogService>();
+
         private NotificationStorage Storage =>
             SimpleIoc.Default.GetInstance<NotificationStorage>();
+
+        private Settings Settings =>
+            SimpleIoc.Default.GetInstance<Settings>();
 
         public ChannelInfo Model
         {
@@ -47,6 +53,19 @@ namespace NotificationsClient.ViewModel
                 ?? (_deleteCommand = new RelayCommand(
                 async () =>
                 {
+                    if (Settings.ConfirmChannelDelete)
+                    {
+                        if (!await Dialog.ShowMessage(
+                            Texts.DeletingChannel,
+                            Texts.AreYouSure,
+                            "Yes",
+                            "No",
+                            null))
+                        {
+                            return;
+                        }
+                    }
+
                     foreach (var notification in Notifications)
                     {
                         notification.PropertyChanged -= NotificationPropertyChanged;
@@ -68,8 +87,21 @@ namespace NotificationsClient.ViewModel
         {
             get => _markReadUnreadCommand
                 ?? (_markReadUnreadCommand = new RelayCommand(
-                () =>
+                async () =>
                 {
+                    if (Settings.ConfirmChannelReadUnread)
+                    {
+                        if (!await Dialog.ShowMessage(
+                            string.Format(Texts.MarkingChannel, IsUnread ? Texts.Read : Texts.Unread),
+                            Texts.AreYouSure,
+                            "Yes",
+                            "No",
+                            null))
+                        {
+                            return;
+                        }
+                    }
+
                     if (IsUnread)
                     {
                         foreach (var notification in Notifications)
@@ -102,33 +134,24 @@ namespace NotificationsClient.ViewModel
             }
         }
 
-        public bool IsSelectionVisible
-        {
-            get => _isSelectionVisible;
-            set
-            {
-                if (Set(ref _isSelectionVisible, value))
-                {
-                    foreach (var notification in Notifications)
-                    {
-                        notification.IsSelectVisible = value;
-
-                        if (!value)
-                        {
-                            notification.IsSelected = false;
-                        }
-                    }
-                }
-            }
-        }
-
         public RelayCommand DeleteSelectionCommand
         {
             get => _deleteSelectionCommand
                 ?? (_deleteSelectionCommand = new RelayCommand(
-                () =>
+                async () =>
                 {
-                    // TODO Ask for confirmation (based on settings)
+                    if (Settings.ConfirmManyDelete)
+                    {
+                        if (!await Dialog.ShowMessage(
+                            Texts.DeletingManyNotifications,
+                            Texts.AreYouSure,
+                            "Yes",
+                            "No",
+                            null))
+                        {
+                            return;
+                        }
+                    }
 
                     var list = Notifications.Where(n => n.IsSelected).ToList();
 
@@ -215,7 +238,6 @@ namespace NotificationsClient.ViewModel
                     RaisePropertyChanged(() => IsLastReceivedVisible);
                     RaisePropertyChanged(() => LastReceived);
                     RaisePropertyChanged(() => IsUnread);
-                    IsSelectionVisible = false;
                     RaisePropertyChanged(() => DeleteButtonOpacity);
                 }
             }
@@ -226,7 +248,6 @@ namespace NotificationsClient.ViewModel
             if (Notifications.Contains(notification))
             {
                 notification.PropertyChanged -= NotificationPropertyChanged;
-
                 Notifications.Remove(notification);
 
                 RaisePropertyChanged(() => NumberOfNotifications);
@@ -234,16 +255,6 @@ namespace NotificationsClient.ViewModel
                 RaisePropertyChanged(() => LastReceived);
                 RaisePropertyChanged(() => IsUnread);
             }
-        }
-
-        public void UnselectAll()
-        {
-            foreach (var notification in Notifications)
-            {
-                notification.IsSelected = false;
-            }
-
-            IsSelectionVisible = false;
         }
     }
 }

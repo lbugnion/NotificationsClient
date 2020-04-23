@@ -17,13 +17,6 @@ namespace NotificationsClient
             NavigationPage.SetHasNavigationBar(this, false);
         }
 
-        protected override void OnDisappearing()
-        {
-            Vm.UnselectAll();
-
-            base.OnDisappearing();
-        }
-
         private void NotificationTapped(object sender, System.EventArgs e)
         {
             var item = (Cell)sender;
