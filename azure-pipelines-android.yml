@@ -41,13 +41,6 @@ steps:
   inputs:
     pathtoPublish: '$(outputDirectory)'
 
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'ca-lbugnion-demo-test (6e69cf24-0859-4dec-84e2-695e2618e473)'
-    scriptType: 'batch'
-    scriptLocation: 'inlineScript'
-    inlineScript: '"AzCopy\AzCopy.exe" copy "$(outputDirectory)\*.apk" "https://storageaccountlbnotb2a5.blob.core.windows.net/artifacts-android/$(Build.BuildNumber)/?sv=2019-02-02&ss=b&srt=sco&sp=rwlac&se=2020-04-24T16:19:48Z&st=2020-04-24T08:00:48Z&spr=https&sig=3Bgtoam07z5TKdfvtHIIHjWE2oM2ruhtgytkDRkPX3A%3D"'
-
 - task: AzureFunction@1
   inputs:
     function: 'https://notificationsendpoint.azurewebsites.net/api/send'
