@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System;
 using Microsoft.Azure.NotificationHubs;
-using Microsoft.Azure.Cosmos.Table;
+using Notifications.Model;
 
 namespace Notifications
 {
@@ -45,10 +45,13 @@ namespace Notifications
                 Title = title,
                 Body = body,
                 Channel = channel,
-                SentTimeUtc = DateTime.UtcNow
+                SentTimeUtc = DateTime.UtcNow,
+                LastOperation = LastOperation.Added,
+                LastChangeUtc = DateTime.UtcNow
             };
 
-            var sentTimeUtcString = notification.SentTimeUtc.ToString(FunctionConstants.DateTimeFormat);
+            var sentTimeUtcString = notification.SentTimeUtc.ToString(
+                FunctionConstants.DateTimeFormat);
 
             var argument = FunctionConstants.UwpArgumentTemplate
                 .Replace(FunctionConstants.UniqueId, notification.RowKey)
@@ -88,13 +91,13 @@ namespace Notifications
 
             try
             {
-                Notifications.Initialize(
+                Model.Notifications.Initialize(
                     Environment.GetEnvironmentVariable(
-                        Notifications.ConnectionStringVariableName),
+                        Model.Notifications.ConnectionStringVariableName),
                     Environment.GetEnvironmentVariable(
-                        Notifications.HubNameVariableName));
+                        Model.Notifications.HubNameVariableName));
 
-                var outcome = await Notifications.Instance.Hub
+                var outcome = await Model.Notifications.Instance.Hub
                     .SendTemplateNotificationAsync(properties);
 
                 var result = string.Empty;

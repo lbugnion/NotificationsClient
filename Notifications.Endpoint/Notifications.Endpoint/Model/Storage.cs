@@ -2,7 +2,7 @@
 using System;
 using System.Threading.Tasks;
 
-namespace Notifications
+namespace Notifications.Model
 {
     public class Storage
     {

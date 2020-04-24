@@ -24,8 +24,8 @@ namespace Notifications
 
             var config = new HubConfiguration
             {
-                HubName = Environment.GetEnvironmentVariable(Notifications.HubNameVariableName),
-                HubConnectionString = Environment.GetEnvironmentVariable(Notifications.ConnectionStringVariableName)
+                HubName = Environment.GetEnvironmentVariable(Model.Notifications.HubNameVariableName),
+                HubConnectionString = Environment.GetEnvironmentVariable(Model.Notifications.ConnectionStringVariableName)
             };
 
             return new JsonResult(config);

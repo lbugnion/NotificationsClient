@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos.Table;
 using System;
 
-namespace Notifications
+namespace Notifications.Model
 {
     public class NotificationEntity : TableEntity
     {
@@ -29,8 +29,27 @@ namespace Notifications
             set;
         }
 
+        public LastOperation LastOperation
+        {
+            get;
+            set;
+        }
+
+        public string LastOperationString
+        {
+            get => LastOperation.ToString();
+            set => Enum.Parse(typeof(LastOperation), value);
+        }
+
+        public DateTime LastChangeUtc
+        {
+            get;
+            set;
+        }
+
         public NotificationEntity()
         {
+            LastOperation = LastOperation.None;
             PartitionKey = FunctionConstants.PartitionKey;
             RowKey = Guid.NewGuid().ToString();
         }
