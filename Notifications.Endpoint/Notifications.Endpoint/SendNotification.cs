@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.Collections.Generic;
 using System;
 using Microsoft.Azure.NotificationHubs;
+using Microsoft.Azure.Cosmos.Table;
 
 namespace Notifications
 {
@@ -39,32 +40,40 @@ namespace Notifications
                     "Please pass a body and a title in the request");
             }
 
-            var uniqueId = Guid.NewGuid().ToString();
-            var sentTimeUtc = DateTime.UtcNow;
+            var notification = new NotificationEntity
+            {
+                Title = title,
+                Body = body,
+                Channel = channel,
+                SentTimeUtc = DateTime.UtcNow
+            };
+
+            var sentTimeUtcString = notification.SentTimeUtc.ToString(FunctionConstants.DateTimeFormat);
+
             var argument = FunctionConstants.UwpArgumentTemplate
-                .Replace(FunctionConstants.UniqueId, uniqueId)
-                .Replace(FunctionConstants.Title, title)
-                .Replace(FunctionConstants.Body, body)
-                .Replace(FunctionConstants.SentTimeUtc, sentTimeUtc.ToString(FunctionConstants.DateTimeFormat))
-                .Replace(FunctionConstants.Channel, channel);
+                .Replace(FunctionConstants.UniqueId, notification.RowKey)
+                .Replace(FunctionConstants.Title, notification.Title)
+                .Replace(FunctionConstants.Body, notification.Body)
+                .Replace(FunctionConstants.SentTimeUtc, sentTimeUtcString)
+                .Replace(FunctionConstants.Channel, notification.Channel);
 
             var properties = new Dictionary<string, string>
             {
                 {
                     FunctionConstants.UniqueId,
-                    uniqueId
+                    notification.RowKey
                 },
                 {
                     FunctionConstants.Title,
-                    title
+                    notification.Title
                 },
                 {
                     FunctionConstants.Body,
-                    body
+                    notification.Body
                 },
                 {
                     FunctionConstants.SentTimeUtc,
-                    sentTimeUtc.ToString(FunctionConstants.DateTimeFormat)
+                    sentTimeUtcString
                 },
                 {
                     FunctionConstants.Argument,
@@ -74,7 +83,7 @@ namespace Notifications
 
             if (!string.IsNullOrEmpty(channel))
             {
-                properties.Add(FunctionConstants.Channel, channel);
+                properties.Add(FunctionConstants.Channel, notification.Channel);
             }
 
             try
@@ -108,6 +117,18 @@ namespace Notifications
                 else
                 {
                     result = "Couldn't complete the operation";
+                }
+
+                try
+                {
+                    var storage = new Storage();
+                    await storage.InsertOrMergeNotification(notification);
+                    result = $"{result} and inserted in storage";
+                }
+                catch (Exception ex)
+                {
+                    log.LogError($"Error when storing notification: {ex.Message}");
+                    return new OkObjectResult($"{result} | error when storing, check the logs");
                 }
 
                 log.LogInformation(result);

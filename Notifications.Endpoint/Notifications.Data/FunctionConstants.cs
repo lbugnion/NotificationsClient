@@ -14,5 +14,8 @@
         public static readonly string UwpArgumentTemplate = $"{UniqueId}{UwpArgumentSeparator}{Title}{UwpArgumentSeparator}{Body}{UwpArgumentSeparator}{SentTimeUtc}{UwpArgumentSeparator}{Channel}";
         public const int UwpArgumentTemplateParts = 5;
         public const string DateTimeFormat = "yyyyMMddHHmmss";
+
+        public const string PartitionKey = "partition";
+        public const string NotificationTableName = "notifications";
     }
 }

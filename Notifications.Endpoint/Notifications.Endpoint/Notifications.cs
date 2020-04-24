@@ -6,6 +6,7 @@ namespace Notifications
     {
         public const string ConnectionStringVariableName = "HubConnectionString";
         public const string HubNameVariableName = "HubName";
+        public const string AzureWebJobsStorageName = "AzureWebJobsStorage";
 
         public static Notifications Instance = null;
 
