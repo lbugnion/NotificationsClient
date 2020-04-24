@@ -40,10 +40,3 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(outputDirectory)'
-
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'ca-lbugnion-demo-test (6e69cf24-0859-4dec-84e2-695e2618e473)'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: 'azcopy copy ''$(outputDirectory)/*.apk'' ''https://storageaccountlbnotb2a5.blob.core.windows.net/artifacts-android/$(Build.BuildNumber)/?sv=2019-02-02&ss=b&srt=sco&sp=rwlac&se=2020-04-24T17:55:44Z&st=2020-04-24T09:30:44Z&spr=https&sig=5xQb6XiGvVTc9tsFjOMhtsiBDGJ4%2Bs7ffYwyW8SEO30%3D'''
