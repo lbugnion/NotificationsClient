@@ -96,6 +96,11 @@ namespace NotificationsClient.UWP
                     .GetInstance<INotificationsServiceClient>();
             }
 
+            if (!string.IsNullOrEmpty(arguments))
+            {
+                notificationsServiceClient.RaiseNotificationReceived(arguments, true);
+            }
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -104,7 +109,6 @@ namespace NotificationsClient.UWP
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();
-
                 rootFrame.NavigationFailed += OnNavigationFailed;
 
                 Xamarin.Forms.Forms.Init(e);
@@ -116,6 +120,8 @@ namespace NotificationsClient.UWP
 
                 // Place the frame in the current Window
                 Window.Current.Content = rootFrame;
+                Window.Current.VisibilityChanged += CurrentWindowVisibilityChanged;
+                Window.Current.Activated += CurrentWindowActivated;
             }
 
             if (rootFrame.Content == null)
@@ -128,11 +134,35 @@ namespace NotificationsClient.UWP
 
             // Ensure the current window is active
             Window.Current.Activate();
+        }
 
-            if (!string.IsNullOrEmpty(arguments))
-            {
-                notificationsServiceClient.RaiseNotificationReceived(arguments, true);
-            }
+        private void CurrentWindowActivated(object sender, Windows.UI.Core.WindowActivatedEventArgs e)
+        {
+            IsWindowActive = !(e.WindowActivationState == Windows.UI.Core.CoreWindowActivationState.Deactivated);
+        }
+
+        public bool IsWindowVisible
+        {
+            get;
+            private set;
+        }
+
+        public bool IsWindowActive
+        {
+            get;
+            private set;
+        }
+
+        private void CurrentWindowVisibilityChanged(
+            object sender, 
+            Windows.UI.Core.VisibilityChangedEventArgs e)
+        {
+            IsWindowVisible = e.Visible;
+        }
+
+        public void MakeVisible()
+        {
+            Window.Current.Activate();
         }
     }
 }

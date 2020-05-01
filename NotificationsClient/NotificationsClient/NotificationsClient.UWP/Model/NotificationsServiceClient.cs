@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Networking.PushNotifications;
+using Windows.UI.Xaml;
 
 // TODO Maybe we can rationalize this code with the other NotificationsServiceClient
 namespace NotificationsClient.UWP.Model
@@ -119,6 +120,10 @@ namespace NotificationsClient.UWP.Model
 
                 var launchAttribute = toastNode.Attributes.FirstOrDefault(a => a.NodeName == "launch");
                 RaiseNotificationReceived(launchAttribute.NodeValue.ToString(), false);
+
+                var isVisible = ((App)Application.Current).IsWindowVisible;
+                var isActivated = ((App)Application.Current).IsWindowActive;
+                args.Cancel = isVisible && isActivated;
             }
         }
 

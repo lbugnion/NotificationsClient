@@ -77,7 +77,6 @@
                         <Label Text="Confirm when deleting a channel"
                                HorizontalOptions="StartAndExpand" />
                     </StackLayout>
-
                 </StackLayout>
             </ScrollView>
 
