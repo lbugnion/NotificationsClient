@@ -55,24 +55,37 @@ namespace NotificationsClient.ViewModel
                 {
                     if (Settings.ConfirmChannelDelete)
                     {
-                        if (!await Dialog.ShowMessage(
-                            Texts.DeletingChannel,
-                            Texts.AreYouSure,
-                            "Yes",
-                            "No",
-                            null))
+                        if (IsAllNotifications)
                         {
-                            return;
+                            if (!await Dialog.ShowMessage(
+                                "You cannot delete this channel but you can delete all the notifications. This is irreversible. Do you want to proceed?",
+                                Texts.AreYouSure,
+                                "Yes",
+                                "No",
+                                null))
+                            {
+                                return;
+                            }
+                        }
+                        else
+                        {
+                            if (!await Dialog.ShowMessage(
+                                Texts.DeletingChannel,
+                                Texts.AreYouSure,
+                                "Yes",
+                                "No",
+                                null))
+                            {
+                                return;
+                            }
                         }
                     }
 
-                    foreach (var notification in Notifications)
+                    foreach (var notification in Notifications.ToList())
                     {
-                        notification.PropertyChanged -= NotificationPropertyChanged;
-                        await Storage.Delete(notification.Model);
+                        notification.MustDelete = true;
                     }
 
-                    await Storage.Delete(Model);
                     MustDelete = true;
                 }));
         }

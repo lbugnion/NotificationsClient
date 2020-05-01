@@ -112,6 +112,7 @@ namespace NotificationsClient.ViewModel
                         ChannelName = Texts.AllNotificationsChannelTitle
                     },
                     true);
+                _allNotifications.PropertyChanged += ChannelVmPropertyChanged;
 
                 await Storage.InitializeAsync();
 
@@ -196,20 +197,34 @@ namespace NotificationsClient.ViewModel
             }
         }
 
-        private void ChannelVmPropertyChanged(object sender, PropertyChangedEventArgs e)
+        private async void ChannelVmPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(ChannelInfoViewModel.MustDelete))
             {
                 var channel = (ChannelInfoViewModel)sender;
-                channel.NotificationDeleted -= ChannelVmNotificationDeleted;
-                channel.PropertyChanged -= ChannelVmPropertyChanged;
 
-                foreach (var notification in channel.Notifications)
+                if (channel.IsAllNotifications)
                 {
-                    _allNotifications.Remove(notification);
-                }
+                    foreach (var ch in Channels.ToList())
+                    {
+                        if (!ch.IsAllNotifications)
+                        {
+                            await Storage.Delete(ch.Model);
 
-                Channels.Remove(channel);
+                            Dispatcher.CheckBeginInvokeOnUI(() =>
+                            {
+                                Channels.Remove(ch);
+                            });
+                        }
+                    }
+                }
+                else 
+                { 
+                    channel.NotificationDeleted -= ChannelVmNotificationDeleted;
+                    channel.PropertyChanged -= ChannelVmPropertyChanged;
+                    await Storage.Delete(channel.Model);
+                    Channels.Remove(channel);
+                }
             }
         }
 
@@ -324,6 +339,8 @@ namespace NotificationsClient.ViewModel
                         {
                             ChannelName = args.Notification.Channel
                         });
+
+                    channel.PropertyChanged += ChannelVmPropertyChanged;
 
                     Channels.Add(channel);
                     Storage.SaveChannelInfo(channel.Model);

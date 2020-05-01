@@ -116,7 +116,15 @@ namespace NotificationsClient.Model
 
         public async Task<int> Delete(Notification notification)
         {
-            return await _database.DeleteAsync(notification);
+            try
+            {
+                var result = await _database.DeleteAsync(notification);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
         }
 
         public async Task Synchronize()
