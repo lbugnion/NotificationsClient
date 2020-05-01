@@ -119,7 +119,7 @@ namespace NotificationsClient.UWP.Model
                     .FirstChild; // toast
 
                 var launchAttribute = toastNode.Attributes.FirstOrDefault(a => a.NodeName == "launch");
-                RaiseNotificationReceived(launchAttribute.NodeValue.ToString(), false);
+                RaiseNotificationReceived(launchAttribute.NodeValue.ToString());
 
                 var isVisible = ((App)Application.Current).IsWindowVisible;
                 var isActivated = ((App)Application.Current).IsWindowActive;
@@ -127,9 +127,9 @@ namespace NotificationsClient.UWP.Model
             }
         }
 
-        public void RaiseNotificationReceived(Notification notification, bool isDelayed)
+        public void RaiseNotificationReceived(Notification notification)
         {
-            if (isDelayed)
+            if (NotificationReceived == null)
             {
                 _delayedNotifications.Add(notification);
             }
@@ -142,13 +142,13 @@ namespace NotificationsClient.UWP.Model
             }
         }
 
-        internal void RaiseNotificationReceived(string arguments, bool isDelayed)
+        internal void RaiseNotificationReceived(string arguments)
         {
             var notification = Notification.Parse(arguments);
 
             if (notification != null)
             {
-                RaiseNotificationReceived(notification, isDelayed);
+                RaiseNotificationReceived(notification);
             }
         }
 

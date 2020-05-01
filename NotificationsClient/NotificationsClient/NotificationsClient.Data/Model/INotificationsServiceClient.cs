@@ -10,7 +10,7 @@ namespace NotificationsClient.Model
         event EventHandler<NotificationStatus> StatusChanged;
 
         Task Initialize(bool registerHub);
-        void RaiseNotificationReceived(Notification notification, bool isDelayed);
+        void RaiseNotificationReceived(Notification notification);
         void RaiseDelayedNotifications();
     }
 }

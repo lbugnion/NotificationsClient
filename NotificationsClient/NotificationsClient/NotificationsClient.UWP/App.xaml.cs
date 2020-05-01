@@ -98,7 +98,7 @@ namespace NotificationsClient.UWP
 
             if (!string.IsNullOrEmpty(arguments))
             {
-                notificationsServiceClient.RaiseNotificationReceived(arguments, true);
+                notificationsServiceClient.RaiseNotificationReceived(arguments);
             }
 
             Frame rootFrame = Window.Current.Content as Frame;

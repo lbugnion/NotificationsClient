@@ -114,10 +114,9 @@ namespace NotificationsClient.Droid.Model
         }
 
         public void RaiseNotificationReceived(
-            NotificationsClient.Model.Notification notification,
-            bool isDelayed)
+            NotificationsClient.Model.Notification notification)
         {
-            if (isDelayed)
+            if (NotificationReceived == null)
             {
                 _delayedNotifications.Add(notification);
             }
