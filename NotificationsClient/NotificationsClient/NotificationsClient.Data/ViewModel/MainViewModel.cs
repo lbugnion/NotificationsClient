@@ -32,9 +32,6 @@ namespace NotificationsClient.ViewModel
         private INavigationService Nav =>
             SimpleIoc.Default.GetInstance<INavigationService>();
 
-        private IDialogService Dialog =>
-            SimpleIoc.Default.GetInstance<IDialogService>();
-
         private IDispatcherHelper Dispatcher =>
             SimpleIoc.Default.GetInstance<IDispatcherHelper>();
 

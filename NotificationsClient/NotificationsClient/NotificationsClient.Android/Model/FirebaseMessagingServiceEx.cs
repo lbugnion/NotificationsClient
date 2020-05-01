@@ -65,7 +65,7 @@ namespace NotificationsClient.Droid.Model
             if (notification != null)
             {
                 var client = SimpleIoc.Default.GetInstance<INotificationsServiceClient>();
-                client.RaiseNotificationReceived(notification, false);
+                client.RaiseNotificationReceived(notification);
             }
         }
     }

@@ -79,7 +79,7 @@ namespace NotificationsClient.Droid
 
                     if (notification != null)
                     {
-                        notificationsServiceClient.RaiseNotificationReceived(notification, true);
+                        notificationsServiceClient.RaiseNotificationReceived(notification);
                     }
                 }
             }
