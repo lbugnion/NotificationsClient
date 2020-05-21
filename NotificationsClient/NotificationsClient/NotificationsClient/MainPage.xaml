@@ -72,10 +72,13 @@
                                            Style="{StaticResource ListTitleStyle}" />
 
                                     <StackLayout Orientation="Horizontal">
+                                        <Label Text="#"
+                                               Style="{StaticResource ListSubTitleStyle}" />
+
                                         <Label Text="{Binding NumberOfNotifications}"
                                                Style="{StaticResource ListSubTitleStyle}" />
 
-                                        <Label Text="notifications"
+                                        <Label Text="|"
                                                Style="{StaticResource ListSubTitleStyle}" />
 
                                         <Label Text="{Binding LastReceived}"

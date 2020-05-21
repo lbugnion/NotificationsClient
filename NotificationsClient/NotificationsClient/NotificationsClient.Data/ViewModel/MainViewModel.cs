@@ -95,7 +95,6 @@ namespace NotificationsClient.ViewModel
             client.ErrorHappened += ClientErrorHappened;
             client.StatusChanged -= ClientStatusChanged;
             client.StatusChanged += ClientStatusChanged;
-            client.RaiseDelayedNotifications();
 
             if (_isDatabaseLoaded)
             {
@@ -177,6 +176,8 @@ namespace NotificationsClient.ViewModel
             Channels.Insert(0, _allNotifications);
             _isDatabaseLoaded = true;
             Messenger.Default.Register<ReadUnreadMessage>(this, HandleReadUnreadMessage);
+
+            client.RaiseDelayedNotifications();
 
             if (SettingsVm.Model.IsRegisteredSuccessfully)
             {
