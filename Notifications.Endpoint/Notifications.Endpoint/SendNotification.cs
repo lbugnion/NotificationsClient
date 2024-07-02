@@ -43,7 +43,7 @@ namespace Notifications.Endpoint
                 || string.IsNullOrEmpty(title))
             {
                 return new BadRequestObjectResult(
-                    "Please pass a body and a title in the request");
+                    "Please pass a body and a title in the payload");
             }
 
             var genericChannelMapping = Environment.GetEnvironmentVariable($"{TelegramId}{GenericChannelId}");
