@@ -22,7 +22,7 @@ namespace Notifications.Endpoint.Model
                     return $"*{title}*\n\n{message}";
                 }
 
-                return $"> {ChannelInMessage}\n*{title}*\n\n{message}";
+                return $"> {ChannelInMessage}\n*{title}*\n{message}\n----";
             }
         }
 
