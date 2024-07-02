@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:NotificationsClient.Controls"
+             xmlns:ignore="http://galasoft.ch/ignore"
+             xmlns:helpers="clr-namespace:NotificationsClient.Helpers"
+             mc:Ignorable="d ignore"
+             x:Class="NotificationsClient.ChannelPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary Source="Styles/Colors.xaml" />
+        <ResourceDictionary Source="Styles/TextStyles.xaml" />
+        <ResourceDictionary Source="Styles/MiscStyles.xaml" />
+        <ResourceDictionary Source="Styles/ListStyles.xaml" />
+
+        <helpers:SelectedToColorConverter x:Key="SelectedToColorConverter" />
+
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <BoxView BackgroundColor="{StaticResource TitleBackgroundColor}"
+                         Grid.ColumnSpan="2" />
+
+                <Label Text="{Binding Model.ChannelName}"
+                       Style="{StaticResource ListHeaderStyle}" />
+
+                <ImageButton Source="Delete.png"
+                             Grid.Column="1"
+                             Style="{StaticResource ImageButtonStyle}"
+                             Command="{Binding DeleteSelectionCommand}"
+                             Opacity="{Binding DeleteButtonOpacity}" />
+            </Grid>
+
+            <Image Source="Alarm.png"
+                   Grid.Row="1"
+                   Grid.RowSpan="2"
+                   Style="{StaticResource HeroImageStyle}" />
+
+            <ListView ItemsSource="{Binding Notifications}"
+                      Grid.Row="1"
+                      Style="{StaticResource ListStyle}"
+                      SeparatorVisibility="None">
+
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <ViewCell Tapped="NotificationTapped">
+                            <Frame Style="{StaticResource TemplateContainerStyle}"
+                                   BackgroundColor="{Binding IsSelected, Converter={StaticResource SelectedToColorConverter}}"
+                                   Margin="-5,0,-5,0">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackLayout Margin="0,0,0,10">
+                                        <Label Text="{Binding Model.Channel}"
+                                               Style="{StaticResource ListSubTitleStyle}"
+                                               Margin="0,0,0,-3"/>
+
+                                        <Label Text="{Binding Model.Title}"
+                                               Style="{StaticResource ListTitleStyle}" />
+
+                                        <Label Text="{Binding Model.Body}"
+                                               Style="{StaticResource ListBodyStyle}" />
+
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text="Received"
+                                                   Style="{StaticResource ListSubTitleStyle}" />
+
+                                            <Label Text="{Binding ReceivedTimeLocal}"
+                                                   Style="{StaticResource ListSubTitleStyle}" />
+                                        </StackLayout>
+                                    </StackLayout>
+
+                                    <ImageButton Source="SmallAlarmGray.png"
+                                                 Grid.Column="1"
+                                                 Style="{StaticResource SmallAlarmStyle}"
+                                                 Command="{Binding MarkReadUnreadCommand}" />
+
+                                    <ImageButton Source="SmallAlarm.png"
+                                                 Grid.Column="1"
+                                                 IsVisible="{Binding Model.IsUnread}"
+                                                 Style="{StaticResource SmallAlarmStyle}"
+                                                 Command="{Binding MarkReadUnreadCommand}" />
+
+                                    <CheckBox IsVisible="{Binding IsSelectVisible}"
+                                              IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                              Grid.Column="1"
+                                              Color="Black"
+                                              VerticalOptions="End"
+                                              HorizontalOptions="End"
+                                              Margin="0,0,0,5"/>
+
+                                    <BoxView Style="{StaticResource SeparatorStyle}"
+                                             Grid.ColumnSpan="2" />
+                                </Grid>
+                            </Frame>
+                        </ViewCell>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <controls:StatusBar x:Name="Status"
+                                IsBlinking="{Binding Main.IsStatusBlinking, Mode=TwoWay}"
+                                StatusText="{Binding Main.Status}"
+                                Grid.Row="2" />
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

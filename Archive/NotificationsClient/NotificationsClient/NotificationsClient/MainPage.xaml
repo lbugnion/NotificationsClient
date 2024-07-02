@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:d="http://xamarin.com/schemas/2014/forms/design"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:controls="clr-namespace:NotificationsClient.Controls"
+             xmlns:ignore="http://galasoft.ch/ignore"
+             mc:Ignorable="d ignore"
+             x:Class="NotificationsClient.MainPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary Source="Styles/Colors.xaml" />
+        <ResourceDictionary Source="Styles/TextStyles.xaml" />
+        <ResourceDictionary Source="Styles/MiscStyles.xaml" />
+        <ResourceDictionary Source="Styles/ListStyles.xaml" />
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="90" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <BoxView BackgroundColor="{StaticResource TitleBackgroundColor}"
+                     Grid.ColumnSpan="2" />
+
+            <Image Source="Title.png"
+                   Style="{StaticResource TitleImageStyle}" />
+
+            <ImageButton Source="Settings.png"
+                         Grid.Column="1"
+                         Style="{StaticResource ImageButtonStyle}"
+                         Clicked="SettingsButtonClicked" />
+        </Grid>
+
+        <Image Source="Alarm.png"
+               Grid.Row="1"
+               Grid.RowSpan="2"
+               Style="{StaticResource HeroImageStyle}" />
+        
+        <ListView Grid.Row="1"
+                  Style="{StaticResource ListStyle}"
+                  ItemsSource="{Binding Channels}"
+                  Refreshing="ListViewRefreshing">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell Tapped="ChannelTapped">
+                        <ViewCell.ContextActions>
+                            <MenuItem Command="{Binding DeleteCommand}"
+                                      Text="Delete" />
+                            
+                            <MenuItem Command="{Binding MarkReadUnreadCommand}"
+                                      Text="Read/Unread" />
+                        </ViewCell.ContextActions>
+
+                        <Frame Style="{StaticResource TemplateContainerStyle}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <StackLayout Margin="0,0,0,10">
+                                    <Label Text="{Binding Model.ChannelName}"
+                                           Style="{StaticResource ListTitleStyle}" />
+
+                                    <StackLayout Orientation="Horizontal">
+                                        <Label Text="#"
+                                               Style="{StaticResource ListSubTitleStyle}" />
+
+                                        <Label Text="{Binding NumberOfNotifications}"
+                                               Style="{StaticResource ListSubTitleStyle}" />
+
+                                        <Label Text="|"
+                                               Style="{StaticResource ListSubTitleStyle}" />
+
+                                        <Label Text="{Binding LastReceived}"
+                                               Style="{StaticResource ListSubTitleStyle}"
+                                               IsVisible="{Binding IsLastReceivedVisible}" />
+                                    </StackLayout>
+                                </StackLayout>
+
+                                <Image Source="SmallAlarm.png"
+                                       Grid.Column="1"
+                                       IsVisible="{Binding IsUnread}"
+                                       Style="{StaticResource SmallAlarmStyle}" />
+
+                                <BoxView Style="{StaticResource SeparatorStyle}"
+                                         Grid.ColumnSpan="2" />
+                            </Grid>
+                        </Frame>                        
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <controls:StatusBar x:Name="Status"
+                            IsBlinking="{Binding IsStatusBlinking, Mode=TwoWay}"
+                            StatusText="{Binding Status}"
+                            Grid.Row="2" />
+    </Grid>
+</ContentPage>

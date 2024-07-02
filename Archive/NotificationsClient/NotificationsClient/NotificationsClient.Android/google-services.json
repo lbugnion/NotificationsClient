@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "521818011643",
+    "project_id": "notificationsclient-e4858",
+    "storage_bucket": "notificationsclient-e4858.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:521818011643:android:b72fc84704b94519183d5e",
+        "android_client_info": {
+          "package_name": "com.galasoft.notificationsclient"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCo8W4NqneCOcCOHQPoqbuY7_L8QvkklWM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

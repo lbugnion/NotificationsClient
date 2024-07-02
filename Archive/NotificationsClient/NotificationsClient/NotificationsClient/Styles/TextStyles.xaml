@@ -1,0 +1,89 @@
+﻿<ResourceDictionary xmlns="http://xamarin.com/schemas/2014/forms"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Style TargetType="Label"
+           x:Key="ListTitleStyle">
+        
+        <Setter Property="FontSize"
+                Value="20" />
+        <Setter Property="FontAttributes"
+                Value="Bold" />
+        <Setter Property="HorizontalOptions"
+                Value="Start" />
+        
+    </Style>
+
+    <Style TargetType="Label"
+           x:Key="ListBodyStyle">
+        
+        <Setter Property="FontSize"
+                Value="18" />
+        <Setter Property="HorizontalOptions"
+                Value="Start" />
+        
+    </Style>
+
+    <Style TargetType="Label"
+           x:Key="ListHeaderStyle">
+        
+        <Setter Property="FontSize"
+                Value="Title" />
+        <Setter Property="FontAttributes"
+                Value="Bold" />
+        <Setter Property="HorizontalOptions"
+                Value="Start" />
+        <Setter Property="VerticalOptions"
+                Value="Center" />
+        <Setter Property="Margin"
+                Value="20,10,10,10" />
+        <Setter Property="TextColor"
+                Value="{DynamicResource ListHeaderTextColor}" />
+        <Setter Property="MaxLines"
+                Value="2" />
+        <Setter Property="LineBreakMode"
+                Value="TailTruncation" />
+
+    </Style>
+
+    <Style TargetType="Label"
+           x:Key="ListSubTitleStyle">
+        
+        <Setter Property="FontSize"
+                Value="Subtitle" />
+        <Setter Property="HorizontalOptions"
+                Value="Start" />
+        
+    </Style>
+
+    <Style TargetType="Label"
+           x:Key="PageLabelStyle">
+
+        <Setter Property="FontSize"
+                Value="18" />
+        <Setter Property="HorizontalOptions"
+                Value="Start" />
+        <Setter Property="Margin"
+                Value="0,10,0,-5" />
+
+    </Style>
+
+    <Style TargetType="Label"
+           x:Key="PageValueStyle">
+
+        <Setter Property="FontSize"
+                Value="22" />
+        <Setter Property="HorizontalOptions"
+                Value="Start" />
+
+    </Style>
+
+    <Style TargetType="Label"
+           x:Key="PageValueStyleBold"
+           BasedOn="{StaticResource PageValueStyle}">
+
+        <Setter Property="FontAttributes"
+                Value="Bold" />
+
+    </Style>
+
+</ResourceDictionary>
