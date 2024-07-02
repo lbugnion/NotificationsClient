@@ -1,0 +1,11 @@
+### Get configuration
+GET {{function-url}}/config
+
+### Send notification
+POST {{function-url}}/send
+
+{
+    "body": "Hello World",
+    "title": "Test Notification",
+    "channel": "test-channel"
+}

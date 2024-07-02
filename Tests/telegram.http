@@ -1,0 +1,38 @@
+### Get me (Notifications)
+GET https://api.telegram.org/bot{{notifications-channel}}/getUpdates
+
+### Get me (Media Management)
+GET https://api.telegram.org/bot{{media-management-channel}}/getMe
+
+### Get updates (Media Management)
+GET https://api.telegram.org/bot{{media-management-channel}}/getUpdates
+
+### Send message to Telegram directly (Notifications)
+POST https://api.telegram.org/bot{{notifications-channel}}/sendMessage
+Content-Type: application/json
+
+{
+    "chat_id": "{{chat_id}}",
+    "text": "> Error handling\n*Hello, World\\!*\nHow *are* you?",
+    "parse_mode": "MarkdownV2"
+}
+
+### Send message to Telegram via a function
+POST {{function-url}}/api/send
+Content-Type: application/json
+
+{
+    "body": "This is a test, hello to all!!",
+    "title": "Hello world from Visual Studio Code",
+    "channel" : "Custom channel"
+}
+
+### Send message to Telegram via a function
+POST {{function-url}}/api/send
+Content-Type: application/json
+
+{
+    "body": "This is a test for the Media Management channel",
+    "title": "Media management test message",
+    "channel" : "MediaManagement"
+}
