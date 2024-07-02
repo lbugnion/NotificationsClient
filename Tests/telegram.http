@@ -20,6 +20,7 @@ Content-Type: application/json
 ### Send message to Telegram via a function
 POST {{function-url}}/api/send
 Content-Type: application/json
+x-functions-key: {{send-notification-key}}
 
 {
     "body": "This is a test, hello to all!!",
@@ -30,6 +31,7 @@ Content-Type: application/json
 ### Send message to Telegram via a function
 POST {{function-url}}/api/send
 Content-Type: application/json
+x-functions-key: {{send-notification-key}}
 
 {
     "body": "This is a test for the Media Management channel",

@@ -46,7 +46,7 @@ namespace Notifications.Endpoint
                     "Please pass a body and a title in the request");
             }
 
-            var genericChannelMapping = Environment.GetEnvironmentVariable($"{TelegramId}-{GenericChannelId}");
+            var genericChannelMapping = Environment.GetEnvironmentVariable($"{TelegramId}{GenericChannelId}");
 
             var channelMapping = string.IsNullOrEmpty(channel) ? genericChannelMapping : string.Empty;
             var channelInMessage = channel;
@@ -54,7 +54,7 @@ namespace Notifications.Endpoint
             // A channel mapping was passed in the request
             if (string.IsNullOrEmpty(channelMapping))
             {
-                channelMapping = Environment.GetEnvironmentVariable($"{TelegramId}-{channel}");
+                channelMapping = Environment.GetEnvironmentVariable($"{TelegramId}{channel}");
                 channelInMessage = string.Empty;
             }
 
@@ -72,11 +72,16 @@ namespace Notifications.Endpoint
 
             var userId = Environment.GetEnvironmentVariable(UserIdVariableName);
 
+            if (string.IsNullOrEmpty(userId))
+            {
+                return new BadRequestObjectResult($"User ID cannot be found, make sure you define UserIdVariableName");
+            }
+
             var url = string.Format(TelegramUrl, channelMapping);
 
             var notification = new Notification
             {
-                ChatId = Environment.GetEnvironmentVariable(UserIdVariableName),
+                ChatId = userId,
                 Title = title,
                 Message = body,
                 ChannelInMessage = channelInMessage
