@@ -19,10 +19,10 @@ namespace Notifications.Endpoint.Model
 
                 if (string.IsNullOrEmpty(ChannelInMessage))
                 {
-                    return $"*{title}*\n{message}\n----";
+                    return $"*{title}*\n{message}\n\-\-\-\-";
                 }
 
-                return $"> {ChannelInMessage}\n*{title}*\n{message}\n----";
+                return $"> {ChannelInMessage}\n*{title}*\n{message}\n\-\-\-\-";
             }
         }
 
