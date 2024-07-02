@@ -67,7 +67,7 @@ namespace Notifications.Endpoint
 
             if (string.IsNullOrEmpty(channelMapping))
             {
-                return new BadRequestObjectResult($"Channel mapping cannot be found, make sure you define {TelegramId}-{channel}");
+                return new BadRequestObjectResult($"Channel mapping cannot be found, make sure you define {TelegramId}{channel}");
             }
 
             var userId = Environment.GetEnvironmentVariable(UserIdVariableName);
