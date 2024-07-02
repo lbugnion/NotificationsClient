@@ -8,6 +8,7 @@
                 .Replace("*", "\\*")
                 .Replace("[", "\\[")
                 .Replace("`", "\\`")
+                .Replace(".", "\\.")
                 .Replace("#", "\\#")
                 .Replace("!", "\\!");
         }
