@@ -51,7 +51,10 @@ namespace Notifications.Endpoint
                     "Please pass a body and a title in the payload");
             }
 
-            var genericChannelMapping = Environment.GetEnvironmentVariable($"{TelegramId}{GenericChannelId}");
+            var genericChannelId = $"{TelegramId}{GenericChannelId}";
+            var channelId = $"{TelegramId}{channel}";
+
+            var genericChannelMapping = Environment.GetEnvironmentVariable(genericChannelId);
 
             var channelMapping = string.IsNullOrEmpty(channel) ? genericChannelMapping : string.Empty;
             var channelInMessage = channel;
@@ -59,7 +62,7 @@ namespace Notifications.Endpoint
             // A channel mapping was passed in the request
             if (string.IsNullOrEmpty(channelMapping))
             {
-                channelMapping = Environment.GetEnvironmentVariable($"{TelegramId}{channel}");
+                channelMapping = Environment.GetEnvironmentVariable(channelId);
                 channelInMessage = string.Empty;
             }
 
@@ -72,7 +75,7 @@ namespace Notifications.Endpoint
 
             if (string.IsNullOrEmpty(channelMapping))
             {
-                return new BadRequestObjectResult($"Channel mapping cannot be found, make sure you define {TelegramId}{channel}");
+                return new BadRequestObjectResult($"Channel mapping cannot be found, make sure you define {channelId}");
             }
 
             var userId = Environment.GetEnvironmentVariable(UserIdVariableName);
@@ -104,8 +107,10 @@ namespace Notifications.Endpoint
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    var responseMessage = await response.Content.ReadAsStringAsync();
+
                     return new BadRequestObjectResult(
-                        $"Error sending notification: {response.StatusCode}");
+                        $"Error sending notification: {response.StatusCode} / {responseMessage}");
                 }
             }
 

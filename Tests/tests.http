@@ -1,11 +1,4 @@
-### Get configuration
-GET {{function-url}}/config
-
 ### Send notification
-POST {{function-url}}/send
+POST {{function-url}}/api/send
 
-{
-    "body": "Hello World",
-    "title": "Test Notification",
-    "channel": "test-channel"
-}
+{"title":"Error in web generation service","body":"Error with updated-cloud-avocate-profile.md: Index and length must refer to a location within the string. (Parameter 'length')","channel":"Web Generate ERRORS"}
