@@ -39,6 +39,11 @@ namespace Notifications.Endpoint
             string title = data.title;
             string channel = data.channel ?? string.Empty;
 
+            _logger.LogDebug($"Body: {body}");
+            _logger.LogDebug($"Title: {title}");
+            _logger.LogDebug($"Channel: {channel}");
+
+
             if (string.IsNullOrEmpty(body)
                 || string.IsNullOrEmpty(title))
             {
@@ -88,6 +93,9 @@ namespace Notifications.Endpoint
             };
 
             var json = JsonConvert.SerializeObject(notification);
+
+            _logger.LogDebug(json);
+
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             using (var client = new HttpClient())
