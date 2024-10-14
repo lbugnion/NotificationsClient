@@ -114,7 +114,7 @@ namespace Notifications.Endpoint
                 }
             }
 
-            return new OkObjectResult("Notification sent");
+            return new OkObjectResult("Notification sent successfully");
         }
     }
 }
