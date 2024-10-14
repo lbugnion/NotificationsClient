@@ -22,7 +22,9 @@ namespace Notifications.Endpoint.Model
                     return $"*{title}*\n{message}\n\\-\\-\\-\\-";
                 }
 
-                return $"> {ChannelInMessage}\n*{title}*\n{message}\n\\-\\-\\-\\-";
+                var channel = ChannelInMessage.PrepareForChatBot();
+
+                return $"> {channel}\n*{title}*\n{message}\n\\-\\-\\-\\-";
             }
         }
 

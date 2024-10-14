@@ -34,7 +34,7 @@ Content-Type: application/json
 x-functions-key: {{send-notification-key}}
 
 {
-    "body": "This is a test for the Media Management channel",
-    "title": "Media management test message",
-    "channel" : "MediaManagement"
+    "title": "SUCCESS adding new AKA.MS link",
+    "channel": "AI Tour AKA.MS",
+    "body": "Success adding AKA.MS link for BRK470 Leverage cloud native infra for intelligent apps / Leveraging cloud native infra for your intelligent apps - delivery with subtitles.mp4"
 }
